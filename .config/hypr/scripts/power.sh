@@ -13,7 +13,7 @@ fi
 OPTIONS="Lock\nLogout\nSuspend\nReboot\nShutdown"
 
 # Show the menu using rofi and get the selected option
-SELECTED=$(echo -e "$OPTIONS" | rofi -dmenu -i -p "Power Menu" -theme-str 'window {width: 400px;} mainbox {children: [ inputbar, listview ]; } listview {lines: 5; fixed-height: false;}')
+SELECTED=$(echo -e "$OPTIONS" | rofi -dmenu -i -p "Power Menu" -theme-str 'window {width: 400px;} mainbox {children: [ inputbar, listview ]; } listview {lines: 5; fixed-height: true; spacing: 2px;} element {padding: 8px; margin: 2px 0px;} element-text {vertical-align: 0.5;}')
 
 # Perform the selected action
 case "$SELECTED" in

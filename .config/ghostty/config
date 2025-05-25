@@ -1,0 +1,13 @@
+background-opacity = 0.85
+
+bold-is-bright = true
+
+cursor-color = #fd6206
+cursor-style = block
+cursor-style-blink = true
+
+window-decoration = false
+window-width = 1366
+window-height = 768
+
+command = tmux new-session -A -s 
