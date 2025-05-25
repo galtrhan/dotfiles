@@ -22,9 +22,7 @@ pacman_packages=(
 	ttf-jetbrains-mono-nerd
 	tmux
 	neovim
-	kakoune
 	yazi
-	code
 )
 
 yay_packages=(
@@ -34,8 +32,6 @@ yay_packages=(
 configs_to_remove=(
 	fish
 	hypr
-	kak
-	kitty
 	nvim
 	tmux
 	waybar
@@ -70,10 +66,6 @@ for config in "${configs_to_remove[@]}"; do
 	sudo rm -rf "~/.config/$config"
 done
 
-echo "Installing packer.nvim..."
-git clone --depth 1 https://github.com/wbthomason/packer.nvim\
- ~/.local/share/nvim/site/pack/packer/start/packer.nvim
-
 # Activate dotfiles
 echo "Setting up .dotfiles..."
 chmod +x ~/.dotfiles/.config/hypr/scripts/*.sh
@@ -85,3 +77,4 @@ sudo systemctl enable bluetooth
 sudo systemctl start bluetooth
 
 echo "Installation complete."
+
