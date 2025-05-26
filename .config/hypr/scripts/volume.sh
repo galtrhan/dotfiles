@@ -1,131 +1,127 @@
 #!/bin/bash
 
-iDIR="$HOME/.config/swaync/icons"
-sDIR="$HOME/.config/hypr/scripts"
 STEP=5
+NOTIFICATION_ID=1
 
 # Get Volume
 get_volume() {
-    volume=$(pamixer --get-volume)
+    volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2 * 100}')
     if [[ "$volume" -eq "0" ]]; then
         echo "Muted"
     else
-        echo "$volume%"
+        echo "${volume%.*}"
     fi
+}
+
+# Check if muted
+is_muted() {
+    wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -q "MUTED"
+}
+
+# Check if mic is muted
+is_mic_muted() {
+    wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | grep -q "MUTED"
 }
 
 # Notify
 notify_user() {
-    if [[ "$(get_volume)" == "Muted" ]]; then
-        notify-send -e -h string:x-canonical-private-synchronous:volume_notif -u low "Volume: Muted"
+    volume=$(get_volume)
+    if [[ "$volume" == "Muted" ]]; then
+        notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:0 "Volume: Muted"
     else
-        notify-send -e -h int:value:"$(get_volume | sed 's/%//')" -h string:x-canonical-private-synchronous:volume_notif -u low "Volume: $(get_volume)"
-        "$sDIR/Sounds.sh" --volume
+        notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:$volume "Volume: $volume%"
     fi
 }
 
 # Increase Volume
 inc_volume() {
-    if [ "$(pamixer --get-mute)" == "true" ]; then
+    if is_muted; then
         toggle_mute
     else
-        pamixer -i "$STEP" --allow-boost --set-limit 150 && notify_user
+        wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && notify_user
     fi
 }
 
 # Decrease Volume
 dec_volume() {
-    if [ "$(pamixer --get-mute)" == "true" ]; then
+    if is_muted; then
         toggle_mute
     else
-        pamixer -d "$STEP" && notify_user
+        wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && notify_user
     fi
 }
 
 # Toggle Mute
 toggle_mute() {
-	if [ "$(pamixer --get-mute)" == "false" ]; then
-		pamixer -m && notify-send -e -u low -i "$iDIR/volume-mute.png" "Volume Switched OFF"
-	elif [ "$(pamixer --get-mute)" == "true" ]; then
-		pamixer -u && notify-send -e -u low -i "$(get_icon)" "Volume Switched ON"
-	fi
+    if is_muted; then
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:$(get_volume) "Volume Switched ON"
+    else
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ 1 && notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:0 "Volume Switched OFF"
+    fi
 }
 
 # Toggle Mic
 toggle_mic() {
-	if [ "$(pamixer --default-source --get-mute)" == "false" ]; then
-		pamixer --default-source -m && notify-send -e -u low -i "$iDIR/microphone-mute.png" "Microphone Switched OFF"
-	elif [ "$(pamixer --default-source --get-mute)" == "true" ]; then
-		pamixer -u --default-source u && notify-send -e -u low -i "$iDIR/microphone.png" "Microphone Switched ON"
-	fi
-}
-# Get Mic Icon
-get_mic_icon() {
-    current=$(pamixer --default-source --get-volume)
-    if [[ "$current" -eq "0" ]]; then
-        echo "$iDIR/microphone-mute.png"
+    if is_mic_muted; then
+        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0 && notify-send -a "Volume" -r "$NOTIFICATION_ID" "Microphone Switched ON"
     else
-        echo "$iDIR/microphone.png"
+        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 1 && notify-send -a "Volume" -r "$NOTIFICATION_ID" "Microphone Switched OFF"
     fi
 }
 
 # Get Microphone Volume
 get_mic_volume() {
-    volume=$(pamixer --default-source --get-volume)
+    volume=$(wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | awk '{print $2 * 100}')
     if [[ "$volume" -eq "0" ]]; then
         echo "Muted"
     else
-        echo "$volume%"
+        echo "${volume%.*}"
     fi
 }
 
 # Notify for Microphone
 notify_mic_user() {
     volume=$(get_mic_volume)
-    icon=$(get_mic_icon)
-    notify-send -e -h int:value:"$volume" -h "string:x-canonical-private-synchronous:volume_notif" -u low -i "$icon" "Mic-Level: $volume"
+    if [[ "$volume" == "Muted" ]]; then
+        notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:0 "Mic-Level: Muted"
+    else
+        notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:$volume "Mic-Level: $volume%"
+    fi
 }
 
 # Increase MIC Volume
 inc_mic_volume() {
-    CURRENT_VOLUME=$(get_volume)
-    if [ "$(pamixer --default-source --get-mute)" == "true" ]; then
+    if is_mic_muted; then
         toggle_mic
     else
-        if [ "$CURRENT_VOLUME" -lt "100" ]; then
-            pamixer --default-source -i 5 && notify_mic_user
-        fi
+        wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%+ && notify_mic_user
     fi
 }
 
 # Decrease MIC Volume
 dec_mic_volume() {
-    if [ "$(pamixer --default-source --get-mute)" == "true" ]; then
-        toggle-mic
+    if is_mic_muted; then
+        toggle_mic
     else
-        pamixer --default-source -d 5 && notify_mic_user
+        wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%- && notify_mic_user
     fi
 }
 
 # Execute accordingly
 if [[ "$1" == "--get" ]]; then
-	get_volume
+    get_volume
 elif [[ "$1" == "--inc" ]]; then
-	inc_volume
+    inc_volume
 elif [[ "$1" == "--dec" ]]; then
-	dec_volume
+    dec_volume
 elif [[ "$1" == "--toggle" ]]; then
-	toggle_mute
+    toggle_mute
 elif [[ "$1" == "--toggle-mic" ]]; then
-	toggle_mic
-elif [[ "$1" == "--get-icon" ]]; then
-	get_icon
-elif [[ "$1" == "--get-mic-icon" ]]; then
-	get_mic_icon
+    toggle_mic
 elif [[ "$1" == "--mic-inc" ]]; then
-	inc_mic_volume
+    inc_mic_volume
 elif [[ "$1" == "--mic-dec" ]]; then
-	dec_mic_volume
+    dec_mic_volume
 else
-	get_volume
+    get_volume
 fi

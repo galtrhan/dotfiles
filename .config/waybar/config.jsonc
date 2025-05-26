@@ -41,9 +41,9 @@
 			"default": "",
 		},
 	},
-    "tray": {
-        "spacing": 10,
-    },
+	"tray": {
+		"spacing": 10,
+	},
 	"backlight": {
 		"interval": 2,
 		"align": 0,
@@ -277,20 +277,20 @@
 		"tooltip-format": "Left Click: Logout Menu\nRight Click: Lock",
 	},
 	"custom/media": {
-        "format": "{icon} {0}",
-        "return-type": "json",
-        "max-length": 40,
-        "format-icons": {
-            "spotify": "",
-            "default": "🎜",
-        },
+		"format": "{icon} {0}",
+		"return-type": "json",
+		"max-length": 40,
+		"format-icons": {
+			"spotify": "",
+			"default": "🎜",
+		},
 		"on-click": "playerctl play-pause",
 		"on-click-right": "playerctl stop",
 		"smooth-scrolling-threshold": 10, // This value was tested using a trackpad, it should be lowered if using a mouse.
 		"on-scroll-up": "playerctl next",
 		"on-scroll-down": "playerctl previous",
 		"exec": "python $HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
-    },
+	},
 	"custom/separator#dot-line": {
 		"format": "",
 		"interval": "once",
@@ -302,11 +302,11 @@
 		"tooltip": false,
 	},
 	"custom/storage": {
-        "format": " {}",
-        "format-alt": "{percentage}% ",
-        "format-alt-click": "click-right",
-        "return-type": "json",
-        "interval": 60,
-        "exec": "$HOME/.config/waybar/storage.sh"
-    },
+		"format": " {}",
+		"format-alt": "{percentage}% ",
+		"format-alt-click": "click-right",
+		"return-type": "json",
+		"interval": 60,
+		"exec": "$HOME/.config/waybar/storage.sh"
+	},
 }
