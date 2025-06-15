@@ -3,5 +3,6 @@
 .gitmodules
 install.sh
 /README.md
+
 .config/kitty
 .config/kak
