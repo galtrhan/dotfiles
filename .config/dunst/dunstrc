@@ -1,13 +1,13 @@
  [global]
     follow = keyboard
-    width = (200, 1500)
+    width = (200, 500)
     height = 950
     origin = top-right
-    offset = (10, 10)
+    offset = (15, 15)
     scale = 0
     notification_limit = 10
     progress_bar = true
-    progress_bar_height = 10
+    progress_bar_height = 15
     progress_bar_frame_width = 1
     progress_bar_min_width = 170
     progress_bar_max_width = 300
