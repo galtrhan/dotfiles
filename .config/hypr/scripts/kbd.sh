@@ -13,6 +13,7 @@
 BACKLIGHT_FILE="/sys/class/leds/tpacpi::kbd_backlight/brightness"
 STATES=("Off" "Low" "High")
 STATE_HISTORY_FILE="/tmp/kbd_backlight_previous"
+NOTIFICATION_ID=130
 
 # Check if the backlight file exists
 if [[ ! -f "$BACKLIGHT_FILE" ]]; then
@@ -50,7 +51,11 @@ fi
 echo "$NEW_BRIGHTNESS" | sudo tee "$BACKLIGHT_FILE" > /dev/null
 
 # Show notification
-notify-send -e -h int:value:"$(( NEW_BRIGHTNESS * 50 ))" -h string:x-canonical-private-synchronous:kbd_notif -u low -i keyboard-brightness "Keyboard Backlight" "Backlight ${STATES[$NEW_BRIGHTNESS]}"
+if [[ $NEW_BRIGHTNESS -eq 0 ]]; then
+    dunstify -a "Keyboard" -r "$NOTIFICATION_ID" -u critical -t 3000 -i keyboard-brightness -h int:value:0 "Keyboard Backlight" "Backlight Off"
+else
+    dunstify -a "Keyboard" -r "$NOTIFICATION_ID" -u normal -t 3000 -i keyboard-brightness -h int:value:"$(( NEW_BRIGHTNESS * 50 ))" "Keyboard Backlight" "Backlight ${STATES[$NEW_BRIGHTNESS]}"
+fi
 
 # Output the new brightness level
 echo "Keyboard backlight set to level $NEW_BRIGHTNESS"

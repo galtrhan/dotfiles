@@ -6,29 +6,33 @@
 # down - Decrease brightness
 
 STEP=10
+NOTIFICATION_ID=131
 
 # Get brightness
 get_backlight() {
 	brightnessctl -m | cut -d, -f4 | sed 's/%//'
 }
 
-
 # Notify
 notify_user() {
-	notify-send -e -h string:x-canonical-private-synchronous:brightness_notif -h int:value:$CURRENT -u low "Brightness : $CURRENT%"
+	dunstify -a "Brightness" -r "$NOTIFICATION_ID" -u normal -t 3000 -h int:value:$CURRENT "Brightness : $CURRENT%"
 }
 
 # Change brightness
 change_backlight() {
-
 	local CURRENT_BRIGHTNESS
+	local NEW_BRIGHTNESS
+	
 	CURRENT_BRIGHTNESS=$(get_backlight)
-
-	# Calculate new brightness
+	
+	# Calculate new brightness percentage
 	if [[ "$1" == "+${STEP}%" ]]; then
 		NEW_BRIGHTNESS=$((CURRENT_BRIGHTNESS + STEP))
-	elif [[ "$1" == "${STEP}%-" ]]; then
+	elif [[ "$1" == "-${STEP}%" ]]; then
 		NEW_BRIGHTNESS=$((CURRENT_BRIGHTNESS - STEP))
+	else
+		echo "Invalid argument: $1"
+		return 1
 	fi
 
 	# Ensure new brightness is within valid range
@@ -38,9 +42,16 @@ change_backlight() {
 		NEW_BRIGHTNESS=100
 	fi
 
-	brightnessctl set "${NEW_BRIGHTNESS}%"
-	CURRENT=$NEW_BRIGHTNESS
-	notify_user
+	# Set the new brightness
+	echo "Setting brightness to ${NEW_BRIGHTNESS}%"
+	if brightnessctl set "${NEW_BRIGHTNESS}%"; then
+		# Update CURRENT variable and notify
+		CURRENT=$NEW_BRIGHTNESS
+		notify_user
+	else
+		echo "Failed to set brightness"
+		return 1
+	fi
 }
 
 # Execute accordingly
@@ -52,7 +63,7 @@ case "$1" in
 		change_backlight "+${STEP}%"
 		;;
 	"down")
-		change_backlight "${STEP}%-"
+		change_backlight "-${STEP}%"
 		;;
 	*)
 		get_backlight
