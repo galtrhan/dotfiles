@@ -21,6 +21,9 @@ change_wallpaper() {
         # Then set it as wallpaper
         hyprctl hyprpaper wallpaper ",$wallpaper_path"
         
+        # Save the wallpaper state for persistence
+        echo "$wallpaper_path" > "$HOME/.config/hypr/wallpaper_state"
+        
         # Clean up old loaded wallpapers (keep only last 5 to save memory)
         cleanup_old_wallpapers
         

@@ -18,6 +18,8 @@ show_usage() {
     echo "  change    - Change wallpaper immediately"
     echo "  enable    - Enable service to start on boot"
     echo "  disable   - Disable service from starting on boot"
+    echo "  save      - Save current wallpaper state"
+    echo "  restore   - Restore saved wallpaper"
     echo "  help      - Show this help message"
     echo ""
     echo "Examples:"
@@ -116,6 +118,30 @@ disable_service() {
     fi
 }
 
+# Function to save wallpaper state
+save_wallpaper_state() {
+    echo "Saving current wallpaper state..."
+    if [ -f "$SCRIPT_DIR/wallpaper_persistence.sh" ]; then
+        "$SCRIPT_DIR/wallpaper_persistence.sh" save
+        echo "✅ Wallpaper state saved!"
+    else
+        echo "❌ Persistence script not found!"
+        exit 1
+    fi
+}
+
+# Function to restore wallpaper
+restore_wallpaper() {
+    echo "Restoring saved wallpaper..."
+    if [ -f "$SCRIPT_DIR/wallpaper_persistence.sh" ]; then
+        "$SCRIPT_DIR/wallpaper_persistence.sh" restore
+        echo "✅ Wallpaper restored!"
+    else
+        echo "❌ Persistence script not found!"
+        exit 1
+    fi
+}
+
 # Main execution
 case "${1:-help}" in
     "start")
@@ -144,6 +170,12 @@ case "${1:-help}" in
     "disable")
         check_service
         disable_service
+        ;;
+    "save")
+        save_wallpaper_state
+        ;;
+    "restore")
+        restore_wallpaper
         ;;
     "help"|"-h"|"--help")
         show_usage
