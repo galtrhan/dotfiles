@@ -1,7 +1,8 @@
 #!/bin/bash
 
 STEP=5
-NOTIFICATION_ID=1
+NOTIFICATION_ID=128
+MIC_NOTIFICATION_ID=129
 
 # Get Volume
 get_volume() {
@@ -27,9 +28,9 @@ is_mic_muted() {
 notify_user() {
     volume=$(get_volume)
     if [[ "$volume" == "Muted" ]]; then
-        notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:0 "Volume: Muted"
+        dunstify -a "Volume" -r "$NOTIFICATION_ID" -u critical -t 3000 -h int:value:0 "Volume: Muted"
     else
-        notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:$volume "Volume: $volume%"
+        dunstify -a "Volume" -r "$NOTIFICATION_ID" -u normal -t 3000 -h int:value:$volume "Volume: $volume%"
     fi
 }
 
@@ -38,7 +39,14 @@ inc_volume() {
     if is_muted; then
         toggle_mute
     else
-        wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && notify_user
+        current_volume=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print $2 * 100}')
+        current_volume=${current_volume%.*}
+        if [[ "$current_volume" -lt 95 ]]; then
+            wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && notify_user
+        else
+            # Set to exactly 100% if we're close to the limit
+            wpctl set-volume @DEFAULT_AUDIO_SINK@ 100% && notify_user
+        fi
     fi
 }
 
@@ -54,18 +62,18 @@ dec_volume() {
 # Toggle Mute
 toggle_mute() {
     if is_muted; then
-        wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:$(get_volume) "Volume Switched ON"
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && dunstify -a "Volume" -r "$NOTIFICATION_ID" -u normal -t 3000 -h int:value:$(get_volume) "Volume Switched ON"
     else
-        wpctl set-mute @DEFAULT_AUDIO_SINK@ 1 && notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:0 "Volume Switched OFF"
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ 1 && dunstify -a "Volume" -r "$NOTIFICATION_ID" -u critical -t 3000 -h int:value:0 "Volume Switched OFF"
     fi
 }
 
 # Toggle Mic
 toggle_mic() {
     if is_mic_muted; then
-        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0 && notify-send -a "Volume" -r "$NOTIFICATION_ID" "Microphone Switched ON"
+        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0 && dunstify -a "Volume" -r "$MIC_NOTIFICATION_ID" -u normal -t 3000 "Microphone Switched ON"
     else
-        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 1 && notify-send -a "Volume" -r "$NOTIFICATION_ID" "Microphone Switched OFF"
+        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 1 && dunstify -a "Volume" -r "$MIC_NOTIFICATION_ID" -u critical -t 3000 "Microphone Switched OFF"
     fi
 }
 
@@ -83,9 +91,9 @@ get_mic_volume() {
 notify_mic_user() {
     volume=$(get_mic_volume)
     if [[ "$volume" == "Muted" ]]; then
-        notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:0 "Mic-Level: Muted"
+        dunstify -a "Volume" -r "$MIC_NOTIFICATION_ID" -u critical -t 3000 -h int:value:0 "Mic-Level: Muted"
     else
-        notify-send -a "Volume" -r "$NOTIFICATION_ID" -h int:value:$volume "Mic-Level: $volume%"
+        dunstify -a "Volume" -r "$MIC_NOTIFICATION_ID" -u normal -t 3000 -h int:value:$volume "Mic-Level: $volume%"
     fi
 }
 
@@ -94,7 +102,14 @@ inc_mic_volume() {
     if is_mic_muted; then
         toggle_mic
     else
-        wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%+ && notify_mic_user
+        current_volume=$(wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | awk '{print $2 * 100}')
+        current_volume=${current_volume%.*}
+        if [[ "$current_volume" -lt 95 ]]; then
+            wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 5%+ && notify_mic_user
+        else
+            # Set to exactly 100% if we're close to the limit
+            wpctl set-volume @DEFAULT_AUDIO_SOURCE@ 100% && notify_mic_user
+        fi
     fi
 }
 

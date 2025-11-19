@@ -1,0 +1,15 @@
+[Unit]
+Description=Wallpaper rotation service
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.config/hypr/scripts/wallpaper_rotate.sh 30
+Restart=always
+RestartSec=10
+Environment=DISPLAY=%E{DISPLAY}
+Environment=WAYLAND_DISPLAY=%E{WAYLAND_DISPLAY}
+
+[Install]
+WantedBy=graphical-session.target
