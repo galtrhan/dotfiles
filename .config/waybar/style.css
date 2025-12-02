@@ -8,9 +8,8 @@
 
 window#waybar {
     background: #202020;
-    border-radius: 8px;
+    border-radius: 6px;
     color: #cba6f7;
-
 }
 
 window#waybar.hidden {
@@ -38,7 +37,6 @@ tooltip {
     padding-bottom: 2px;
     padding-right: 4px;
     padding-left: 4px;
-
 }
 
 .modules-center {
@@ -56,7 +54,7 @@ tooltip {
 }
 
 #workspaces button {
-    color: #6E6A86;
+    color: #6e6a86;
     box-shadow: none;
     text-shadow: none;
     padding: 0px;
@@ -108,7 +106,7 @@ tooltip {
 
 #custom-hypridle.notactive,
 #idle_inhibitor.activated {
-    color: #39FF14;
+    color: #39ff14;
 }
 
 #battery.critical:not(.charging) {

@@ -10,10 +10,9 @@ pacman_packages=(
 	hypridle
 	hyprlock
 	hyprpaper
+	hyprshot
 	waybar
 	rofi
-	mako
-	kitty
 	nautilus
 	networkmanager
 	network-manager-applet
@@ -77,4 +76,3 @@ sudo systemctl enable bluetooth
 sudo systemctl start bluetooth
 
 echo "Installation complete."
-
