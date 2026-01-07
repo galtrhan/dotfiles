@@ -7,8 +7,8 @@
 }
 
 window#waybar {
-    background: #202020;
-    border-radius: 6px;
+    background: rgba(20, 20, 20, .75);
+    border-radius: 8px;
     color: #cba6f7;
 }
 
@@ -98,9 +98,9 @@ tooltip {
     padding-left: 4px;
 }
 
-@keyframes blink {
+@keyframes pulse {
     to {
-        color: #000000;
+        color: #ffffff;
     }
 }
 
@@ -109,10 +109,23 @@ tooltip {
     color: #39ff14;
 }
 
+#battery.charging {
+    color: #39ff14;
+}
+
+#battery.warning:not(.charging) {
+    color: orange;
+    animation-name: pulse;
+    animation-duration: 0.5s;
+    animation-timing-function: steps(4);
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
 #battery.critical:not(.charging) {
     color: #f53c3c;
-    animation-name: blink;
-    animation-duration: 0.5s;
+    animation-name: pulse;
+    animation-duration: 0.3s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
     animation-direction: alternate;
@@ -130,4 +143,19 @@ box#battery:hover {
 
 #pulseaudio.microphone.muted {
     color: #ff5555;
+}
+
+#custom-power {
+    color: white;
+    /*transition-duration: 4s;
+    transition-property: color;
+    transition-timing-function: steps(4);*/
+}
+
+#custom-power:hover {
+    animation-name: pulse;
+    animation-duration: 1s;
+    animation-timing-function: steps(12);
+    animation-iteration-count: infinite;
+    color: blue;
 }

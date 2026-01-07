@@ -1,4 +1,5 @@
 {
+    "reload_style_on_change": true,
     "layer": "top",
     "exclusive": true,
     "passthrough": false,
@@ -10,12 +11,12 @@
     "margin-left": 4,
     "margin-right": 4,
     "modules-left": ["hyprland/workspaces", "custom/separator#line", "tray"],
-    "modules-center": ["custom/media", "custom/file_check"],
+    "modules-center": [
+        "clock",
+    ],
     "modules-right": [
         "group/pulseaudio",
         "group/battery",
-        "custom/separator#line",
-        "clock",
         "custom/separator#line",
         "custom/power",
     ],
@@ -25,8 +26,8 @@
         "format": "{icon}",
         "show-special": false,
         "on-click": "activate",
-        "on-scroll-up": "hyprctl dispatch workspace e+1",
-        "on-scroll-down": "hyprctl dispatch workspace e-1",
+        "on-scroll-up": "hyprctl dispatch workspace e-1",
+        "on-scroll-down": "hyprctl dispatch workspace e+1",
         "persistent-workspaces": {
             "*": 4,
         },
@@ -68,8 +69,7 @@
     },
     "clock": {
         "interval": 1,
-        "format": " {:%H:%M}",
-        "format-alt": " {:%H:%M   %Y, %d %B, %A}",
+        "format": " {:%H:%M   %Y, %d %B, %A}",
         "tooltip": false,
     },
     "group/pulseaudio": {
@@ -137,16 +137,15 @@
     "battery": {
         "weighted-average": true,
         "full-at": 100,
-        "design-capacity": false,
+        // "design-capacity": true,
         "states": {
-            "good": 95,
+            "good": 80,
             "warning": 30,
             "critical": 15,
         },
         "format": "{icon} {capacity}%",
         "format-charging": " {capacity}%",
         "format-plugged": "󱘖 {capacity}%",
-        "format-full": "{icon} Full",
         "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"],
         "format-time": "{H}h {M}min",
         "tooltip": true,
