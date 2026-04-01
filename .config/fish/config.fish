@@ -1,7 +1,3 @@
 
-
-if status is-interactive
-    # Commands to run in interactive sessions can go here
-end
-
-#fastfetch --config minimal
+# uv
+fish_add_path "/home/galtrhan/.local/bin"

@@ -7,7 +7,7 @@
 }
 
 window#waybar {
-    background: rgba(20, 20, 20, .75);
+    background: rgba(20, 20, 20, 0.75);
     border-radius: 8px;
     color: #cba6f7;
 }
@@ -111,24 +111,17 @@ tooltip {
 
 #battery.charging {
     color: #39ff14;
+    animation: pulse 1s alternate infinite steps(24);
 }
 
 #battery.warning:not(.charging) {
     color: orange;
-    animation-name: pulse;
-    animation-duration: 0.5s;
-    animation-timing-function: steps(4);
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
+    animation: pulse 1s alternate infinite steps(24);
 }
 
 #battery.critical:not(.charging) {
     color: #f53c3c;
-    animation-name: pulse;
-    animation-duration: 0.3s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
+    animation: pulse 0.4s alternate infinite steps(24);
 }
 
 box#pulseaudio,
@@ -147,15 +140,9 @@ box#battery:hover {
 
 #custom-power {
     color: white;
-    /*transition-duration: 4s;
-    transition-property: color;
-    transition-timing-function: steps(4);*/
+    transition: color 0.4s;
 }
 
 #custom-power:hover {
-    animation-name: pulse;
-    animation-duration: 1s;
-    animation-timing-function: steps(12);
-    animation-iteration-count: infinite;
-    color: blue;
+    color: orange;
 }

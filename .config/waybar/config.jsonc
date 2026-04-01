@@ -10,16 +10,9 @@
     "margin-top": 4,
     "margin-left": 4,
     "margin-right": 4,
-    "modules-left": ["hyprland/workspaces", "custom/separator#line", "tray"],
-    "modules-center": [
-        "clock",
-    ],
-    "modules-right": [
-        "group/pulseaudio",
-        "group/battery",
-        "custom/separator#line",
-        "custom/power",
-    ],
+    "modules-left": ["hyprland/workspaces", "custom/separator#dot-line", "tray"],
+    "modules-center": ["clock", "custom/claude-usage"],
+    "modules-right": ["group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
     "hyprland/workspaces": {
         "active-only": false,
         "all-outputs": true,
@@ -34,6 +27,7 @@
         "format-icons": {
             "active": "",
             "default": "",
+            "zen": "z",
         },
     },
     "tray": {
@@ -44,23 +38,7 @@
         "align": 0,
         "rotate": 0,
         "format": "{icon}",
-        "format-icons": [
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-        ],
+        "format-icons": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
         "tooltip-format": "Backlight {percent}%",
         "icon-size": 10,
         "on-scroll-up": "$HOME/.config/hypr/scripts/brightness.sh --inc",
@@ -68,8 +46,8 @@
         "smooth-scrolling-threshold": 1,
     },
     "clock": {
-        "interval": 1,
-        "format": " {:%H:%M   %Y, %d %B, %A}",
+        "interval": 10,
+        "format": " {:%H:%M   %Y.%m.%d}",
         "tooltip": false,
     },
     "group/pulseaudio": {
@@ -260,5 +238,14 @@
         "exec": "/home/kaspars/.dotfiles/.config/waybar/file_check.py status ~/.config/waybar/watched_file",
         "on-click": "/home/kaspars/.dotfiles/.config/waybar/file_check.py open ~/.config/waybar/watched_file",
         "tooltip": true,
+    },
+    "custom/claude-usage": {
+        "exec": "claude-usage-waybar",
+        "return-type": "json",
+        "format": "{}",
+        "interval": 300,
+        "signal": 8,
+        "tooltip": true,
+        "on-click": "xdg-open https://console.anthropic.com/settings/usage",
     },
 }
