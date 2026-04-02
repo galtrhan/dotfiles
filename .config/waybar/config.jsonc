@@ -12,7 +12,7 @@
     "margin-right": 4,
     "modules-left": ["hyprland/workspaces", "custom/separator#dot-line", "tray"],
     "modules-center": ["clock", "custom/claude-usage"],
-    "modules-right": ["custom/screen_capture", "group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
+    "modules-right": ["custom/screen_capture", "custom/ip", "group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
     "hyprland/workspaces": {
         "active-only": false,
         "all-outputs": true,
@@ -47,7 +47,14 @@
     },
     "clock": {
         "interval": 10,
-        "format": " {:%H:%M   %Y.%m.%d}",
+        "format": " {:%H:%M   %Y.%m.%d}",
+        "tooltip": false,
+    },
+    "custom/ip": {
+        "exec": "$HOME/.config/waybar/get_ip.sh",
+        "return-type": "json",
+        "format": "{}",
+        "interval": 30,
         "tooltip": false,
     },
     "group/pulseaudio": {
