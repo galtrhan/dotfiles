@@ -90,7 +90,8 @@ tooltip {
 #workspaces,
 #custom-backlight,
 #custom-power,
-#custom-media {
+#custom-media,
+#custom-screen_capture {
     color: #e5d9f5;
     padding-top: 1px;
     padding-bottom: 1px;
@@ -145,4 +146,13 @@ box#battery:hover {
 
 #custom-power:hover {
     color: orange;
+}
+
+#custom-screen_capture.recording {
+    color: #ff4444;
+    animation: pulse 1s alternate infinite;
+}
+
+#custom-screen_capture.idle {
+    color: transparent;
 }

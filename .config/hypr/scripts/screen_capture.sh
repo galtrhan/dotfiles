@@ -293,13 +293,18 @@ stop_recording() {
 }
 
 status() {
+    local silent="${1:-false}"
     if is_recording; then
-        PID="$(cat "${PID_FILE}" 2>/dev/null || echo "")"
-        OUTFILE="$(cat "${OUT_FILE_FILE}" 2>/dev/null || echo "")"
-        notify "Screen capture status" "Recording active (PID ${PID}). Output: ${OUTFILE}"
+        if [[ "${silent}" != "true" ]]; then
+            PID="$(cat "${PID_FILE}" 2>/dev/null || echo "")"
+            OUTFILE="$(cat "${OUT_FILE_FILE}" 2>/dev/null || echo "")"
+            notify "Screen capture status" "Recording active (PID ${PID}). Output: ${OUTFILE}"
+        fi
         return 0
     else
-        notify "Screen capture status" "No active recording."
+        if [[ "${silent}" != "true" ]]; then
+            notify "Screen capture status" "No active recording."
+        fi
         return 1
     fi
 }
@@ -350,7 +355,12 @@ case "${cmd}" in
         exit $?
         ;;
     status)
-        status
+        # Support --silent flag for waybar integration
+        silent_mode="false"
+        if [[ "$1" == "--silent" ]]; then
+            silent_mode="true"
+        fi
+        status "${silent_mode}"
         exit $?
         ;;
     help|--help|-h)

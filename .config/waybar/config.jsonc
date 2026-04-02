@@ -12,7 +12,7 @@
     "margin-right": 4,
     "modules-left": ["hyprland/workspaces", "custom/separator#dot-line", "tray"],
     "modules-center": ["clock", "custom/claude-usage"],
-    "modules-right": ["group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
+    "modules-right": ["custom/screen_capture", "group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
     "hyprland/workspaces": {
         "active-only": false,
         "all-outputs": true,
@@ -247,5 +247,12 @@
         "signal": 8,
         "tooltip": true,
         "on-click": "xdg-open https://console.anthropic.com/settings/usage",
+    },
+    "custom/screen_capture": {
+        "exec": "$HOME/.config/waybar/screen_capture_indicator.sh",
+        "return-type": "json",
+        "format": "{}",
+        "interval": 1,
+        "tooltip": false,
     },
 }
