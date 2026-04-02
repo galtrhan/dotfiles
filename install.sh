@@ -13,6 +13,7 @@ pacman_packages=(
 	hyprshot
 	waybar
 	rofi
+	dunst
 	nautilus
 	networkmanager
 	network-manager-applet
@@ -22,6 +23,7 @@ pacman_packages=(
 	tmux
 	neovim
 	yazi
+	ghostty
 )
 
 yay_packages=(
@@ -34,6 +36,10 @@ configs_to_remove=(
 	nvim
 	tmux
 	waybar
+	ghostty
+	dunst
+	rofi
+	systemd
 )
 
 # Check if sudo is available for root permissions, maybe not needed
@@ -62,7 +68,7 @@ done
 # Remove default configs
 for config in "${configs_to_remove[@]}"; do
 	echo "Removing $config config..."
-	sudo rm -rf "~/.config/$config"
+	rm -rf "$HOME/.config/$config"
 done
 
 # Activate dotfiles
