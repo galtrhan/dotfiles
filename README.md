@@ -82,6 +82,49 @@ stow -D .
 stow -R .
 ```
 
+## Keybinds
+
+### General
+| Key | Action |
+|-----|--------|
+| `Super+Return` | Open terminal (Ghostty) |
+| `Super+W` | Open browser (Zen) |
+| `Super+E` | Open file manager (Nautilus) |
+| `Super+Space` | Application launcher (Rofi) |
+| `Super+L` | Lock screen (Hyprlock) |
+| `Super+P` | Power menu |
+| `Super+Q` | Kill active window |
+| `Super+C` | Toggle floating |
+| `Super+F` | Fullscreen |
+| `Super+Shift+V` | Clipboard history (Cliphist) |
+| `Super+B` | Toggle Waybar |
+
+### Screen Capture & Recording
+| Key | Action |
+|-----|--------|
+| `Super+Print` | Toggle video recording (select region) |
+| `Super+Shift+Print` | Toggle video recording with audio |
+| `Print` | Screenshot (region) |
+
+### Window Management
+| Key | Action |
+|-----|--------|
+| `Super+G` | Toggle Ghostty solo layout (75% × 70% centered) |
+| `Super+Arrows` | Move focus between windows |
+| `Super+Shift+[0-9]` | Move window to workspace |
+| `Super+[0-9]` | Switch to workspace |
+| `Super+S` | Toggle scratchpad (magic workspace) |
+| `Super+\` | Toggle terminal scratchpad |
+
+### Wallpaper & Multimedia
+| Key | Action |
+|-----|--------|
+| `Super+Shift+B` | Change wallpaper |
+| `XF86MonBrightnessUp/Down` | Adjust screen brightness |
+| `XF86AudioRaiseVolume/LowerVolume` | Adjust volume |
+| `XF86AudioMute` | Toggle mute |
+| `XF86AudioMicMute` | Toggle microphone mute |
+
 ## Directory Structure
 
 ```
