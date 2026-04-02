@@ -24,6 +24,11 @@ pacman_packages=(
 	neovim
 	yazi
 	ghostty
+	wf-recorder
+	slurp
+	wl-clipboard
+	ffmpeg
+	libnotify
 )
 
 yay_packages=(
