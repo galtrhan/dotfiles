@@ -45,8 +45,22 @@ To activate dotfiles: `stow .` from the repo root (creates symlinks in `~`).
 
 Shell scripts for system integration:
 
-- `.config/hypr/scripts/`: Brightness, volume, power, screenshot, wallpaper management, keyboard monitor
-- `.config/waybar/`: Spotify status and storage checking scripts
+**Hyprland scripts** (`.config/hypr/scripts/`):
+- `brightness.sh`, `volume.sh` — System volume/brightness control with dunst notifications
+- `wallpaper_rotate.sh`, `wallpaper_control.sh`, `wallpaper_persistence.sh`, `wallpaper_restore.sh` — Wallpaper rotation/persistence across restarts
+- `power.sh` — Power management (lock, suspend)
+- `screenshot.sh` — Screenshot capture with visual feedback
+- `kbd_monitor.sh` — Keyboard backlight monitoring
+- `ghostty_toggle_solo.sh` — Toggle Ghostty between solo/tiled layouts
+
+**Waybar scripts** (`.config/waybar/`):
+- `spotify.sh` — Display active Spotify track and status
+- `storage.sh` — Monitor storage usage with warning/critical thresholds
+- `get_ip.sh` — Fetch and display external IP
+- `screen_capture_indicator.sh` — Show active screen recording status
+- `file_check.sh` — Generic file existence checker
+
+All Hyprland scripts integrate with Hyprland keybinds and dunst notifications for user feedback.
 
 ## Common Development Commands
 
