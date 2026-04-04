@@ -63,6 +63,34 @@ cd ~/.dotfiles
 stow .  # Create symlinks for all configs
 ```
 
+### Init System Setup
+
+Services are provided for both **systemd** (Arch) and **runit** (Artix):
+
+#### On Arch (systemd)
+
+After stowing, enable the wallpaper rotation service:
+
+```bash
+systemctl --user enable wallpaper-rotate.service
+systemctl --user start wallpaper-rotate.service
+```
+
+#### On Artix (runit)
+
+After stowing, symlink the runit service:
+
+```bash
+mkdir -p ~/.local/share/runit/sv
+ln -s ~/.config/runit/sv/wallpaper-rotate ~/.local/share/runit/sv/
+```
+
+Then ensure `runsvdir` monitors your service directory. If not already running, add to your shell startup (e.g., `~/.config/fish/config.fish`):
+
+```bash
+runsvdir -P ~/.local/share/runit/sv
+```
+
 ## Managing Configs with Stow
 
 ```bash

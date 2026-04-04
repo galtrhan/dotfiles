@@ -100,23 +100,21 @@ stow -nv .
 ## Important Notes
 
 - **All `.config/*/` directories are managed here**—edit configs in the repo; changes propagate via stow symlinks to `~/.config/`.
-- **Submodules** are used for tmux plugins. Always clone with `git clone --recurse-submodules`.
+- **Submodules** are used for tmux plugins (tpm, tmux-resurrect, tmux-gruvbox). Always clone with `git clone --recurse-submodules` or fetch missing submodules with `git submodule update --init --recursive`.
 - The `install.sh` script handles full setup (packages + symlinks). It's up-to-date with current `.config/` structure.
-- Individual config directories (nvim, tmux plugins, etc.) may have their own documentation/READMEs.
 - This setup is **Wayland/Hyprland-focused**; X11 environments may need adjustments.
 - Fish shell configuration sourced from multiple `.config/fish/` files—check sourcing order when modifying.
+- Individual config directories (nvim, tmux plugins, etc.) may have their own documentation/READMEs.
 
-## Recent Updates
+## Config Changes and Reloading
 
-- **install.sh**: Updated to include all current `.config/` directories (added `dunst`, `ghostty`, `rofi`, `systemd`) and fixed path expansion bug (`$HOME` instead of `~`)
-- **README.md**: Expanded with clearer structure, tool descriptions, installation alternatives, and stow command examples
-- **CLAUDE.md**: Created with comprehensive developer guidance
+Since this is config-only, changes require verification and reloading:
 
-## Testing Changes
+- **Fish shell**: Changes apply on new shell session or via `source ~/.config/fish/config.fish`
+- **Hyprland**: Changes apply on next restart or via `hyprctl reload` (keybind: Super+Shift+R)
+- **Tmux**: Reload config with `tmux source-file ~/.tmux.conf` or the bound key (default: Prefix+R)
+- **Waybar**: Restart with `killall waybar; waybar &` or similar
+- **Other tools** (Ghostty, Dunst, Rofi, Neovim): Usually require application restart
 
-Since this is config-only, testing involves:
+Always verify symlinks are correct after changes: `ls -la ~/.config/{fish,hypr,nvim,etc}`
 
-1. Making changes to files in the repo
-2. Verifying symlinks are correct: `ls -la ~/.config/{fish,nvim,hypr,...}`
-3. Reloading affected applications (e.g., `source ~/.config/fish/config.fish` for fish, restart terminal for others)
-4. Manual testing of functionality (keybinds, scripts, appearance)

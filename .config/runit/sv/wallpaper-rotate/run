@@ -1,0 +1,5 @@
+#!/bin/sh
+exec 2>&1
+export DISPLAY="${DISPLAY:-:0}"
+export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-0}"
+exec chpst -u "$USER" ~/.config/hypr/scripts/wallpaper_rotate.sh 30

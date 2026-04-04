@@ -1,0 +1,3 @@
+#!/bin/sh
+# Optional cleanup on service stop
+exit 0
