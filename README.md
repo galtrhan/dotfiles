@@ -6,7 +6,7 @@ Personal Arch Linux dotfiles setup using **GNU stow** for managing configuration
 
 ### Window Manager & Desktop
 - **Hyprland** - Wayland window manager with custom scripts (brightness, volume, power, screenshot, wallpaper)
-- **Waybar** - Status bar with custom widgets (spotify, storage monitoring)
+- **Waybar** - Status bar with custom widgets (spotify, storage monitoring, Claude API usage)
 - **Rofi** - Application launcher and menu
 - **Dunst** - Notification daemon
 
