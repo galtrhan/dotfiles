@@ -1,0 +1,2 @@
+SUBSYSTEM=="leds", KERNEL=="platform::mute", ACTION=="add|change", RUN+="/usr/bin/chown __DOTFILES_USER__:__DOTFILES_GROUP__ /sys/class/leds/platform::mute/brightness", RUN+="/usr/bin/chmod 0664 /sys/class/leds/platform::mute/brightness"
+SUBSYSTEM=="leds", KERNEL=="platform::micmute", ACTION=="add|change", RUN+="/usr/bin/chown __DOTFILES_USER__:__DOTFILES_GROUP__ /sys/class/leds/platform::micmute/brightness", RUN+="/usr/bin/chmod 0664 /sys/class/leds/platform::micmute/brightness"

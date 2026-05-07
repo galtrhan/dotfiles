@@ -3,6 +3,8 @@
 STEP=5
 NOTIFICATION_ID=128
 MIC_NOTIFICATION_ID=129
+MUTE_LED_PATH="/sys/class/leds/platform::mute/brightness"
+MIC_LED_PATH="/sys/class/leds/platform::micmute/brightness"
 
 # Get Volume
 get_volume() {
@@ -22,6 +24,34 @@ is_muted() {
 # Check if mic is muted
 is_mic_muted() {
     wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | grep -q "MUTED"
+}
+
+# Write LED state only when writable
+set_led_state() {
+    led_path="$1"
+    led_state="$2"
+
+    if [[ -w "$led_path" ]]; then
+        printf "%s" "$led_state" > "$led_path"
+    fi
+}
+
+# Sync mute LED with actual state
+sync_mute_led() {
+    if is_muted; then
+        set_led_state "$MUTE_LED_PATH" 1
+    else
+        set_led_state "$MUTE_LED_PATH" 0
+    fi
+}
+
+# Sync mic mute LED with actual state
+sync_mic_led() {
+    if is_mic_muted; then
+        set_led_state "$MIC_LED_PATH" 1
+    else
+        set_led_state "$MIC_LED_PATH" 0
+    fi
 }
 
 # Notify
@@ -66,6 +96,7 @@ toggle_mute() {
     else
         wpctl set-mute @DEFAULT_AUDIO_SINK@ 1 && dunstify -a "Volume" -r "$NOTIFICATION_ID" -u critical -t 3000 -h int:value:0 "Volume Switched OFF"
     fi
+    sync_mute_led
 }
 
 # Toggle Mic
@@ -75,6 +106,7 @@ toggle_mic() {
     else
         wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 1 && dunstify -a "Volume" -r "$MIC_NOTIFICATION_ID" -u critical -t 3000 "Microphone Switched OFF"
     fi
+    sync_mic_led
 }
 
 # Get Microphone Volume

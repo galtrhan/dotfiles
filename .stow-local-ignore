@@ -4,5 +4,8 @@
 install.sh
 /README.md
 
+.claude
+CLAUDE.md
+
 .config/kitty
 .config/kak

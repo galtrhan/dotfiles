@@ -50,8 +50,10 @@ The script will:
 1. Update pacman database
 2. Install all required packages
 3. Remove any existing default configs
-4. Apply stow to create symlinks
-5. Start bluetooth service
+4. Initialize/update git submodules (tmux plugins)
+5. Install udev LED permission rules for mute/mic mute keys
+6. Apply stow to create symlinks
+7. Start bluetooth service
 
 ### Manual Installation
 
@@ -60,6 +62,12 @@ If you prefer to install packages separately:
 ```bash
 git clone --recurse-submodules https://codeberg.org/galtrhan/dotfiles ~/.dotfiles
 cd ~/.dotfiles
+git submodule update --init --recursive
+sed "s/__DOTFILES_USER__/$(id -un)/g; s/__DOTFILES_GROUP__/$(id -gn)/g" \
+  ~/.dotfiles/.config/hypr/udev/90-audio-leds.rules \
+  | sudo tee /etc/udev/rules.d/90-audio-leds.rules > /dev/null
+sudo udevadm control --reload-rules
+sudo udevadm trigger --subsystem-match=leds
 stow .  # Create symlinks for all configs
 ```
 
@@ -95,6 +103,7 @@ runsvdir -P ~/.local/share/runit/sv
 
 ```bash
 # Apply all configs
+git submodule update --init --recursive  # Ensure tmux plugins are present
 stow .
 
 # Apply specific configs only
@@ -148,7 +157,7 @@ stow -R .
 | Key | Action |
 |-----|--------|
 | `Super+Shift+B` | Change wallpaper |
-| `XF86MonBrightnessUp/Down` | Adjust screen brightness |
+| `XF86MonBrightnessUp/Down` | Adjust screen brightness (requires `brightnessctl`) |
 | `XF86AudioRaiseVolume/LowerVolume` | Adjust volume |
 | `XF86AudioMute` | Toggle mute |
 | `XF86AudioMicMute` | Toggle microphone mute |
@@ -175,4 +184,6 @@ stow -R .
 - This setup is tailored for Wayland (Hyprland) and may require adjustments for other environments
 - Config submodules are included for tmux plugins—clone with `--recurse-submodules`
 - Each config directory may have its own documentation
+- **Brightness control** (`brightnessctl`) is required for screen brightness adjustments. Installed by `install.sh`
+- **Mute LED control** for `XF86AudioMute` and `XF86AudioMicMute` uses udev ownership rules installed by `install.sh`
 - For development or contributions, see [CLAUDE.md](./CLAUDE.md)
