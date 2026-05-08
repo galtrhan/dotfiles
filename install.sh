@@ -30,6 +30,7 @@ pacman_packages=(
 	ffmpeg
 	libnotify
 	brightnessctl
+	gnome-keyring
 )
 
 yay_packages=(
