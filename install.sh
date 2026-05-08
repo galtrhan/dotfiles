@@ -31,6 +31,7 @@ pacman_packages=(
 	libnotify
 	brightnessctl
 	gnome-keyring
+	gparted
 )
 
 yay_packages=(
@@ -102,6 +103,7 @@ sudo udevadm control --reload-rules
 sudo udevadm trigger --subsystem-match=leds
 
 chmod +x ~/.dotfiles/.config/hypr/scripts/*.sh
+chmod +x ~/.dotfiles/.local/bin/*
 stow .
 
 # Enable & start bluetooth service

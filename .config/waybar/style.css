@@ -156,3 +156,7 @@ box#battery:hover {
 #custom-screen_capture.idle {
     color: transparent;
 }
+
+#custom-ip {
+	color: teal;
+}

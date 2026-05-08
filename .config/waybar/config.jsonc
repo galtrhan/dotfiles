@@ -53,7 +53,7 @@
     "custom/ip": {
         "exec": "$HOME/.config/waybar/get_ip.sh",
         "return-type": "json",
-        "format": "{}",
+        "format": "[{}]",
         "interval": 30,
         "tooltip": false,
     },
