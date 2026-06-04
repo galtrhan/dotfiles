@@ -11,7 +11,7 @@
     "margin-left": 4,
     "margin-right": 4,
     "modules-left": ["hyprland/workspaces", "custom/separator#dot-line", "tray"],
-    "modules-center": ["clock", "custom/claude-usage"],
+    "modules-center": ["clock"],
     "modules-right": ["custom/screen_capture", "custom/ip", "group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
     "hyprland/workspaces": {
         "active-only": false,
@@ -56,6 +56,7 @@
         "format": "[{}]",
         "interval": 30,
         "tooltip": false,
+        "on-click": "$HOME/.config/waybar/get_ip.sh --copy",
     },
     "group/pulseaudio": {
         "orientation": "horizontal",
@@ -245,15 +246,6 @@
         "exec": "/home/kaspars/.dotfiles/.config/waybar/file_check.py status ~/.config/waybar/watched_file",
         "on-click": "/home/kaspars/.dotfiles/.config/waybar/file_check.py open ~/.config/waybar/watched_file",
         "tooltip": true,
-    },
-    "custom/claude-usage": {
-        "exec": "claude-usage-waybar",
-        "return-type": "json",
-        "format": "{}",
-        "interval": 300,
-        "signal": 8,
-        "tooltip": true,
-        "on-click": "xdg-open https://console.anthropic.com/settings/usage",
     },
     "custom/screen_capture": {
         "exec": "$HOME/.config/waybar/screen_capture_indicator.sh",

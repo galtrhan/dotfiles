@@ -32,6 +32,8 @@ pacman_packages=(
 	brightnessctl
 	gnome-keyring
 	gparted
+	gedit
+	imv
 )
 
 yay_packages=(
