@@ -10,20 +10,17 @@
     "margin-top": 4,
     "margin-left": 4,
     "margin-right": 4,
-    "modules-left": ["hyprland/workspaces", "custom/separator#dot-line", "tray"],
+    "modules-left": ["ext/workspaces", "custom/separator#dot-line", "tray"],
     "modules-center": ["clock"],
     "modules-right": ["custom/screen_capture", "custom/ip", "group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
-    "hyprland/workspaces": {
+    "ext/workspaces": {
         "active-only": false,
         "all-outputs": true,
+        "sort-by-id": true,
         "format": "{icon}",
-        "show-special": false,
         "on-click": "activate",
-        "on-scroll-up": "hyprctl dispatch workspace e-1",
-        "on-scroll-down": "hyprctl dispatch workspace e+1",
-        "persistent-workspaces": {
-            "*": 4,
-        },
+        "on-scroll-up": "hyprctl dispatch 'hl.dsp.exec_raw(\"workspace e-1\")'",
+        "on-scroll-down": "hyprctl dispatch 'hl.dsp.exec_raw(\"workspace e+1\")'",
         "format-icons": {
             "active": "",
             "default": "",
