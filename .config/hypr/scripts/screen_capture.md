@@ -32,7 +32,8 @@ A Wayland-native video recording tool for Hyprland with intuitive region selecti
 
 | Option | Description |
 |--------|-------------|
-| `-a`, `--audio` | Enable audio capture (use with `start` command) |
+| `-a`, `--audio` | Enable audio capture (default audio sink) |
+| `--audio=DEVICE` | Capture audio from a specific PipeWire node |
 
 ## Examples
 
@@ -52,22 +53,32 @@ A Wayland-native video recording tool for Hyprland with intuitive region selecti
 ~/.config/hypr/scripts/screen_capture.sh start --audio
 ```
 
+### Recording with mic input
+
+```bash
+~/.config/hypr/scripts/screen_capture.sh start --audio=alsa_input.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__Mic1__source
+```
+
 ### Check recording status
 
 ```bash
 ~/.config/hypr/scripts/screen_capture.sh status
 ```
 
+## Audio Source Menu
+
+`screen_capture_menu.sh` provides a rofi menu to pick an audio source before recording:
+
+- **None (no audio)** — video only
+- **System Audio (output)** — captures application/system sounds
+- **Digital Microphone (internal)** — built-in laptop mic
+- **Stereo Microphone (external)** — external mic jack
+
 ## Hyprland Keybinds
 
-Add to your `~/.config/hypr/hyprland.conf`:
-
 ```
-# Start recording (select area)
-bind = $mainMod, Print, exec, ~/.config/hypr/scripts/screen_capture.sh start
-
-# Start recording with audio
-bind = $mainMod SHIFT, Print, exec, ~/.config/hypr/scripts/screen_capture.sh start --audio
+# Toggle recording with audio source picker
+bind = $mainMod, Print, exec, ~/.config/hypr/scripts/screen_capture_menu.sh
 
 # Stop recording
 bind = $mainMod ALT, Print, exec, ~/.config/hypr/scripts/screen_capture.sh stop

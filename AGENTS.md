@@ -50,6 +50,8 @@ Shell scripts for system integration:
 - `wallpaper_rotate.sh`, `wallpaper_control.sh`, `wallpaper_persistence.sh`, `wallpaper_restore.sh` — Wallpaper rotation/persistence across restarts
 - `power.sh` — Power management (lock, suspend)
 - `screenshot.sh` — Screenshot capture with visual feedback
+- `screen_capture.sh` — Video recording with `wf-recorder` (region select, clipboard, notifications)
+- `screen_capture_menu.sh` — Rofi menu to pick audio source before recording
 - `kbd_monitor.sh` — Keyboard backlight monitoring
 - `ghostty_toggle_solo.sh` — Toggle Ghostty between solo/tiled layouts
 
@@ -64,6 +66,7 @@ All Hyprland scripts integrate with Hyprland keybinds and dunst notifications fo
 
 ### Keybinds (`.config/hypr/configs/keybinds.lua`)
 
+- `Super+Print` — Launch screen recording audio source menu
 - `Super+Z` — Launch `shmooz` screen magnifier
 
 ## Common Development Commands

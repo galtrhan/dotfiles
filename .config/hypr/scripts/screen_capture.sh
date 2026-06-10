@@ -119,9 +119,10 @@ start_recording() {
         return 1
     fi
 
-    # Add audio flag if requested
-    if [[ "${AUDIO_ENABLED:-false}" == "true" ]]; then
-        audio_flag="-a"
+    # Set audio flag if requested
+    # AUDIO_PARAM can be: empty (no audio), "-a" (default sink), or "--audio=DEVICE" (specific source)
+    if [[ -n "${AUDIO_PARAM:-}" ]]; then
+        audio_flag="${AUDIO_PARAM}"
     fi
 
     # Start wf-recorder in background, store PID and output path
@@ -134,7 +135,7 @@ start_recording() {
     printf '%s' "${OUTFILE}" > "${OUT_FILE_FILE}"
 
     local audio_status=""
-    if [[ "${AUDIO_ENABLED:-false}" == "true" ]]; then
+    if [[ -n "${AUDIO_PARAM:-}" ]]; then
         audio_status=" (with audio)"
     fi
     notify "Screen capture started" "Recording to: ${OUTFILE}${audio_status}"
@@ -324,13 +325,17 @@ if [[ $# -lt 1 ]]; then
 fi
 
 cmd="$1"; shift
-AUDIO_ENABLED=false
+AUDIO_PARAM=""
 
 # Parse options
 while [[ $# -gt 0 ]]; do
     case "$1" in
         -a|--audio)
-            AUDIO_ENABLED=true
+            AUDIO_PARAM="-a"
+            shift
+            ;;
+        --audio=*)
+            AUDIO_PARAM="$1"
             shift
             ;;
         *)
