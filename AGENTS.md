@@ -53,7 +53,7 @@ Shell scripts for system integration:
 - `screen_capture.sh` — Video recording with `wf-recorder` (region select, clipboard, notifications)
 - `screen_capture_menu.sh` — Rofi menu to pick audio source before recording
 - `kbd_monitor.sh` — Keyboard backlight monitoring
-- `ghostty_toggle_solo.sh` — Toggle Ghostty between solo/tiled layouts
+- `toggle_solo.sh` — Toggle active window between solo float and tiled layout
 
 **Waybar scripts** (`.config/waybar/`):
 - `spotify.sh` — Display active Spotify track and status

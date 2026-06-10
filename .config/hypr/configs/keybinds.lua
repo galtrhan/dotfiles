@@ -60,7 +60,7 @@ hl.bind(mainMod .. " + RETURN", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + W", hl.dsp.exec_cmd(browser))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 
-hl.bind(mainMod .. " + G", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/ghostty_toggle_solo.sh"))
+hl.bind(mainMod .. " + G", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/toggle_solo.sh"))
 
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill waybar || waybar"))
 

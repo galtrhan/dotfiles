@@ -139,7 +139,7 @@ stow -R .
 | `Super+F` | Fullscreen |
 | `Super+Shift+V` | Clipboard history (Cliphist) |
 | `Super+B` | Toggle Waybar |
-| `Super+G` | Toggle Ghostty solo layout (75% × 70% centered) |
+| `Super+G` | Toggle solo layout on active window (75% × 70% centered float) |
 
 ### Screen Capture & Recording
 | Key | Action |
@@ -212,7 +212,7 @@ Related Hyprland config:
 
 | Script | Trigger | Description |
 |--------|---------|-------------|
-| [`ghostty_toggle_solo.sh`](.config/hypr/scripts/ghostty_toggle_solo.sh) | `Super+G` | Toggle active Ghostty window between tiled and solo float (75% × 70%, centered) |
+| [`toggle_solo.sh`](.config/hypr/scripts/toggle_solo.sh) | `Super+G` | Toggle active window between tiled and solo float (75% × 70%, centered) |
 
 ### Wallpaper
 
