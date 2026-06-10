@@ -5,10 +5,11 @@ Personal Arch Linux dotfiles setup using **GNU stow** for managing configuration
 ## What's Included
 
 ### Window Manager & Desktop
-- **Hyprland** - Wayland window manager with custom scripts (brightness, volume, power, screenshot, wallpaper)
-- **Waybar** - Status bar with custom widgets (spotify, storage monitoring, Claude API usage)
+- **Hyprland** - Wayland window manager with custom scripts (brightness, volume, power, screenshot, wallpaper, screen recording)
+- **Waybar** - Status bar with custom widgets (spotify, storage, screen recording indicator, external IP)
 - **Rofi** - Application launcher and menu
 - **Dunst** - Notification daemon
+- **Shmooz** - Screen magnifier (zoom, annotation, spotlight, color picker)
 
 ### Shell & Terminal
 - **Fish** - Shell configuration and functions
@@ -21,6 +22,10 @@ Personal Arch Linux dotfiles setup using **GNU stow** for managing configuration
 ### Editor & Tools
 - **Neovim** - Editor configuration
 - **Systemd** - User service units
+- **Shmooz** - Screen magnifier with zoom, annotation, spotlight, and color picker
+
+### Screen Recording
+- **Screen Capture** - Video recording with `wf-recorder` (region select, audio source picker, clipboard integration, desktop notifications)
 
 ## Installation
 
@@ -139,9 +144,13 @@ stow -R .
 ### Screen Capture & Recording
 | Key | Action |
 |-----|--------|
-| `Super+Print` | Toggle video recording (select region) |
-| `Super+Shift+Print` | Toggle video recording with audio |
+| `Super+Print` | Audio source picker → start/stop video recording |
 | `Print` | Screenshot (region) |
+
+### Screen Magnifier
+| Key | Action |
+|-----|--------|
+| `Super+Z` | Launch `shmooz` screen magnifier (scroll to zoom, drag to pan, right-click to exit) |
 
 ### Window Management
 | Key | Action |
@@ -168,7 +177,7 @@ stow -R .
 ~/.dotfiles/
 ├── .config/
 │   ├── fish/          # Shell configuration
-│   ├── hypr/          # Hyprland WM config + scripts
+│   ├── hypr/          # Hyprland WM config + scripts (brightness, volume, power, screenshot, screen recording, wallpaper)
 │   ├── waybar/        # Status bar + custom scripts
 │   ├── nvim/          # Neovim configuration
 │   ├── tmux/          # Tmux + plugins
@@ -176,7 +185,8 @@ stow -R .
 │   ├── dunst/         # Notification daemon
 │   ├── rofi/          # Application launcher
 │   └── systemd/       # Systemd user units
-└── install.sh
+├── install.sh         # Installation script (packages + stow)
+└── README.md
 ```
 
 ## Notes
