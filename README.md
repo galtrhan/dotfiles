@@ -5,7 +5,7 @@ Personal Arch Linux dotfiles setup using **GNU stow** for managing configuration
 ## What's Included
 
 ### Window Manager & Desktop
-- **Hyprland** - Wayland window manager with custom scripts (brightness, volume, power, screenshot, wallpaper, screen recording)
+- **Hyprland** - Wayland window manager (Lua config) with custom scripts for auth, power, media, wallpaper, and screen capture
 - **Waybar** - Status bar with custom widgets (spotify, storage, screen recording indicator, external IP)
 - **Rofi** - Application launcher and menu
 - **Dunst** - Notification daemon
@@ -21,11 +21,10 @@ Personal Arch Linux dotfiles setup using **GNU stow** for managing configuration
 
 ### Editor & Tools
 - **Neovim** - Editor configuration
-- **Systemd** - User service units
-- **Shmooz** - Screen magnifier with zoom, annotation, spotlight, and color picker
+- **Systemd** - User service units (wallpaper rotation, battery notifications)
 
 ### Screen Recording
-- **Screen Capture** - Video recording with `wf-recorder` (region select, audio source picker, clipboard integration, desktop notifications)
+- **Screen Capture** - Video recording with `wf-recorder` (region select, audio source picker, clipboard integration, desktop notifications). See [`.config/hypr/scripts/screen_capture.md`](.config/hypr/scripts/screen_capture.md).
 
 ## Installation
 
@@ -171,13 +170,79 @@ stow -R .
 | `XF86AudioMute` | Toggle mute |
 | `XF86AudioMicMute` | Toggle microphone mute |
 
+## Hyprland Scripts
+
+Scripts live in [`.config/hypr/scripts/`](.config/hypr/scripts/). Hyprland itself is configured via [`.config/hypr/hyprland.lua`](.config/hypr/hyprland.lua) (legacy `.conf` files are unused).
+
+### Authentication
+
+| Script | Trigger | Description |
+|--------|---------|-------------|
+| [`sudo_askpass.sh`](.config/hypr/scripts/sudo_askpass.sh) | Fish `sudo` wrapper (`sudo -A`) | Graphical sudo password prompt used as `SUDO_ASKPASS` |
+
+**Sudo askpass behavior:**
+- Opens Hyprland `special:sudo` workspace with `dim_special` so the rest of the screen is dimmed
+- Shows a compact, centered Rofi password field (`-normal-window`) styled to match Hyprland window borders (1px cyan→green gradient, 4px rounding)
+- Grabs keyboard focus immediately (`-no-lazy-grab`, `-steal-focus`)
+- Restores the previous workspace after entry or cancel, including other special workspaces (e.g. `special:terminal`)
+- Only prints the password to stdout (all `hyprctl` output is suppressed so sudo does not receive `ok`)
+
+Fish is configured in [`.config/fish/config.fish`](.config/fish/config.fish) to call `sudo -A` automatically when `SUDO_ASKPASS` is set.
+
+Related Hyprland config:
+- `special:sudo` workspace and `dim_special = 0.4` in `hyprland.lua`
+- Window rule in [`configs/windowrules.lua`](.config/hypr/configs/windowrules.lua): Rofi on `special:sudo` is floated, centered, pinned, 420×60
+
+### Power & Session
+
+| Script | Trigger | Description |
+|--------|---------|-------------|
+| [`power.sh`](.config/hypr/scripts/power.sh) | `Super+P` | Rofi menu: lock, logout, suspend, reboot, shutdown |
+| [`battery.sh`](.config/hypr/scripts/battery.sh) | `battery-notify.service` | Low-battery desktop notifications at 20/15/10/5% |
+
+### Hardware Controls
+
+| Script | Trigger | Description |
+|--------|---------|-------------|
+| [`brightness.sh`](.config/hypr/scripts/brightness.sh) | `XF86MonBrightnessUp/Down` | Adjust backlight via `brightnessctl` with dunst feedback |
+| [`volume.sh`](.config/hypr/scripts/volume.sh) | `XF86Audio*` keys | Volume/mute/mic control via PipeWire (`wpctl`) with dunst feedback and ThinkPad mute LED sync |
+| [`kbd_monitor.sh`](.config/hypr/scripts/kbd_monitor.sh) | Hyprland autostart | Monitors keyboard backlight changes and shows dunst notifications |
+
+### Window Layout
+
+| Script | Trigger | Description |
+|--------|---------|-------------|
+| [`ghostty_toggle_solo.sh`](.config/hypr/scripts/ghostty_toggle_solo.sh) | `Super+G` | Toggle active Ghostty window between tiled and solo float (75% × 70%, centered) |
+
+### Wallpaper
+
+| Script | Role |
+|--------|------|
+| [`wallpaper_control.sh`](.config/hypr/scripts/wallpaper_control.sh) | CLI for rotation service and on-demand changes (`Super+Shift+B` → `change`) |
+| [`wallpaper_restore.sh`](.config/hypr/scripts/wallpaper_restore.sh) | Restores last wallpaper on Hyprland startup |
+| [`wallpaper_rotate.sh`](.config/hypr/scripts/wallpaper_rotate.sh) | Rotation loop used by `wallpaper-rotate.service` |
+| [`wallpaper_cron.sh`](.config/hypr/scripts/wallpaper_cron.sh) | Single wallpaper change (used by control script / cron) |
+| [`wallpaper_persistence.sh`](.config/hypr/scripts/wallpaper_persistence.sh) | Save/restore wallpaper state across restarts |
+
+Full wallpaper system docs: [`.config/hypr/scripts/wallpaper.md`](.config/hypr/scripts/wallpaper.md)
+
+### Screen Capture & Screenshots
+
+| Script | Trigger | Description |
+|--------|---------|-------------|
+| [`screen_capture_menu.sh`](.config/hypr/scripts/screen_capture_menu.sh) | `Super+Print` | Rofi picker for audio source, then start/stop recording |
+| [`screen_capture.sh`](.config/hypr/scripts/screen_capture.sh) | Called by menu | Region recording via `wf-recorder` + `slurp`, clipboard copy, notifications |
+| [`screenshot.sh`](.config/hypr/scripts/screenshot.sh) / [`screenshot.py`](.config/hypr/scripts/screenshot.py) | `Print` | Region screenshot via `hyprshot` |
+
+Full screen capture docs: [`.config/hypr/scripts/screen_capture.md`](.config/hypr/scripts/screen_capture.md)
+
 ## Directory Structure
 
 ```
 ~/.dotfiles/
 ├── .config/
 │   ├── fish/          # Shell configuration
-│   ├── hypr/          # Hyprland WM config + scripts (brightness, volume, power, screenshot, screen recording, wallpaper)
+│   ├── hypr/          # Hyprland Lua config, window rules, and scripts (see Hyprland Scripts)
 │   ├── waybar/        # Status bar + custom scripts
 │   ├── nvim/          # Neovim configuration
 │   ├── tmux/          # Tmux + plugins
@@ -196,4 +261,5 @@ stow -R .
 - Each config directory may have its own documentation
 - **Brightness control** (`brightnessctl`) is required for screen brightness adjustments. Installed by `install.sh`
 - **Mute LED control** for `XF86AudioMute` and `XF86AudioMicMute` uses udev ownership rules installed by `install.sh`
+- **Sudo askpass** requires Fish (for the `sudo -A` wrapper), Rofi, `jq`, and Hyprland Lua dispatch syntax (`hl.dsp.*`)
 - For development or contributions, see [AGENTS.md](./AGENTS.md)

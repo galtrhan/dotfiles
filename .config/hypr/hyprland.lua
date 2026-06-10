@@ -57,6 +57,10 @@ hl.workspace_rule({
     on_created_empty = "ghostty -e tmux new-session -A -s \239\187\190",
 })
 
+hl.workspace_rule({
+    workspace = "special:sudo",
+})
+
 hl.config({
     input = {
         kb_layout = "lv",
@@ -112,6 +116,7 @@ hl.config({
         layout = "master",
     },
     decoration = {
+        dim_special = 0.4,
         rounding = 4,
         active_opacity = 0.97,
         inactive_opacity = 0.8,
@@ -126,6 +131,7 @@ hl.config({
             size = 5,
             passes = 1,
             vibrancy = 0.1696,
+            special = false,
         },
     },
     animations = {
