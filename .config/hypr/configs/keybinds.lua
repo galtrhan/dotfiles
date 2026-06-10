@@ -65,4 +65,4 @@ hl.bind(mainMod .. " + G", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/ghostt
 
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill waybar || waybar"))
 
-hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("hyprmag"))
+hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("shmooz"))

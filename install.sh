@@ -38,7 +38,7 @@ pacman_packages=(
 
 yay_packages=(
 	hyprpolkitagent-git
-	hyprmag-git
+	shmooz
 )
 
 configs_to_remove=(
