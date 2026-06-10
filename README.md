@@ -140,6 +140,7 @@ stow -R .
 | `Super+F` | Fullscreen |
 | `Super+Shift+V` | Clipboard history (Cliphist) |
 | `Super+B` | Toggle Waybar |
+| `Super+G` | Toggle Ghostty solo layout (75% × 70% centered) |
 
 ### Screen Capture & Recording
 | Key | Action |
@@ -155,7 +156,6 @@ stow -R .
 ### Window Management
 | Key | Action |
 |-----|--------|
-| `Super+G` | Toggle Ghostty solo layout (75% × 70% centered) |
 | `Super+Arrows` | Move focus between windows |
 | `Super+Shift+[0-9]` | Move window to workspace |
 | `Super+[0-9]` | Switch to workspace |
