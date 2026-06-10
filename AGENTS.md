@@ -62,6 +62,10 @@ Shell scripts for system integration:
 
 All Hyprland scripts integrate with Hyprland keybinds and dunst notifications for user feedback.
 
+### Keybinds (`.config/hypr/configs/keybinds.lua`)
+
+- `Super+Z` — Launch `wooz` screen magnifier
+
 ## Common Development Commands
 
 ### Install/Apply Configuration

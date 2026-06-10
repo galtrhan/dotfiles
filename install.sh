@@ -39,6 +39,7 @@ pacman_packages=(
 yay_packages=(
 	hyprpolkitagent-git
 	claude-usage-waybar
+	wooz
 )
 
 configs_to_remove=(
