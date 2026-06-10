@@ -64,7 +64,7 @@ All Hyprland scripts integrate with Hyprland keybinds and dunst notifications fo
 
 ### Keybinds (`.config/hypr/configs/keybinds.lua`)
 
-- `Super+Z` — Launch `wooz` screen magnifier
+- `Super+Z` — Launch `hyprmag` screen magnifier
 
 ## Common Development Commands
 
