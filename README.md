@@ -196,4 +196,4 @@ stow -R .
 - Each config directory may have its own documentation
 - **Brightness control** (`brightnessctl`) is required for screen brightness adjustments. Installed by `install.sh`
 - **Mute LED control** for `XF86AudioMute` and `XF86AudioMicMute` uses udev ownership rules installed by `install.sh`
-- For development or contributions, see [CLAUDE.md](./CLAUDE.md)
+- For development or contributions, see [AGENTS.md](./AGENTS.md)
