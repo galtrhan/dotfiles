@@ -36,7 +36,12 @@ else
             exec "$SCRIPT_DIR/screen_capture.sh" toggle
             ;;
         "System Audio (output)")
-            exec "$SCRIPT_DIR/screen_capture.sh" toggle --audio
+            MONITOR_SOURCE="$(pactl get-default-sink 2>/dev/null).monitor"
+            if [[ -z "${MONITOR_SOURCE}" ]] || [[ "${MONITOR_SOURCE}" == ".monitor" ]]; then
+                notify-send "Screen capture" "Could not detect default audio sink monitor."
+                exit 1
+            fi
+            exec "$SCRIPT_DIR/screen_capture.sh" toggle --audio="${MONITOR_SOURCE}"
             ;;
         "Digital Microphone (internal)")
             exec "$SCRIPT_DIR/screen_capture.sh" toggle --audio=alsa_input.pci-0000_00_1f.3-platform-skl_hda_dsp_generic.HiFi__Mic1__source
