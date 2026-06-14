@@ -110,6 +110,7 @@ stow -nv .
 - **Submodules** are used for tmux plugins (tpm, tmux-resurrect, tmux-gruvbox). Always clone with `git clone --recurse-submodules` or fetch missing submodules with `git submodule update --init --recursive`.
 - The `install.sh` script handles full setup (packages + symlinks). It's up-to-date with current `.config/` structure.
 - This setup is **Wayland/Hyprland-focused**; X11 environments may need adjustments.
+- **Rootless Docker** is configured. The Docker daemon runs as a systemd user service (`docker.service`). `DOCKER_HOST` is set in `config.fish` to `unix://$XDG_RUNTIME_DIR/docker.sock`. Linger is enabled for automatic startup on boot. User was removed from the `docker` group after rootless setup.
 - Fish shell configuration sourced from multiple `.config/fish/` files—check sourcing order when modifying.
 - Individual config directories (nvim, tmux plugins, etc.) may have their own documentation/READMEs.
 

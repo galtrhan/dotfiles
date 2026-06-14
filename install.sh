@@ -5,6 +5,11 @@ pacman_packages=(
 	yay
 	stow
 	fish
+	docker
+	docker-compose
+	docker-buildx
+	rootlesskit
+	slirp4netns
 	hyprland
 	hyprcursor
 	hypridle

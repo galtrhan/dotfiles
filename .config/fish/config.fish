@@ -1,4 +1,7 @@
 
+# Rootless Docker
+set -x DOCKER_HOST unix://$XDG_RUNTIME_DIR/docker.sock
+
 # uv
 fish_add_path "/home/galtrhan/.local/bin"
 fish_add_path /home/galtrhan/fvm/default/bin
