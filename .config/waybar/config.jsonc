@@ -10,21 +10,22 @@
     "margin-top": 4,
     "margin-left": 4,
     "margin-right": 4,
-    "modules-left": ["ext/workspaces", "custom/separator#dot-line", "tray"],
+    "modules-left": ["hyprland/workspaces", "custom/separator#dot-line", "tray"],
     "modules-center": ["clock"],
     "modules-right": ["custom/screen_capture", "custom/ip", "group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
-    "ext/workspaces": {
-        "active-only": false,
+    "hyprland/workspaces": {
         "all-outputs": true,
-        "sort-by-id": true,
+        "sort-by-number": true,
         "format": "{icon}",
         "on-click": "activate",
-        "on-scroll-up": "hyprctl dispatch 'hl.dsp.exec_raw(\"workspace e-1\")'",
-        "on-scroll-down": "hyprctl dispatch 'hl.dsp.exec_raw(\"workspace e+1\")'",
+        "on-scroll-up": "hyprctl dispatch workspace e-1",
+        "on-scroll-down": "hyprctl dispatch workspace e+1",
         "format-icons": {
             "active": "",
             "default": "",
-            "zen": "z",
+        },
+        "persistent-workspaces": {
+            "*": [1, 2, 3, 4]
         },
     },
     "tray": {
