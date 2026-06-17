@@ -11,7 +11,7 @@
     "margin-left": 4,
     "margin-right": 4,
     "modules-left": ["hyprland/workspaces", "custom/separator#dot-line", "tray"],
-    "modules-center": ["clock"],
+    "modules-center": ["custom/namedays"],
     "modules-right": ["custom/screen_capture", "custom/ip", "group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
     "hyprland/workspaces": {
         "all-outputs": true,
@@ -43,10 +43,11 @@
         "on-scroll-down": "$HOME/.config/hypr/scripts/brightness.sh --dec",
         "smooth-scrolling-threshold": 1,
     },
-    "clock": {
+    "custom/namedays": {
+        "exec": "$HOME/.config/waybar/namedays.py",
+        "return-type": "json",
         "interval": 10,
-        "format": " {:%H:%M   %Y.%m.%d}",
-        "tooltip": false,
+        "format": "{}",
     },
     "custom/ip": {
         "exec": "$HOME/.config/waybar/get_ip.sh",
