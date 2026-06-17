@@ -2,3 +2,7 @@
 .config/nvim/
 .config/hypr/wallpaper_state
 backup/
+.bash_profile
+.bashrc
+.config/systemd/user/default.target.wants/
+.local/bin/lnd
