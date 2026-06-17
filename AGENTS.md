@@ -61,6 +61,7 @@ Shell scripts for system integration:
 - `get_ip.sh` — Fetch and display external IP
 - `screen_capture_indicator.sh` — Show active screen recording status
 - `file_check.sh` — Generic file existence checker
+- `namedays.sh` — Wrapper for `lnd` CLI (Latvian name day lookup, built separately)
 
 All Hyprland scripts integrate with Hyprland keybinds and dunst notifications for user feedback.
 
@@ -113,6 +114,7 @@ stow -nv .
 - **Rootless Docker** is configured. The Docker daemon runs as a systemd user service (`docker.service`). `DOCKER_HOST` is set in `config.fish` to `unix://$XDG_RUNTIME_DIR/docker.sock`. Linger is enabled for automatic startup on boot. User was removed from the `docker` group after rootless setup.
 - Fish shell configuration sourced from multiple `.config/fish/` files—check sourcing order when modifying.
 - Individual config directories (nvim, tmux plugins, etc.) may have their own documentation/READMEs.
+- **`lnd`** (Latvian Name Days) is an external tool at [codeberg.org/galtrhan/latvian-name-days](https://codeberg.org/galtrhan/latvian-name-days). Build with `zig build -Doptimize=ReleaseSmall` and copy to `~/.local/bin/lnd`.
 
 ## Config Changes and Reloading
 
