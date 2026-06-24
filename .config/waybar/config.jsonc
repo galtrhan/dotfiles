@@ -12,7 +12,7 @@
     "margin-right": 4,
     "modules-left": ["hyprland/workspaces", "custom/separator#dot-line", "tray"],
     "modules-center": ["custom/namedays"],
-    "modules-right": ["custom/screen_capture", "custom/ip", "group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
+    "modules-right": ["custom/screen_capture", "custom/ip", "custom/temps", "group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
     "hyprland/workspaces": {
         "all-outputs": true,
         "sort-by-number": true,
@@ -22,11 +22,11 @@
         "on-scroll-down": "hyprctl dispatch workspace e+1",
         "format-icons": {
             "active": "",
-            "default": "",
+            "default": ""
         },
         "persistent-workspaces": {
             "*": [1, 2, 3, 4]
-        },
+        }
     },
     "tray": {
         "spacing": 10,
@@ -56,6 +56,13 @@
         "interval": 30,
         "tooltip": false,
         "on-click": "$HOME/.config/waybar/get_ip.sh --copy",
+    },
+    "custom/temps": {
+        "exec": "$HOME/.config/waybar/temps.py",
+        "return-type": "json",
+        "interval": 5,
+        "tooltip": true,
+        "on-click": "$HOME/.config/waybar/temps.py --notify"
     },
     "group/pulseaudio": {
         "orientation": "horizontal",

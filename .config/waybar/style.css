@@ -160,3 +160,25 @@ box#battery:hover {
 #custom-ip {
 	color: teal;
 }
+
+#custom-temps {
+	color: #39ff14;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	padding-right: 4px;
+	padding-left: 4px;
+}
+
+#custom-temps.cool {
+	color: #89b4fa;
+}
+
+#custom-temps.warning {
+	color: orange;
+	animation: pulse 1s alternate infinite steps(24);
+}
+
+#custom-temps.critical {
+	color: #f53c3c;
+	animation: pulse 0.4s alternate infinite steps(24);
+}
