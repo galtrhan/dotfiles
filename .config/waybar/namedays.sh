@@ -20,7 +20,7 @@ if [ -f "$STATE_FILE" ]; then
         3|23) suffix="rd" ;;
         *) suffix="th" ;;
     esac
-    text=$(date "+%A %B ${day}${suffix} %Y")
+    text=$(date "+%A %B ${day}${suffix} %Y  %H:%M")
 else
     text=$(date "+%H:%M   %Y.%m.%d")
 fi
