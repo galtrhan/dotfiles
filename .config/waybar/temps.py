@@ -78,6 +78,30 @@ def notify(temps):
     )
 
 
+HISTORY_FILE = os.path.join(
+    os.environ.get("XDG_RUNTIME_DIR", "/tmp"), "waybar-temps.json"
+)
+HISTORY_SIZE = 12
+
+
+def rolling_average(current: float) -> int:
+    history = []
+    if os.path.exists(HISTORY_FILE):
+        try:
+            with open(HISTORY_FILE) as f:
+                history = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            history = []
+    history.append(current)
+    history = history[-HISTORY_SIZE:]
+    try:
+        with open(HISTORY_FILE, "w") as f:
+            json.dump(history, f)
+    except OSError:
+        pass
+    return int(round(sum(history) / len(history)))
+
+
 def main():
     data = get_sensors()
     temps = parse_temps(data)
@@ -91,7 +115,7 @@ def main():
         return
 
     cpu_temp = find_cpu_temp(temps)
-    display = int(round(cpu_temp))
+    display = rolling_average(cpu_temp)
 
     out = {
         "text": f" {display}°C",
