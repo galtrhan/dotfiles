@@ -22,7 +22,7 @@ if [ -f "$STATE_FILE" ]; then
     esac
     text=$(date "+%H:%M  %A %B ${day}${suffix} %Y")
 else
-    text=$(date "+%H:%M   %Y.%m.%d")
+    text=$(date "+%H:%M  %Y.%m.%d")
 fi
 
 alt=$(date "+%Y.%m.%d")
