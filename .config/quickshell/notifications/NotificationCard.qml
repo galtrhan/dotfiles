@@ -205,9 +205,17 @@ Rectangle {
 
     MouseArea {
         anchors.fill: parent
-        anchors.topMargin: 40
         z: -1
-        onClicked: root.fullDismiss ? root.modelData.dismiss() : root.modelData.removePopup()
+        acceptedButtons: Qt.LeftButton | Qt.RightButton
         cursorShape: Qt.PointingHandCursor
+        onClicked: function (mouse) {
+            if (mouse.button === Qt.RightButton) {
+                root.modelData.dismiss()
+                return
+            }
+            if (mouse.y < 40)
+                return
+            root.fullDismiss ? root.modelData.dismiss() : root.modelData.removePopup()
+        }
     }
 }
