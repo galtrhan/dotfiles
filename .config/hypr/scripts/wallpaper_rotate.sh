@@ -7,7 +7,6 @@
 # Configuration
 WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
 DEFAULT_INTERVAL=30
-NOTIFICATION_ID=132
 
 # Get interval from argument or use default
 INTERVAL=${1:-$DEFAULT_INTERVAL}
@@ -36,7 +35,7 @@ change_wallpaper() {
         
         # Show notification
         local filename=$(basename "$wallpaper_path")
-        dunstify -a "Wallpaper" -r "$NOTIFICATION_ID" -u normal -t 3000 -i image "Wallpaper Changed" "$filename"
+        notify-send -a "Wallpaper" -u normal -t 3000 -i "$wallpaper_path" "Wallpaper Changed" "$filename"
         
         echo "Changed wallpaper to: $wallpaper_path"
     else

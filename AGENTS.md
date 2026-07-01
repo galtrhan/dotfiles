@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for working with code in this repository.
 
 ## Repository Overview
 
@@ -17,12 +17,10 @@ The repository uses GNU stow to manage symlinks. The directory structure mirrors
 ├── .config/
 │   ├── fish/          # Fish shell configuration
 │   ├── hypr/          # Hyprland (Wayland WM) configuration
-│   ├── waybar/        # Waybar (status bar) configuration
+│   ├── quickshell/    # QuickShell bar, notifications, app launcher, menus (QML)
 │   ├── nvim/          # Neovim configuration
 │   ├── tmux/          # Tmux configuration + plugins (tpm, tmux-resurrect, tmux-gruvbox)
 │   ├── ghostty/       # Ghostty terminal configuration
-│   ├── dunst/         # Dunst notification daemon configuration
-│   ├── rofi/          # Rofi launcher configuration
 │   └── systemd/       # Systemd user units
 ├── install.sh         # Installation script (sets up packages and applies stow)
 └── README.md
@@ -34,41 +32,41 @@ To activate dotfiles: `stow .` from the repo root (creates symlinks in `~`).
 
 - **fish**: Shell with scripted configuration
 - **Hyprland**: Wayland window manager with custom scripts (volume, brightness, power management, wallpaper control)
-- **Waybar**: Status bar with custom shell helper scripts
+- **QuickShell**: QtQuick-based status bar, notification center, app launcher, and script menus (QML in `.config/quickshell/`)
 - **Neovim**: Text editor configuration (large, includes plugins)
 - **Tmux**: Terminal multiplexer with plugin manager (tpm) and plugins:
   - `tmux-resurrect`: Session persistence
   - `tmux-gruvbox`: Color theme
-- **Ghostty, Dunst, Rofi**: Terminal, notifications, and launcher configs
+- **Ghostty**: Terminal emulator config
 
 ### Custom Scripts
 
 Shell scripts for system integration:
 
 **Hyprland scripts** (`.config/hypr/scripts/`):
-- `brightness.sh`, `volume.sh` — System volume/brightness control with dunst notifications
+- `brightness.sh`, `volume.sh` — System volume/brightness control with QuickShell OSD notifications
 - `wallpaper_rotate.sh`, `wallpaper_control.sh`, `wallpaper_persistence.sh`, `wallpaper_restore.sh` — Wallpaper rotation/persistence across restarts
-- `power.sh` — Power management (lock, suspend)
+- `power.sh` — Power management (lock, suspend) via QuickShell menu
+- `qs-menu.sh` — Generic QuickShell menu picker for shell scripts
+- `sudo_askpass.sh` — Graphical sudo password prompt via QuickShell
 - `screenshot.sh` — Screenshot capture with visual feedback
 - `screen_capture.sh` — Video recording with `wf-recorder` (region select, clipboard, notifications)
-- `screen_capture_menu.sh` — Rofi menu to pick audio source before recording
+- `screen_capture_menu.sh` — QuickShell menu to pick audio source before recording
 - `kbd_monitor.sh` — Keyboard backlight monitoring
 - `toggle_solo.sh` — Toggle active window between solo float and tiled layout
 
-**Waybar scripts** (`.config/waybar/`):
-- `spotify.sh` — Display active Spotify track and status
-- `storage.sh` — Monitor storage usage with warning/critical thresholds
-- `get_ip.sh` — Fetch and display external IP
-- `screen_capture_indicator.sh` — Show active screen recording status
-- `file_check.sh` — Generic file existence checker
-- `namedays.sh` — Wrapper for `lnd` CLI (Latvian name day lookup, built separately)
-
-All Hyprland scripts integrate with Hyprland keybinds and dunst notifications for user feedback.
+All Hyprland scripts integrate with Hyprland keybinds and QuickShell desktop notifications for user feedback.
 
 ### Keybinds (`.config/hypr/configs/keybinds.lua`)
 
+- `Super+Space` — Toggle QuickShell app launcher
+- `Super+P` — Power menu
+- `Super+Shift+V` — Clipboard history picker
 - `Super+Print` — Launch screen recording audio source menu
 - `Super+Z` — Launch `shmooz` screen magnifier
+- `Super+N` — Toggle QuickShell notification center
+- `Super+Shift+N` — Toggle Do Not Disturb
+- `Super+Ctrl+N` — Clear all notifications
 
 ## Common Development Commands
 
@@ -96,7 +94,7 @@ stow fish           # Only symlink fish config
 stow nvim           # Only symlink nvim config
 
 # Make multiple configs
-stow fish nvim tmux waybar
+stow fish nvim tmux quickshell
 
 # Remove specific symlinks
 stow -D fish
@@ -123,8 +121,8 @@ Since this is config-only, changes require verification and reloading:
 - **Fish shell**: Changes apply on new shell session or via `source ~/.config/fish/config.fish`
 - **Hyprland**: Changes apply on next restart or via `hyprctl reload` (keybind: Super+Shift+R)
 - **Tmux**: Reload config with `tmux source-file ~/.tmux.conf` or the bound key (default: Prefix+R)
-- **Waybar**: Restart with `killall waybar; waybar &` or similar
-- **Other tools** (Ghostty, Dunst, Rofi, Neovim): Usually require application restart
+- **QuickShell**: Auto-reloads on file save (watches `~/.config/quickshell/`). To restart: `pkill quickshell && quickshell &`
+- **Other tools** (Ghostty, Neovim): Usually require application restart
 
 Always verify symlinks are correct after changes: `ls -la ~/.config/{fish,hypr,nvim,etc}`
 

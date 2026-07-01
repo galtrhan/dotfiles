@@ -3,9 +3,7 @@
 .gitmodules
 install.sh
 /README.md
-
-.claude
-CLAUDE.md
+AGENTS.md
 
 .config/kitty
 .config/kak

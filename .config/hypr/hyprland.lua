@@ -4,7 +4,7 @@ package.path = home .. "/.config/hypr/?.lua;" .. package.path
 local terminal = "ghostty"
 local browser = "zen-browser"
 local fileManager = "nautilus"
-local menu = "rofi -show drun"
+local menu = "qs ipc call launcher toggle"
 
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
@@ -31,7 +31,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd(home .. "/.config/hypr/scripts/wallpaper_restore.sh")
     hl.exec_cmd("nm-applet")
     hl.exec_cmd("blueman-applet")
-    hl.exec_cmd("waybar")
+    hl.exec_cmd("quickshell")
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
     hl.exec_cmd("hypridle")
     hl.exec_cmd("wl-paste --type text --watch cliphist store")

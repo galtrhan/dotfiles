@@ -2,7 +2,7 @@ local home = os.getenv("HOME")
 local terminal = "ghostty"
 local browser = "zen-browser"
 local fileManager = "nautilus"
-local menu = "rofi -show drun"
+local menu = "qs ipc call launcher toggle"
 local mainMod = "SUPER"
 
 hl.bind(mainMod .. " + BACKSPACE", hl.dsp.exit())
@@ -13,8 +13,8 @@ hl.bind(mainMod .. " + C", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("pidof hyprlock || hyprlock --immediate"))
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/power.sh"))
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -p Clipboard | cliphist decode | wl-copy"))
-hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("killall -SIGUSR2 waybar"))
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("bash -c 'SELECTED=$(cliphist list | " .. home .. "/.config/hypr/scripts/qs-menu.sh Clipboard); [ -n \"$SELECTED\" ] && echo \"$SELECTED\" | cliphist decode | wl-copy'"))
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("pkill -x quickshell; quickshell &"))
 
 hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screen_capture_menu.sh"))
 
@@ -62,6 +62,10 @@ hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 
 hl.bind(mainMod .. " + G", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/toggle_solo.sh"))
 
-hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill waybar || waybar"))
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call notifications center_toggle"))
+hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("qs ipc call notifications dnd_toggle"))
+hl.bind(mainMod .. " + CTRL + N", hl.dsp.exec_cmd("qs ipc call notifications dismiss_all"))
+
+hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill quickshell || quickshell"))
 
 hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("shmooz"))

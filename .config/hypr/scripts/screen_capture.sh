@@ -360,7 +360,7 @@ case "${cmd}" in
         exit $?
         ;;
     status)
-        # Support --silent flag for waybar integration
+        # Support --silent flag for non-interactive/script use
         silent_mode="false"
         if [[ "$1" == "--silent" ]]; then
             silent_mode="true"

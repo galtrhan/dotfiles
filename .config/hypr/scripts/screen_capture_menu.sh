@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SCRIPT_DIR="$HOME/.config/hypr/scripts"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PID_FILE="${XDG_RUNTIME_DIR:-/tmp}/screen_capture.pid"
 
 is_recording() {
@@ -15,8 +15,7 @@ is_recording() {
 }
 
 if is_recording; then
-    SELECTED=$(echo -e "Stop recording" | rofi -dmenu -i -p "Recording active" \
-        -theme-str 'window {width: 500px;} mainbox {children: [ inputbar, listview ]; } listview {lines: 1; fixed-height: true; spacing: 2px;} element {padding: 8px; margin: 2px 0px;} element-text {vertical-align: 0.5;}')
+    SELECTED=$("$SCRIPT_DIR/qs-menu.sh" "Recording active" "Stop recording")
     case "$SELECTED" in
         "Stop recording")
             exec "$SCRIPT_DIR/screen_capture.sh" stop
@@ -26,10 +25,11 @@ if is_recording; then
             ;;
     esac
 else
-    OPTIONS="None (no audio)\nSystem Audio (output)\nDigital Microphone (internal)\nStereo Microphone (external)"
-
-    SELECTED=$(echo -e "$OPTIONS" | rofi -dmenu -i -p "Recording Audio" \
-        -theme-str 'window {width: 500px;} mainbox {children: [ inputbar, listview ]; } listview {lines: 4; fixed-height: true; spacing: 2px;} element {padding: 8px; margin: 2px 0px;} element-text {vertical-align: 0.5;}')
+    SELECTED=$("$SCRIPT_DIR/qs-menu.sh" "Recording Audio" \
+        "None (no audio)" \
+        "System Audio (output)" \
+        "Digital Microphone (internal)" \
+        "Stereo Microphone (external)")
 
     case "$SELECTED" in
         "None (no audio)")

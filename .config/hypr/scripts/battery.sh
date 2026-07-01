@@ -2,7 +2,6 @@
 
 BATTERY="/sys/class/power_supply/BAT0"
 STATE_FILE="${XDG_CACHE_HOME:-$HOME/.cache}/battery-notify-state"
-NOTIFICATION_ID=132
 
 THRESHOLDS=(20 15 10 5)
 
@@ -38,9 +37,9 @@ notify() {
     local message="$3"
     local value="$4"
     if [[ -n "$value" ]]; then
-        dunstify -a "Battery" -r "$NOTIFICATION_ID" -u "$urgency" -t 5000 -h int:value:"$value" "$title" "$message"
+        notify-send -a "Battery" -u "$urgency" -t 5000 -h int:value:"$value" "$title" "$message"
     else
-        dunstify -a "Battery" -r "$NOTIFICATION_ID" -u "$urgency" -t 5000 "$title" "$message"
+        notify-send -a "Battery" -u "$urgency" -t 5000 "$title" "$message"
     fi
 }
 

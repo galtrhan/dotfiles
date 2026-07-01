@@ -264,7 +264,7 @@ Both wallpaper change scripts now include persistence:
 - The "wallpaper failed (not preloaded)" warning is normal and doesn't affect functionality
 - Wallpapers are changed using `hyprctl hyprpaper wallpaper` command
 - The service automatically restarts if it crashes
-- Notifications require dunst to be running
+- Notifications require QuickShell to be running
 
 ### Persistence System
 - The system works with both manual and automatic wallpaper changes

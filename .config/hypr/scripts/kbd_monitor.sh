@@ -9,7 +9,6 @@
 
 BACKLIGHT_FILE="/sys/class/leds/tpacpi::kbd_backlight/brightness"
 STATES=("Off" "Low" "High")
-NOTIFICATION_ID=130
 PID_FILE="/tmp/kbd_monitor.pid"
 
 # Check if the backlight file exists
@@ -22,9 +21,9 @@ fi
 show_notification() {
     local brightness=$1
     if [[ $brightness -eq 0 ]]; then
-        dunstify -a "Keyboard" -r "$NOTIFICATION_ID" -u critical -t 3000 -i keyboard-brightness -h int:value:0 "Keyboard Backlight" "Backlight Off"
+        notify-send -a "Keyboard" -u critical -t 3000 -i keyboard-brightness -h int:value:0 "Keyboard Backlight" "Backlight Off"
     else
-        dunstify -a "Keyboard" -r "$NOTIFICATION_ID" -u normal -t 3000 -i keyboard-brightness -h int:value:"$(( brightness * 50 ))" "Keyboard Backlight" "Backlight ${STATES[$brightness]}"
+        notify-send -a "Keyboard" -u normal -t 3000 -i keyboard-brightness -h int:value:"$(( brightness * 50 ))" "Keyboard Backlight" "Backlight ${STATES[$brightness]}"
     fi
 }
 

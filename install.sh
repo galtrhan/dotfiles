@@ -16,9 +16,7 @@ pacman_packages=(
 	hyprlock
 	hyprpaper
 	hyprshot
-	waybar
-	rofi
-	dunst
+	quickshell
 	nautilus
 	networkmanager
 	network-manager-applet
@@ -53,8 +51,7 @@ configs_to_remove=(
 	tmux
 	waybar
 	ghostty
-	dunst
-	rofi
+	quickshell
 	systemd
 )
 
@@ -112,6 +109,13 @@ sudo udevadm trigger --subsystem-match=leds
 chmod +x ~/.dotfiles/.config/hypr/scripts/*.sh
 chmod +x ~/.dotfiles/.local/bin/*
 stow .
+
+# Disable dunst if previously installed (QuickShell handles notifications)
+if systemctl --user is-enabled dunst.service &>/dev/null; then
+	echo "Disabling dunst (QuickShell handles notifications)..."
+	systemctl --user disable --now dunst.service 2>/dev/null || true
+	systemctl --user mask dunst.service 2>/dev/null || true
+fi
 
 # Enable & start bluetooth service
 echo "Enabling & starting bluetooth service..."

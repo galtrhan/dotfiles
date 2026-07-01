@@ -8,8 +8,7 @@ import time
 
 def main():
     parser = argparse.ArgumentParser(
-        description="A script to manage a screen capture, "
-        "with optional audio and Waybar responses."
+        description="A script to manage a screen capture, with optional audio."
     )
 
     parser.add_argument(
@@ -20,14 +19,10 @@ def main():
     parser.add_argument(
         "-a", "--audio", action="store_true", help="Enable audio capture"
     )
-    parser.add_argument(
-        "-w", "--waybar", action="store_true", help="Enable Waybar response"
-    )
 
     args = parser.parse_args()
     cmd = args.command
 
-    waybar_response = args.waybar
     audio_enabled = args.audio
 
     # filename = current timestamp + ".mp4"

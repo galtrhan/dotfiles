@@ -4,7 +4,6 @@
 # This script changes wallpaper once and exits
 
 WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
-NOTIFICATION_ID=132
 
 # Function to get random wallpaper
 get_random_wallpaper() {
@@ -29,7 +28,7 @@ change_wallpaper() {
         
         # Show notification
         local filename=$(basename "$wallpaper_path")
-        dunstify -a "Wallpaper" -r "$NOTIFICATION_ID" -u normal -t 3000 -i image "Wallpaper Changed" "$filename"
+        notify-send -a "Wallpaper" -u normal -t 3000 -i "$wallpaper_path" "Wallpaper Changed" "$filename"
         
         echo "$(date): Changed wallpaper to: $filename"
     else

@@ -6,9 +6,7 @@ Personal Arch Linux dotfiles setup using **GNU stow** for managing configuration
 
 ### Window Manager & Desktop
 - **Hyprland** - Wayland window manager (Lua config) with custom scripts for auth, power, media, wallpaper, and screen capture
-- **Waybar** - Status bar with custom widgets (spotify, storage, screen recording indicator, external IP)
-- **Rofi** - Application launcher and menu
-- **Dunst** - Notification daemon
+- **QuickShell** - Status bar, notification center, app launcher, and script menus (QML)
 - **Shmooz** - Screen magnifier (zoom, annotation, spotlight, color picker)
 
 ### Shell & Terminal
@@ -57,7 +55,8 @@ The script will:
 4. Initialize/update git submodules (tmux plugins)
 5. Install udev LED permission rules for mute/mic mute keys
 6. Apply stow to create symlinks
-7. Start bluetooth service
+7. Disable dunst if it was previously enabled (QuickShell owns notifications)
+8. Start bluetooth service
 
 ### Manual Installation
 
@@ -111,7 +110,7 @@ git submodule update --init --recursive  # Ensure tmux plugins are present
 stow .
 
 # Apply specific configs only
-stow fish nvim tmux waybar
+stow fish nvim tmux quickshell
 
 # Preview changes without applying
 stow -nv .
@@ -131,14 +130,18 @@ stow -R .
 | `Super+Return` | Open terminal (Ghostty) |
 | `Super+W` | Open browser (Zen) |
 | `Super+E` | Open file manager (Nautilus) |
-| `Super+Space` | Application launcher (Rofi) |
+| `Super+Space` | Application launcher (QuickShell) |
 | `Super+L` | Lock screen (Hyprlock) |
 | `Super+P` | Power menu |
 | `Super+Q` | Kill active window |
 | `Super+C` | Toggle floating |
 | `Super+F` | Fullscreen |
 | `Super+Shift+V` | Clipboard history (Cliphist) |
-| `Super+B` | Toggle Waybar |
+| `Super+B` | Restart QuickShell |
+| `Super+O` | Restart QuickShell (hard restart) |
+| `Super+N` | Toggle notification center |
+| `Super+Shift+N` | Toggle Do Not Disturb |
+| `Super+Ctrl+N` | Clear all notifications |
 | `Super+G` | Toggle solo layout on active window (75% × 70% centered float) |
 
 ### Screen Capture & Recording
@@ -181,32 +184,29 @@ Scripts live in [`.config/hypr/scripts/`](.config/hypr/scripts/). Hyprland itsel
 | [`sudo_askpass.sh`](.config/hypr/scripts/sudo_askpass.sh) | Fish `sudo` wrapper (`sudo -A`) | Graphical sudo password prompt used as `SUDO_ASKPASS` |
 
 **Sudo askpass behavior:**
-- Opens Hyprland `special:sudo` workspace with `dim_special` so the rest of the screen is dimmed
-- Shows a compact, centered Rofi password field (`-normal-window`) styled to match Hyprland window borders (1px cyan→green gradient, 4px rounding)
-- Grabs keyboard focus immediately (`-no-lazy-grab`, `-steal-focus`)
-- Restores the previous workspace after entry or cancel, including other special workspaces (e.g. `special:terminal`)
-- Only prints the password to stdout (all `hyprctl` output is suppressed so sudo does not receive `ok`)
+- Sends a critical desktop notification when a password is required
+- Shows a QuickShell password overlay via `qs ipc call menu show_password`
+- Returns the entered password on stdout for Fish's `sudo -A` wrapper (empty string if cancelled)
 
 Fish is configured in [`.config/fish/config.fish`](.config/fish/config.fish) to call `sudo -A` automatically when `SUDO_ASKPASS` is set.
 
-Related Hyprland config:
-- `special:sudo` workspace and `dim_special = 0.4` in `hyprland.lua`
-- Window rule in [`configs/windowrules.lua`](.config/hypr/configs/windowrules.lua): Rofi on `special:sudo` is floated, centered, pinned, 420×60
+Requires QuickShell to be running (started with Hyprland).
 
 ### Power & Session
 
 | Script | Trigger | Description |
 |--------|---------|-------------|
-| [`power.sh`](.config/hypr/scripts/power.sh) | `Super+P` | Rofi menu: lock, logout, suspend, reboot, shutdown |
+| [`power.sh`](.config/hypr/scripts/power.sh) | `Super+P` | QuickShell menu: lock, logout, suspend, reboot, shutdown |
+| [`qs-menu.sh`](.config/hypr/scripts/qs-menu.sh) | Called by scripts | Generic QuickShell menu picker (replaces dmenu-style prompts) |
 | [`battery.sh`](.config/hypr/scripts/battery.sh) | `battery-notify.service` | Low-battery desktop notifications at 20/15/10/5% |
 
 ### Hardware Controls
 
 | Script | Trigger | Description |
 |--------|---------|-------------|
-| [`brightness.sh`](.config/hypr/scripts/brightness.sh) | `XF86MonBrightnessUp/Down` | Adjust backlight via `brightnessctl` with dunst feedback |
-| [`volume.sh`](.config/hypr/scripts/volume.sh) | `XF86Audio*` keys | Volume/mute/mic control via PipeWire (`wpctl`) with dunst feedback and ThinkPad mute LED sync |
-| [`kbd_monitor.sh`](.config/hypr/scripts/kbd_monitor.sh) | Hyprland autostart | Monitors keyboard backlight changes and shows dunst notifications |
+| [`brightness.sh`](.config/hypr/scripts/brightness.sh) | `XF86MonBrightnessUp/Down` | Adjust backlight via `brightnessctl` with QuickShell OSD feedback |
+| [`volume.sh`](.config/hypr/scripts/volume.sh) | `XF86Audio*` keys | Volume/mute/mic control via PipeWire (`wpctl`) with QuickShell OSD feedback and ThinkPad mute LED sync |
+| [`kbd_monitor.sh`](.config/hypr/scripts/kbd_monitor.sh) | Hyprland autostart | Monitors keyboard backlight changes and shows QuickShell notifications |
 
 ### Window Layout
 
@@ -230,11 +230,32 @@ Full wallpaper system docs: [`.config/hypr/scripts/wallpaper.md`](.config/hypr/s
 
 | Script | Trigger | Description |
 |--------|---------|-------------|
-| [`screen_capture_menu.sh`](.config/hypr/scripts/screen_capture_menu.sh) | `Super+Print` | Rofi picker for audio source, then start/stop recording |
+| [`screen_capture_menu.sh`](.config/hypr/scripts/screen_capture_menu.sh) | `Super+Print` | QuickShell picker for audio source, then start/stop recording |
 | [`screen_capture.sh`](.config/hypr/scripts/screen_capture.sh) | Called by menu | Region recording via `wf-recorder` + `slurp`, clipboard copy, notifications |
 | [`screenshot.sh`](.config/hypr/scripts/screenshot.sh) / [`screenshot.py`](.config/hypr/scripts/screenshot.py) | `Print` | Region screenshot via `hyprshot` |
 
 Full screen capture docs: [`.config/hypr/scripts/screen_capture.md`](.config/hypr/scripts/screen_capture.md)
+
+## QuickShell Launcher & Menus
+
+App launcher and script menus are built into QuickShell (`.config/quickshell/launcher/`). Hyprland keybinds call `qs ipc`:
+
+| IPC target | Function | Use |
+|------------|----------|-----|
+| `launcher` | `toggle`, `open`, `close` | App launcher (`Super+Space`) |
+| `menu` | `show(title, options)` | Compact script menus (`qs-menu.sh --compact`) |
+| `menu` | `show_search(title, options)` | Wide searchable picker (default in `qs-menu.sh`) |
+| `menu` | `show_password(prompt)` | Sudo password prompt |
+
+Examples:
+
+```bash
+qs ipc call launcher toggle
+qs ipc call -- menu show "Power Menu" $'Lock\nLogout\nSuspend'
+~/.config/hypr/scripts/qs-menu.sh "Recording Audio" "None (no audio)" "System Audio (output)"
+```
+
+QuickShell auto-reloads QML on save. Restart with `Super+B` or `pkill quickshell; quickshell &`.
 
 ## Directory Structure
 
@@ -243,12 +264,10 @@ Full screen capture docs: [`.config/hypr/scripts/screen_capture.md`](.config/hyp
 ├── .config/
 │   ├── fish/          # Shell configuration
 │   ├── hypr/          # Hyprland Lua config, window rules, and scripts (see Hyprland Scripts)
-│   ├── waybar/        # Status bar + custom scripts
+│   ├── quickshell/    # Status bar, notifications, app launcher, menus (QML)
 │   ├── nvim/          # Neovim configuration
 │   ├── tmux/          # Tmux + plugins
 │   ├── ghostty/       # Terminal emulator config
-│   ├── dunst/         # Notification daemon
-│   ├── rofi/          # Application launcher
 │   └── systemd/       # Systemd user units
 ├── install.sh         # Installation script (packages + stow)
 └── README.md
@@ -261,5 +280,6 @@ Full screen capture docs: [`.config/hypr/scripts/screen_capture.md`](.config/hyp
 - Each config directory may have its own documentation
 - **Brightness control** (`brightnessctl`) is required for screen brightness adjustments. Installed by `install.sh`
 - **Mute LED control** for `XF86AudioMute` and `XF86AudioMicMute` uses udev ownership rules installed by `install.sh`
-- **Sudo askpass** requires Fish (for the `sudo -A` wrapper), Rofi, `jq`, and Hyprland Lua dispatch syntax (`hl.dsp.*`)
+- **Sudo askpass** requires Fish (for the `sudo -A` wrapper) and QuickShell running for the password overlay
+- **Desktop notifications** are handled by QuickShell (`notify-send` / `libnotify`). Disable or mask `dunst.service` if migrating from an older setup
 - For development or contributions, see [AGENTS.md](./AGENTS.md)

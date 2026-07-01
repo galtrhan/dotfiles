@@ -1,0 +1,11 @@
+[Unit]
+Description=Set power profile to balanced
+After=graphical-session.target
+Wants=graphical-session.target
+
+[Service]
+Type=oneshot
+ExecStart=powerprofilesctl set balanced
+
+[Install]
+WantedBy=graphical-session.target
