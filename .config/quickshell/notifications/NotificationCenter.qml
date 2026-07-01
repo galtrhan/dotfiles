@@ -16,6 +16,13 @@ Scope {
             required property var modelData
             screen: modelData
 
+            readonly property int panelPadding: 24
+            readonly property int chromeHeight: headerRow.implicitHeight + 1 + centerColumn.spacing + panelPadding
+            readonly property int maxBodyHeight: Math.max(80, modelData.height * 0.75 - chromeHeight)
+            readonly property int bodyHeight: NotificationService.history.length === 0
+                ? 80
+                : Math.min(historyList.implicitHeight, maxBodyHeight)
+
             visible: NotificationService.centerOpen
             focusable: true
             color: "transparent"
@@ -36,11 +43,8 @@ Scope {
                 right: Theme.margin
             }
 
-            implicitWidth: Theme.notifWidth + 24
-            implicitHeight: Math.min(
-                centerPanel.implicitHeight,
-                modelData.height * 0.75
-            )
+            implicitWidth: Theme.notifWidth + panelPadding
+            implicitHeight: chromeHeight + bodyHeight
 
             Rectangle {
                 id: centerPanel
@@ -52,11 +56,13 @@ Scope {
                 clip: true
 
                 ColumnLayout {
+                    id: centerColumn
                     anchors.fill: parent
                     anchors.margins: 12
                     spacing: 8
 
                     RowLayout {
+                        id: headerRow
                         Layout.fillWidth: true
                         spacing: 8
 
@@ -151,7 +157,7 @@ Scope {
 
                     Item {
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
+                        Layout.preferredHeight: bodyHeight
                         visible: NotificationService.history.length === 0
 
                         Text {
@@ -167,11 +173,12 @@ Scope {
 
                     ScrollView {
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
+                        Layout.preferredHeight: bodyHeight
                         visible: NotificationService.history.length > 0
                         clip: true
 
                         ColumnLayout {
+                            id: historyList
                             width: parent.width
                             spacing: 8
 

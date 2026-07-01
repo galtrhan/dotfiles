@@ -29,7 +29,7 @@ Scope {
             implicitHeight: Theme.barHeight
             color: "transparent"
             aboveWindows: true
-            exclusiveZone: Theme.barHeight + Theme.margin * 2
+            exclusiveZone: Theme.barHeight
 
             Rectangle {
                 anchors.fill: parent
