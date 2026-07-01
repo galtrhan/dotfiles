@@ -4,7 +4,7 @@ import QtQuick
 
 Singleton {
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
-    readonly property int fontSize: 12
+    readonly property int fontSize: 14
     readonly property int launcherFontSize: 16
     readonly property int launcherAppWidth: 560
     readonly property int launcherMenuWidth: 240

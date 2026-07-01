@@ -16,7 +16,6 @@ pacman_packages=(
 	hyprlock
 	hyprpaper
 	hyprshot
-	waybar
 	quickshell
 	nautilus
 	networkmanager

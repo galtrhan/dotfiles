@@ -7,7 +7,6 @@ Personal Arch Linux dotfiles setup using **GNU stow** for managing configuration
 ### Window Manager & Desktop
 - **Hyprland** - Wayland window manager (Lua config) with custom scripts for auth, power, media, wallpaper, and screen capture
 - **QuickShell** - Status bar, notification center, app launcher, and script menus (QML)
-- **Waybar** - Legacy status bar config; scripts still used by QuickShell
 - **Shmooz** - Screen magnifier (zoom, annotation, spotlight, color picker)
 
 ### Shell & Terminal
@@ -111,7 +110,7 @@ git submodule update --init --recursive  # Ensure tmux plugins are present
 stow .
 
 # Apply specific configs only
-stow fish nvim tmux waybar
+stow fish nvim tmux quickshell
 
 # Preview changes without applying
 stow -nv .
@@ -244,7 +243,8 @@ App launcher and script menus are built into QuickShell (`.config/quickshell/lau
 | IPC target | Function | Use |
 |------------|----------|-----|
 | `launcher` | `toggle`, `open`, `close` | App launcher (`Super+Space`) |
-| `menu` | `show(title, options)` | Script menus via [`qs-menu.sh`](.config/hypr/scripts/qs-menu.sh) |
+| `menu` | `show(title, options)` | Compact script menus (`qs-menu.sh --compact`) |
+| `menu` | `show_search(title, options)` | Wide searchable picker (default in `qs-menu.sh`) |
 | `menu` | `show_password(prompt)` | Sudo password prompt |
 
 Examples:
@@ -264,7 +264,6 @@ QuickShell auto-reloads QML on save. Restart with `Super+B` or `pkill quickshell
 ├── .config/
 │   ├── fish/          # Shell configuration
 │   ├── hypr/          # Hyprland Lua config, window rules, and scripts (see Hyprland Scripts)
-│   ├── waybar/        # Legacy status bar scripts (used by QuickShell)
 │   ├── quickshell/    # Status bar, notifications, app launcher, menus (QML)
 │   ├── nvim/          # Neovim configuration
 │   ├── tmux/          # Tmux + plugins

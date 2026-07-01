@@ -11,7 +11,6 @@ if [[ $# -eq 0 ]]; then
 fi
 
 cmd="status"
-waybar=false
 audio=false
 
 while [ $# -gt 0 ]; do
@@ -27,9 +26,6 @@ while [ $# -gt 0 ]; do
             ;;
         -a|--audio)
             audio=true
-            ;;
-        -w|--waybar)
-            waybar=true
             ;;
     esac
 done
