@@ -2,9 +2,11 @@
 import Quickshell
 import QtQuick
 import "bar"
+import "launcher"
 import "notifications"
 
 Scope {
+    LauncherIpc {}
     NotificationPopup {}
     NotificationCenter {}
 

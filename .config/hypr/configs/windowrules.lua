@@ -23,12 +23,3 @@ hl.window_rule({
     center = true,
     size = { 768, 480 },
 })
-
-hl.window_rule({
-    name = "Sudo Askpass",
-    match = { class = "rofi", workspace = "special:sudo" },
-    float = true,
-    center = true,
-    pin = true,
-    size = { 420, 60 },
-})

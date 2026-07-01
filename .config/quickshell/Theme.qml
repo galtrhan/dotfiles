@@ -5,8 +5,17 @@ import QtQuick
 Singleton {
     readonly property string fontFamily: "JetBrainsMono Nerd Font"
     readonly property int fontSize: 12
+    readonly property int launcherFontSize: 16
+    readonly property int launcherAppWidth: 560
+    readonly property int launcherMenuWidth: 240
+    readonly property int launcherPickerWidth: 480
 
     readonly property color bg: Qt.rgba(20 / 255, 20 / 255, 20 / 255, 0.75)
+    readonly property color bgSolid: Qt.rgba(20 / 255, 20 / 255, 20 / 255, 1)
+    readonly property color launcherInputBg: Qt.rgba(20 / 255, 20 / 255, 20 / 255, 0.9)
+    readonly property color launcherTextActive: "#ffffff"
+    readonly property color launcherTextDefault: Qt.rgba(1, 1, 1, 0.85)
+    readonly property color launcherTextInactive: Qt.rgba(1, 1, 1, 0.5)
     readonly property color fg: "#cba6f7"
     readonly property color fgMuted: "#6e6a86"
     readonly property color fgBright: "#e5d9f5"

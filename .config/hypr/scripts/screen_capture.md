@@ -67,7 +67,7 @@ A Wayland-native video recording tool for Hyprland with intuitive region selecti
 
 ## Audio Source Menu
 
-`screen_capture_menu.sh` provides a rofi menu to pick an audio source before recording:
+`screen_capture_menu.sh` provides a QuickShell menu to pick an audio source before recording:
 
 - **None (no audio)** — video only
 - **System Audio (output)** — captures application/system sounds

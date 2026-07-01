@@ -17,7 +17,6 @@ pacman_packages=(
 	hyprpaper
 	hyprshot
 	waybar
-	rofi
 	quickshell
 	nautilus
 	networkmanager
@@ -53,7 +52,6 @@ configs_to_remove=(
 	tmux
 	waybar
 	ghostty
-	rofi
 	quickshell
 	systemd
 )
