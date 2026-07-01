@@ -1,8 +1,6 @@
 #!/bin/bash
 
 STEP=5
-NOTIFICATION_ID=128
-MIC_NOTIFICATION_ID=129
 MUTE_LED_PATH="/sys/class/leds/platform::mute/brightness"
 MIC_LED_PATH="/sys/class/leds/platform::micmute/brightness"
 
@@ -58,9 +56,9 @@ sync_mic_led() {
 notify_user() {
     volume=$(get_volume)
     if [[ "$volume" == "Muted" ]]; then
-        dunstify -a "Volume" -r "$NOTIFICATION_ID" -u critical -t 3000 -h int:value:0 "Volume: Muted"
+        notify-send -a "Volume" -u critical -t 3000 -h int:value:0 "Volume: Muted"
     else
-        dunstify -a "Volume" -r "$NOTIFICATION_ID" -u normal -t 3000 -h int:value:$volume "Volume: $volume%"
+        notify-send -a "Volume" -u normal -t 3000 -h int:value:$volume "Volume: $volume%"
     fi
 }
 
@@ -92,9 +90,9 @@ dec_volume() {
 # Toggle Mute
 toggle_mute() {
     if is_muted; then
-        wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && dunstify -a "Volume" -r "$NOTIFICATION_ID" -u normal -t 3000 -h int:value:$(get_volume) "Volume Switched ON"
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ 0 && notify-send -a "Volume" -u normal -t 3000 -h int:value:$(get_volume) "Volume Switched ON"
     else
-        wpctl set-mute @DEFAULT_AUDIO_SINK@ 1 && dunstify -a "Volume" -r "$NOTIFICATION_ID" -u critical -t 3000 -h int:value:0 "Volume Switched OFF"
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ 1 && notify-send -a "Volume" -u critical -t 3000 -h int:value:0 "Volume Switched OFF"
     fi
     sync_mute_led
 }
@@ -102,9 +100,9 @@ toggle_mute() {
 # Toggle Mic
 toggle_mic() {
     if is_mic_muted; then
-        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0 && dunstify -a "Volume" -r "$MIC_NOTIFICATION_ID" -u normal -t 3000 "Microphone Switched ON"
+        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0 && notify-send -a "Volume" -u normal -t 3000 "Microphone Switched ON"
     else
-        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 1 && dunstify -a "Volume" -r "$MIC_NOTIFICATION_ID" -u critical -t 3000 "Microphone Switched OFF"
+        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 1 && notify-send -a "Volume" -u critical -t 3000 "Microphone Switched OFF"
     fi
     sync_mic_led
 }
@@ -123,9 +121,9 @@ get_mic_volume() {
 notify_mic_user() {
     volume=$(get_mic_volume)
     if [[ "$volume" == "Muted" ]]; then
-        dunstify -a "Volume" -r "$MIC_NOTIFICATION_ID" -u critical -t 3000 -h int:value:0 "Mic-Level: Muted"
+        notify-send -a "Volume" -u critical -t 3000 -h int:value:0 "Mic-Level: Muted"
     else
-        dunstify -a "Volume" -r "$MIC_NOTIFICATION_ID" -u normal -t 3000 -h int:value:$volume "Mic-Level: $volume%"
+        notify-send -a "Volume" -u normal -t 3000 -h int:value:$volume "Mic-Level: $volume%"
     fi
 }
 

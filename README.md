@@ -6,9 +6,9 @@ Personal Arch Linux dotfiles setup using **GNU stow** for managing configuration
 
 ### Window Manager & Desktop
 - **Hyprland** - Wayland window manager (Lua config) with custom scripts for auth, power, media, wallpaper, and screen capture
-- **Waybar** - Status bar with custom widgets (spotify, storage, screen recording indicator, external IP)
+- **QuickShell** - Status bar and notification center (popups, history, DND)
+- **Waybar** - Legacy status bar config; scripts still used by QuickShell
 - **Rofi** - Application launcher and menu
-- **Dunst** - Notification daemon
 - **Shmooz** - Screen magnifier (zoom, annotation, spotlight, color picker)
 
 ### Shell & Terminal
@@ -57,7 +57,8 @@ The script will:
 4. Initialize/update git submodules (tmux plugins)
 5. Install udev LED permission rules for mute/mic mute keys
 6. Apply stow to create symlinks
-7. Start bluetooth service
+7. Disable dunst if it was previously enabled (QuickShell owns notifications)
+8. Start bluetooth service
 
 ### Manual Installation
 
@@ -138,7 +139,11 @@ stow -R .
 | `Super+C` | Toggle floating |
 | `Super+F` | Fullscreen |
 | `Super+Shift+V` | Clipboard history (Cliphist) |
-| `Super+B` | Toggle Waybar |
+| `Super+B` | Restart QuickShell |
+| `Super+O` | Restart QuickShell (hard restart) |
+| `Super+N` | Toggle notification center |
+| `Super+Shift+N` | Toggle Do Not Disturb |
+| `Super+Ctrl+N` | Clear all notifications |
 | `Super+G` | Toggle solo layout on active window (75% × 70% centered float) |
 
 ### Screen Capture & Recording
@@ -204,9 +209,9 @@ Related Hyprland config:
 
 | Script | Trigger | Description |
 |--------|---------|-------------|
-| [`brightness.sh`](.config/hypr/scripts/brightness.sh) | `XF86MonBrightnessUp/Down` | Adjust backlight via `brightnessctl` with dunst feedback |
-| [`volume.sh`](.config/hypr/scripts/volume.sh) | `XF86Audio*` keys | Volume/mute/mic control via PipeWire (`wpctl`) with dunst feedback and ThinkPad mute LED sync |
-| [`kbd_monitor.sh`](.config/hypr/scripts/kbd_monitor.sh) | Hyprland autostart | Monitors keyboard backlight changes and shows dunst notifications |
+| [`brightness.sh`](.config/hypr/scripts/brightness.sh) | `XF86MonBrightnessUp/Down` | Adjust backlight via `brightnessctl` with QuickShell OSD feedback |
+| [`volume.sh`](.config/hypr/scripts/volume.sh) | `XF86Audio*` keys | Volume/mute/mic control via PipeWire (`wpctl`) with QuickShell OSD feedback and ThinkPad mute LED sync |
+| [`kbd_monitor.sh`](.config/hypr/scripts/kbd_monitor.sh) | Hyprland autostart | Monitors keyboard backlight changes and shows QuickShell notifications |
 
 ### Window Layout
 
@@ -243,11 +248,11 @@ Full screen capture docs: [`.config/hypr/scripts/screen_capture.md`](.config/hyp
 ├── .config/
 │   ├── fish/          # Shell configuration
 │   ├── hypr/          # Hyprland Lua config, window rules, and scripts (see Hyprland Scripts)
-│   ├── waybar/        # Status bar + custom scripts
+│   ├── waybar/        # Legacy status bar scripts (used by QuickShell)
+│   ├── quickshell/    # Status bar + notification center (QML)
 │   ├── nvim/          # Neovim configuration
 │   ├── tmux/          # Tmux + plugins
 │   ├── ghostty/       # Terminal emulator config
-│   ├── dunst/         # Notification daemon
 │   ├── rofi/          # Application launcher
 │   └── systemd/       # Systemd user units
 ├── install.sh         # Installation script (packages + stow)
@@ -262,4 +267,5 @@ Full screen capture docs: [`.config/hypr/scripts/screen_capture.md`](.config/hyp
 - **Brightness control** (`brightnessctl`) is required for screen brightness adjustments. Installed by `install.sh`
 - **Mute LED control** for `XF86AudioMute` and `XF86AudioMicMute` uses udev ownership rules installed by `install.sh`
 - **Sudo askpass** requires Fish (for the `sudo -A` wrapper), Rofi, `jq`, and Hyprland Lua dispatch syntax (`hl.dsp.*`)
+- **Desktop notifications** are handled by QuickShell (`notify-send` / `libnotify`). Disable or mask `dunst.service` if migrating from an older setup
 - For development or contributions, see [AGENTS.md](./AGENTS.md)

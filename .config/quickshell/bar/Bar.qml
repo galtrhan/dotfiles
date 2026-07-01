@@ -40,6 +40,7 @@ Item {
         }
 
         RecIndicator {}
+        NotificationWidget {}
         IpWidget {}
         TempsWidget {}
         AudioWidget {}

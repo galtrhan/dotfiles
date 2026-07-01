@@ -62,6 +62,10 @@ hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 
 hl.bind(mainMod .. " + G", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/toggle_solo.sh"))
 
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call notifications center_toggle"))
+hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("qs ipc call notifications dnd_toggle"))
+hl.bind(mainMod .. " + CTRL + N", hl.dsp.exec_cmd("qs ipc call notifications dismiss_all"))
+
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill quickshell || quickshell"))
 
 hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("shmooz"))

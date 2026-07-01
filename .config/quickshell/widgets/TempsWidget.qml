@@ -67,7 +67,7 @@ BarLabel {
         cursorShape: Qt.PointingHandCursor
         enabled: root.visible && root.tooltipBody !== ""
         onClicked: {
-            notifyProc.command = ["dunstify", "-a", "quickshell", "-u", "normal", "Temperatures", root.tooltipBody];
+            notifyProc.command = ["notify-send", "-a", "quickshell", "Temperatures", root.tooltipBody];
             notifyProc.running = true;
         }
     }

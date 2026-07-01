@@ -26,7 +26,7 @@ BarLabel {
         cursorShape: Qt.PointingHandCursor
         enabled: root.visible
         onClicked: {
-            copyProc.command = ["sh", "-c", "printf '%s' '" + root.ip.replace(/'/g, "'\\''") + "' | wl-copy && dunstify 'IP address copied!'"];
+            copyProc.command = ["sh", "-c", "printf '%s' '" + root.ip.replace(/'/g, "'\\''") + "' | wl-copy && notify-send 'IP address copied!'"];
             copyProc.running = true;
         }
     }

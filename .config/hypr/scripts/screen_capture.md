@@ -10,7 +10,7 @@ A Wayland-native video recording tool for Hyprland with intuitive region selecti
 - **Clipboard Integration**: Automatically copies recorded video to clipboard via `wl-copy`
 - **Clipboard History**: Works with `cliphist` for persistent clipboard history
 - **Thumbnail Fallback**: Generates video thumbnail when direct video copy fails
-- **Desktop Notifications**: Real-time status updates via dunst (via `notify-send`)
+- **Desktop Notifications**: Real-time status updates via QuickShell (via `notify-send`)
 - **Graceful Shutdown**: Properly finalizes video file on stop, with timeout handling
 
 ## Usage
@@ -129,7 +129,7 @@ The script sends desktop notifications for:
 - **Status**: Shows active recording PID or confirms no recording active
 - **Requirements**: Alerts if required tools are missing
 
-Notifications style (colors, timeouts, position) are controlled by your dunst config.
+Notification styling (colors, timeouts, position) is configured in `.config/quickshell/`.
 
 ## Requirements
 

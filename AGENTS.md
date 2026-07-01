@@ -21,9 +21,8 @@ The repository uses GNU stow to manage symlinks. The directory structure mirrors
 │   ├── nvim/          # Neovim configuration
 │   ├── tmux/          # Tmux configuration + plugins (tpm, tmux-resurrect, tmux-gruvbox)
 │   ├── ghostty/       # Ghostty terminal configuration
-│   ├── dunst/         # Dunst notification daemon configuration
 │   ├── rofi/          # Rofi launcher configuration
-│   ├── quickshell/    # QuickShell bar configuration (QML-based, replaces waybar)
+│   ├── quickshell/    # QuickShell bar + notification center (QML)
 │   └── systemd/       # Systemd user units
 ├── install.sh         # Installation script (sets up packages and applies stow)
 └── README.md
@@ -41,14 +40,15 @@ To activate dotfiles: `stow .` from the repo root (creates symlinks in `~`).
 - **Tmux**: Terminal multiplexer with plugin manager (tpm) and plugins:
   - `tmux-resurrect`: Session persistence
   - `tmux-gruvbox`: Color theme
-- **Ghostty, Dunst, Rofi**: Terminal, notifications, and launcher configs
+- **Ghostty, Rofi**: Terminal and launcher configs
+- **QuickShell**: Status bar and notification daemon (replaces Dunst/Waybar UI)
 
 ### Custom Scripts
 
 Shell scripts for system integration:
 
 **Hyprland scripts** (`.config/hypr/scripts/`):
-- `brightness.sh`, `volume.sh` — System volume/brightness control with dunst notifications
+- `brightness.sh`, `volume.sh` — System volume/brightness control with QuickShell OSD notifications
 - `wallpaper_rotate.sh`, `wallpaper_control.sh`, `wallpaper_persistence.sh`, `wallpaper_restore.sh` — Wallpaper rotation/persistence across restarts
 - `power.sh` — Power management (lock, suspend)
 - `screenshot.sh` — Screenshot capture with visual feedback
@@ -65,12 +65,15 @@ Shell scripts for system integration:
 - `file_check.sh` — Generic file existence checker
 - `namedays.sh` — Wrapper for `lnd` CLI (Latvian name day lookup, built separately)
 
-All Hyprland scripts integrate with Hyprland keybinds and dunst notifications for user feedback.
+All Hyprland scripts integrate with Hyprland keybinds and QuickShell desktop notifications for user feedback.
 
 ### Keybinds (`.config/hypr/configs/keybinds.lua`)
 
 - `Super+Print` — Launch screen recording audio source menu
 - `Super+Z` — Launch `shmooz` screen magnifier
+- `Super+N` — Toggle QuickShell notification center
+- `Super+Shift+N` — Toggle Do Not Disturb
+- `Super+Ctrl+N` — Clear all notifications
 
 ## Common Development Commands
 
@@ -127,7 +130,7 @@ Since this is config-only, changes require verification and reloading:
 - **Tmux**: Reload config with `tmux source-file ~/.tmux.conf` or the bound key (default: Prefix+R)
 - **QuickShell**: Auto-reloads on file save (watches `~/.config/quickshell/`). To restart: `pkill quickshell && quickshell &`
 - **Waybar**: Restart with `killall waybar; waybar &` or similar
-- **Other tools** (Ghostty, Dunst, Rofi, Neovim): Usually require application restart
+- **Other tools** (Ghostty, Rofi, Neovim): Usually require application restart
 
 Always verify symlinks are correct after changes: `ls -la ~/.config/{fish,hypr,nvim,etc}`
 

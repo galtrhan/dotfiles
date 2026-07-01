@@ -6,7 +6,6 @@
 # down - Decrease brightness
 
 STEP=10
-NOTIFICATION_ID=131
 
 # Get brightness
 get_backlight() {
@@ -15,7 +14,7 @@ get_backlight() {
 
 # Notify
 notify_user() {
-	dunstify -a "Brightness" -r "$NOTIFICATION_ID" -u normal -t 3000 -h int:value:$CURRENT "Brightness : $CURRENT%"
+	notify-send -a "Brightness" -u normal -t 3000 -h int:value:$CURRENT "Brightness : $CURRENT%"
 }
 
 # Change brightness

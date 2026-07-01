@@ -38,4 +38,21 @@ Singleton {
     readonly property int spacing: 8
     readonly property int margin: 4
     readonly property int barHeight: 28
+
+    readonly property color notifBg: Qt.rgba(20 / 255, 20 / 255, 20 / 255, 0.92)
+    readonly property color notifBorder: "#323232"
+    readonly property color notifFg: "#ffffff"
+    readonly property color notifFgMuted: "#aaaaaa"
+    readonly property color notifAccent: fg
+    readonly property color notifUrgencyLow: fgMuted
+    readonly property color notifUrgencyNormal: fgBright
+    readonly property color notifUrgencyCritical: batteryCritical
+    readonly property color notifProgress: workspaceActive
+
+    readonly property int notifWidth: 360
+    readonly property int notifMaxPopups: 5
+    readonly property int notifMaxHistory: 50
+    readonly property int notifTimeoutLow: 10000
+    readonly property int notifTimeoutNormal: 10000
+    readonly property int notifTimeoutCritical: 0
 }

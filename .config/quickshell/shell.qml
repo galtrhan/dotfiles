@@ -2,8 +2,12 @@
 import Quickshell
 import QtQuick
 import "bar"
+import "notifications"
 
 Scope {
+    NotificationPopup {}
+    NotificationCenter {}
+
     Variants {
         model: Quickshell.screens
 
