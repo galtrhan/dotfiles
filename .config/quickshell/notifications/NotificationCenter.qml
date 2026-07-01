@@ -2,7 +2,6 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
-import QtQuick.Controls
 import QtQuick.Layouts
 import ".."
 
@@ -21,7 +20,7 @@ Scope {
             readonly property int maxBodyHeight: Math.max(80, modelData.height * 0.75 - chromeHeight)
             readonly property int bodyHeight: NotificationService.history.length === 0
                 ? 80
-                : Math.min(historyList.implicitHeight, maxBodyHeight)
+                : Math.min(Math.max(historyList.implicitHeight, 80), maxBodyHeight)
 
             visible: NotificationService.centerOpen
             focusable: true
@@ -171,11 +170,14 @@ Scope {
                         }
                     }
 
-                    ScrollView {
+                    Flickable {
                         Layout.fillWidth: true
                         Layout.preferredHeight: bodyHeight
                         visible: NotificationService.history.length > 0
                         clip: true
+                        boundsBehavior: Flickable.StopAtBounds
+                        contentWidth: width
+                        contentHeight: historyList.implicitHeight
 
                         ColumnLayout {
                             id: historyList

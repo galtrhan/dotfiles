@@ -7,6 +7,7 @@ QtObject {
 
     property Notification notification: null
     property bool closed: false
+    property bool archived: false
     property bool popupVisible: false
 
     property string seqId: ""
@@ -40,17 +41,29 @@ QtObject {
     }
 
     readonly property bool hasProgress: progress >= 0 && progress <= 100
+    readonly property bool isOsd: NotificationService.osdApps.indexOf(appName) !== -1
 
     readonly property Connections _conn: Connections {
         target: notificationData.notification
 
         function onClosed(): void {
-            if (notificationData.closed)
+            if (notificationData.closed || notificationData.archived)
                 return;
-            notificationData.closed = true;
+
             NotificationService._removeFromPopups(notificationData);
-            NotificationService._removeFromHistory(notificationData);
-            notificationData.destroy();
+
+            if (notificationData.isOsd) {
+                notificationData.closed = true;
+                NotificationService._removeFromHistory(notificationData);
+                notificationData.notification = null;
+                notificationData.destroy();
+                return;
+            }
+
+            notificationData.archived = true;
+            notificationData.popupVisible = false;
+            notificationData.actions = [];
+            notificationData.notification = null;
         }
 
         function onSummaryChanged(): void {
@@ -105,6 +118,7 @@ QtObject {
     readonly property Timer _timer: Timer {
         id: popupTimer
         running: !notificationData.closed
+                 && !notificationData.archived
                  && notificationData.popupVisible
                  && !notificationData.hovered
                  && notificationData.urgency !== NotificationUrgency.Critical
@@ -170,15 +184,21 @@ QtObject {
     }
 
     function expirePopup(): void {
-        if (closed)
+        if (closed || archived)
             return;
         popupVisible = false;
         NotificationService._removeFromPopups(this);
+        if (!isOsd)
+            return;
+        closed = true;
+        NotificationService._removeFromHistory(this);
         if (notification) {
             try {
                 notification.expire();
             } catch (e) {}
+            notification = null;
         }
+        destroy();
     }
 
     function invokeAction(identifier): void {

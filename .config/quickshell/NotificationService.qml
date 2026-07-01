@@ -61,9 +61,9 @@ Singleton {
         const idStr = String(notification.id || "");
         if (idStr !== "") {
             const byId = root.popups.find(function (n) {
-                return n.notifId === idStr && !n.closed;
+                return n.notifId === idStr && !n.closed && !n.archived;
             }) || root.history.find(function (n) {
-                return n.notifId === idStr && !n.closed;
+                return n.notifId === idStr && !n.closed && !n.archived;
             });
             if (byId)
                 return byId;
@@ -74,9 +74,9 @@ Singleton {
             return null;
 
         return root.popups.find(function (n) {
-            return !n.closed && root.osdGroupKeyFromData(n) === groupKey;
+            return !n.closed && !n.archived && root.osdGroupKeyFromData(n) === groupKey;
         }) || root.history.find(function (n) {
-            return !n.closed && root.osdGroupKeyFromData(n) === groupKey;
+            return !n.closed && !n.archived && root.osdGroupKeyFromData(n) === groupKey;
         });
     }
 
