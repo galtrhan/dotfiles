@@ -11,8 +11,8 @@
     "margin-left": 4,
     "margin-right": 4,
     "modules-left": ["hyprland/workspaces", "custom/separator#dot-line", "tray"],
-    "modules-center": ["custom/namedays"],
-    "modules-right": ["custom/screen_capture", "custom/ip", "custom/temps", "group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
+    "modules-center": ["clock"],
+    "modules-right": ["group/pulseaudio", "group/battery", "custom/separator#line", "custom/power"],
     "hyprland/workspaces": {
         "all-outputs": true,
         "sort-by-number": true,
@@ -43,28 +43,10 @@
         "on-scroll-down": "$HOME/.config/hypr/scripts/brightness.sh --dec",
         "smooth-scrolling-threshold": 1,
     },
-    "custom/namedays": {
-        "exec": "$HOME/.config/waybar/namedays.sh",
-        "return-type": "json",
-        "interval": 10,
-        "format": "{}",
-        "tooltip": true,
-        "on-click": "$HOME/.config/waybar/namedays.sh --toggle",
-    },
-    "custom/ip": {
-        "exec": "$HOME/.config/waybar/get_ip.sh",
-        "return-type": "json",
-        "format": "[{}]",
-        "interval": 30,
-        "tooltip": false,
-        "on-click": "$HOME/.config/waybar/get_ip.sh --copy",
-    },
-    "custom/temps": {
-        "exec": "$HOME/.config/waybar/temps.py",
-        "return-type": "json",
-        "interval": 5,
-        "tooltip": true,
-        "on-click": "$HOME/.config/waybar/temps.py --notify"
+    "clock": {
+        "interval": 1,
+        "format": "{:%H:%M  %Y.%m.%d}",
+        "tooltip-format": "<big>{:%Y %B %d}</big>",
     },
     "group/pulseaudio": {
         "orientation": "horizontal",
@@ -254,12 +236,5 @@
         "exec": "/home/kaspars/.dotfiles/.config/waybar/file_check.py status ~/.config/waybar/watched_file",
         "on-click": "/home/kaspars/.dotfiles/.config/waybar/file_check.py open ~/.config/waybar/watched_file",
         "tooltip": true,
-    },
-    "custom/screen_capture": {
-        "exec": "$HOME/.config/waybar/screen_capture_indicator.sh",
-        "return-type": "json",
-        "format": "{}",
-        "interval": 1,
-        "tooltip": false,
     },
 }

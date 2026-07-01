@@ -90,8 +90,7 @@ tooltip {
 #workspaces,
 #custom-backlight,
 #custom-power,
-#custom-media,
-#custom-screen_capture {
+#custom-media {
     color: #e5d9f5;
     padding-top: 1px;
     padding-bottom: 1px;
@@ -146,39 +145,4 @@ box#battery:hover {
 
 #custom-power:hover {
     color: orange;
-}
-
-#custom-screen_capture.recording {
-    color: #ff4444;
-    animation: pulse 1s alternate infinite;
-}
-
-#custom-screen_capture.idle {
-    color: transparent;
-}
-
-#custom-ip {
-	color: teal;
-}
-
-#custom-temps {
-	color: #39ff14;
-	padding-top: 1px;
-	padding-bottom: 1px;
-	padding-right: 4px;
-	padding-left: 4px;
-}
-
-#custom-temps.cool {
-	color: #89b4fa;
-}
-
-#custom-temps.warning {
-	color: orange;
-	animation: pulse 1s alternate infinite steps(24);
-}
-
-#custom-temps.critical {
-	color: #f53c3c;
-	animation: pulse 0.4s alternate infinite steps(24);
 }
