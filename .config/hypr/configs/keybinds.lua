@@ -14,7 +14,7 @@ hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("pidof hyprlock || hyprlock --immedia
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/power.sh"))
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu -p Clipboard | cliphist decode | wl-copy"))
-hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("killall -SIGUSR2 waybar"))
+hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("pkill -x quickshell; quickshell &"))
 
 hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screen_capture_menu.sh"))
 
@@ -62,6 +62,6 @@ hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 
 hl.bind(mainMod .. " + G", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/toggle_solo.sh"))
 
-hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill waybar || waybar"))
+hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill quickshell || quickshell"))
 
 hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("shmooz"))

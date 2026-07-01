@@ -23,6 +23,7 @@ The repository uses GNU stow to manage symlinks. The directory structure mirrors
 │   ├── ghostty/       # Ghostty terminal configuration
 │   ├── dunst/         # Dunst notification daemon configuration
 │   ├── rofi/          # Rofi launcher configuration
+│   ├── quickshell/    # QuickShell bar configuration (QML-based, replaces waybar)
 │   └── systemd/       # Systemd user units
 ├── install.sh         # Installation script (sets up packages and applies stow)
 └── README.md
@@ -34,7 +35,8 @@ To activate dotfiles: `stow .` from the repo root (creates symlinks in `~`).
 
 - **fish**: Shell with scripted configuration
 - **Hyprland**: Wayland window manager with custom scripts (volume, brightness, power management, wallpaper control)
-- **Waybar**: Status bar with custom shell helper scripts
+- **QuickShell**: QtQuick-based status bar replacing Waybar (QML configuration in `.config/quickshell/`)
+- **Waybar** (legacy): Status bar config preserved at `.config/waybar/`, scripts still used by QuickShell
 - **Neovim**: Text editor configuration (large, includes plugins)
 - **Tmux**: Terminal multiplexer with plugin manager (tpm) and plugins:
   - `tmux-resurrect`: Session persistence
@@ -55,7 +57,7 @@ Shell scripts for system integration:
 - `kbd_monitor.sh` — Keyboard backlight monitoring
 - `toggle_solo.sh` — Toggle active window between solo float and tiled layout
 
-**Waybar scripts** (`.config/waybar/`):
+**Waybar scripts** (`.config/waybar/`, still used by QuickShell):
 - `spotify.sh` — Display active Spotify track and status
 - `storage.sh` — Monitor storage usage with warning/critical thresholds
 - `get_ip.sh` — Fetch and display external IP
@@ -123,6 +125,7 @@ Since this is config-only, changes require verification and reloading:
 - **Fish shell**: Changes apply on new shell session or via `source ~/.config/fish/config.fish`
 - **Hyprland**: Changes apply on next restart or via `hyprctl reload` (keybind: Super+Shift+R)
 - **Tmux**: Reload config with `tmux source-file ~/.tmux.conf` or the bound key (default: Prefix+R)
+- **QuickShell**: Auto-reloads on file save (watches `~/.config/quickshell/`). To restart: `pkill quickshell && quickshell &`
 - **Waybar**: Restart with `killall waybar; waybar &` or similar
 - **Other tools** (Ghostty, Dunst, Rofi, Neovim): Usually require application restart
 

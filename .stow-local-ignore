@@ -6,6 +6,7 @@ install.sh
 
 .claude
 CLAUDE.md
+AGENTS.md
 
 .config/kitty
 .config/kak
