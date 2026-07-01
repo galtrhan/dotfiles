@@ -26,4 +26,9 @@ else
 fi
 
 alt=$(date "+%Y.%m.%d")
-printf '{"text":"%s","alt":"%s","tooltip":"%s","class":"namedays"}\n' "$text" "$alt" "$names"
+
+python3 -c "
+import json, sys
+text, alt, names = sys.argv[1], sys.argv[2], sys.argv[3]
+print(json.dumps({'text': text, 'alt': alt, 'tooltip': names, 'class': 'namedays'}))
+" "$text" "$alt" "$names"
