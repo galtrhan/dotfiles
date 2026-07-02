@@ -110,22 +110,27 @@ Scope {
 
                     Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: Theme.barHeight
+                        Layout.preferredHeight: Theme.launcherFontSize + Theme.launcherInputPaddingV * 2
                         visible: LauncherService.mode === LauncherService.modeApps
                                  || (LauncherService.mode === LauncherService.modeMenu
                                      && LauncherService.menuSearchable)
                         radius: Theme.borderRadius
                         color: Theme.launcherInputBg
-                        border.width: 0
+                        border.width: 1
+                        border.color: Theme.launcherInputBorder
 
                         Text {
                             anchors {
                                 left: parent.left
                                 right: parent.right
-                                verticalCenter: parent.verticalCenter
-                                leftMargin: Theme.barPadding
-                                rightMargin: Theme.barPadding
+                                top: parent.top
+                                bottom: parent.bottom
+                                leftMargin: Theme.launcherInputPaddingH
+                                rightMargin: Theme.launcherInputPaddingH
+                                topMargin: Theme.launcherInputPaddingV
+                                bottomMargin: Theme.launcherInputPaddingV
                             }
+                            verticalAlignment: Text.AlignVCenter
                             visible: searchInput.text.length === 0 && !searchInput.activeFocus
                             text: LauncherService.mode === LauncherService.modeApps
                                   ? "Search applications…"
@@ -140,8 +145,10 @@ Scope {
                             id: searchInput
                             anchors {
                                 fill: parent
-                                leftMargin: Theme.barPadding
-                                rightMargin: Theme.barPadding
+                                leftMargin: Theme.launcherInputPaddingH
+                                rightMargin: Theme.launcherInputPaddingH
+                                topMargin: Theme.launcherInputPaddingV
+                                bottomMargin: Theme.launcherInputPaddingV
                             }
                             text: LauncherService.query
                             color: Theme.launcherTextDefault
@@ -201,20 +208,25 @@ Scope {
 
                     Rectangle {
                         Layout.fillWidth: true
-                        Layout.preferredHeight: Theme.barHeight
+                        Layout.preferredHeight: Theme.launcherFontSize + Theme.launcherInputPaddingV * 2
                         visible: LauncherService.mode === LauncherService.modePassword
                         radius: Theme.borderRadius
                         color: Theme.launcherInputBg
-                        border.width: 0
+                        border.width: 1
+                        border.color: passwordInput.activeFocus ? Theme.fg : Theme.launcherInputBorder
 
                         Text {
                             anchors {
                                 left: parent.left
                                 right: parent.right
-                                verticalCenter: parent.verticalCenter
-                                leftMargin: Theme.barPadding
-                                rightMargin: Theme.barPadding
+                                top: parent.top
+                                bottom: parent.bottom
+                                leftMargin: Theme.launcherInputPaddingH
+                                rightMargin: Theme.launcherInputPaddingH
+                                topMargin: Theme.launcherInputPaddingV
+                                bottomMargin: Theme.launcherInputPaddingV
                             }
+                            verticalAlignment: Text.AlignVCenter
                             visible: passwordInput.text.length === 0 && !passwordInput.activeFocus
                             text: "Password"
                             color: Theme.launcherTextInactive
@@ -227,8 +239,10 @@ Scope {
                             id: passwordInput
                             anchors {
                                 fill: parent
-                                leftMargin: Theme.barPadding
-                                rightMargin: Theme.barPadding
+                                leftMargin: Theme.launcherInputPaddingH
+                                rightMargin: Theme.launcherInputPaddingH
+                                topMargin: Theme.launcherInputPaddingV
+                                bottomMargin: Theme.launcherInputPaddingV
                             }
                             text: LauncherService.query
                             color: Theme.launcherTextDefault

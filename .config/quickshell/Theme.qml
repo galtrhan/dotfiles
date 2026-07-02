@@ -9,10 +9,13 @@ Singleton {
     readonly property int launcherAppWidth: 560
     readonly property int launcherMenuWidth: 240
     readonly property int launcherPickerWidth: 480
+    readonly property int launcherInputPaddingV: 15
+    readonly property int launcherInputPaddingH: 15
 
     readonly property color bg: Qt.rgba(20 / 255, 20 / 255, 20 / 255, 0.75)
     readonly property color bgSolid: Qt.rgba(20 / 255, 20 / 255, 20 / 255, 1)
     readonly property color launcherInputBg: Qt.rgba(20 / 255, 20 / 255, 20 / 255, 0.9)
+    readonly property color launcherInputBorder: Qt.rgba(200 / 255, 200 / 255, 200 / 255, .5)
     readonly property color launcherTextActive: "#ffffff"
     readonly property color launcherTextDefault: Qt.rgba(1, 1, 1, 0.85)
     readonly property color launcherTextInactive: Qt.rgba(1, 1, 1, 0.5)
