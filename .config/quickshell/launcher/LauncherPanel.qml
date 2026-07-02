@@ -311,12 +311,12 @@ Scope {
                                     }
                                     spacing: Theme.spacing
 
-                                    IconImage {
-                                        Layout.preferredWidth: Theme.launcherFontSize + 4
-                                        Layout.preferredHeight: Theme.launcherFontSize + 4
-                                        visible: modelData.icon !== ""
-                                        source: modelData.icon
-                                    }
+                                    // IconImage {
+                                    //     Layout.preferredWidth: Theme.launcherFontSize + 4
+                                    //     Layout.preferredHeight: Theme.launcherFontSize + 4
+                                    //     visible: modelData.icon !== ""
+                                    //     source: modelData.icon
+                                    // }
 
                                     Text {
                                         Layout.fillWidth: true
