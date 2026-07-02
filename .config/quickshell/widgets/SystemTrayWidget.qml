@@ -2,9 +2,10 @@ import Quickshell
 import Quickshell.Services.SystemTray
 import Quickshell.Widgets
 import QtQuick
+import QtQuick.Layouts
 import ".."
 
-Row {
+RowLayout {
     spacing: Theme.spacing
 
     Repeater {
@@ -13,8 +14,9 @@ Row {
         delegate: Item {
             id: trayIcon
             required property SystemTrayItem modelData
-            width: 20
-            height: 20
+            Layout.alignment: Qt.AlignVCenter
+            width: Theme.fontSize
+            height: Theme.fontSize
 
             IconImage {
                 anchors.fill: parent

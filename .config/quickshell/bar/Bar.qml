@@ -1,5 +1,6 @@
 import Quickshell
 import QtQuick
+import QtQuick.Layouts
 import ".."
 import "../components"
 import "../widgets"
@@ -8,46 +9,58 @@ Item {
     anchors.fill: parent
     clip: true
 
-    Row {
-        id: leftSection
+    RowLayout {
+        anchors.fill: parent
+        anchors.leftMargin: Theme.barPadding
+        anchors.rightMargin: Theme.barPadding
         spacing: Theme.spacing
-        anchors {
-            left: parent.left
-            leftMargin: Theme.barPadding
-            verticalCenter: parent.verticalCenter
+
+        WorkspaceWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        Separator {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        SystemTrayWidget {
+            Layout.alignment: Qt.AlignVCenter
         }
 
-        WorkspaceWidget {}
-        Separator {}
-        SystemTrayWidget {}
-    }
-
-    Row {
-        id: centerSection
-        spacing: Theme.spacing
-        anchors.centerIn: parent
-
-        ClockWidget {}
-    }
-
-    Row {
-        id: rightSection
-        spacing: Theme.spacing
-        anchors {
-            right: parent.right
-            rightMargin: Theme.barPadding
-            verticalCenter: parent.verticalCenter
+        Item {
+            Layout.fillWidth: true
         }
 
-        RecIndicator {}
-        NotificationWidget {}
-        IpWidget {}
-        TempsWidget {}
-        AudioWidget {}
-        BatteryGroup {}
+        ClockWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
+
+        Item {
+            Layout.fillWidth: true
+        }
+
+        RecIndicator {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        NotificationWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        IpWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        TempsWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        AudioWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        BatteryGroup {
+            Layout.alignment: Qt.AlignVCenter
+        }
         Separator {
             variant: "line"
+            Layout.alignment: Qt.AlignVCenter
         }
-        PowerWidget {}
+        PowerWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
     }
 }

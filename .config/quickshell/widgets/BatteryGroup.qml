@@ -1,10 +1,11 @@
 import Quickshell.Services.UPower
 import QtQuick
+import QtQuick.Layouts
 import ".."
 import "../components"
 import "."
 
-Row {
+RowLayout {
     id: root
     spacing: Theme.spacing
     property bool expanded: false
@@ -48,6 +49,7 @@ Row {
     }
 
     BarLabel {
+        Layout.alignment: Qt.AlignVCenter
         visible: UPower.displayDevice.ready
         text: root.formatBattery(UPower.displayDevice)
         labelColor: root.batteryColor(UPower.displayDevice)
@@ -60,23 +62,39 @@ Row {
         }
     }
 
-    Row {
+    RowLayout {
+        Layout.alignment: Qt.AlignVCenter
         visible: root.expanded
         spacing: Theme.spacing
 
-        Separator {}
-        IdleInhibitorWidget {}
-        Separator {}
-        PowerProfilesWidget {}
-        Separator {}
-        BacklightWidget {}
-        Separator {}
+        Separator {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        IdleInhibitorWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        Separator {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        PowerProfilesWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        Separator {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        BacklightWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        Separator {
+            Layout.alignment: Qt.AlignVCenter
+        }
 
         Repeater {
             model: root.extraBatteryPaths
 
             BarLabel {
                 required property string modelData
+                Layout.alignment: Qt.AlignVCenter
                 readonly property var device: root.findBattery(modelData)
                 visible: device !== null
                 text: device ? root.formatBattery(device) : ""

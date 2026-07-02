@@ -1,10 +1,11 @@
 import Quickshell.Io
 import Quickshell.Services.Pipewire
 import QtQuick
+import QtQuick.Layouts
 import ".."
 import "../components"
 
-Row {
+RowLayout {
     id: root
     spacing: Theme.spacing
 
@@ -52,6 +53,7 @@ Row {
     }
 
     BarLabel {
+        Layout.alignment: Qt.AlignVCenter
         text: formatOutput()
         labelColor: root.sink?.audio?.muted ? Theme.micMuted : Theme.fgBright
         tooltipText: "Scroll: volume · Right-click: pavucontrol"
@@ -79,6 +81,7 @@ Row {
     }
 
     BarLabel {
+        Layout.alignment: Qt.AlignVCenter
         text: formatMic()
         labelColor: root.source?.audio?.muted ? Theme.micMuted : Theme.fgBright
         visible: root.source !== null

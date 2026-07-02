@@ -1,9 +1,10 @@
 import Quickshell
 import Quickshell.Hyprland
 import QtQuick
+import QtQuick.Layouts
 import ".."
 
-Row {
+RowLayout {
     id: root
     spacing: Theme.spacing
 
@@ -18,6 +19,7 @@ Row {
 
         delegate: Text {
             required property int index
+            Layout.alignment: Qt.AlignVCenter
             readonly property int wsId: index + 1
             readonly property var ws: Hyprland.workspaces.values.find(function (w) {
                 return w.id === wsId;
@@ -29,7 +31,7 @@ Row {
             visible: isVisible
             text: isActive ? "" : ""
             font.family: Theme.fontFamily
-            font.pixelSize: 16
+            font.pixelSize: Theme.fontSize
             color: {
                 if (isActive)
                     return Theme.workspaceActive;

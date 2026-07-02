@@ -7,5 +7,4 @@ BarLabel {
 
     text: variant === "line" ? "|" : ""
     labelColor: Theme.fgMuted
-    anchors.verticalCenter: parent.verticalCenter
 }
