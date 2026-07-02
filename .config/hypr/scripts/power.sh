@@ -17,7 +17,16 @@ case "$SELECTED" in
     Lock)
         pidof hyprlock || hyprlock ;;
     Logout)
-        hyprctl dispatch exit ;;
+        # hyprctl dispatch exit blocks when run synchronously from a script
+        # until keyboard input (hyprwm/Hyprland#4793). Detach so logout works.
+        (
+            hyprctl dispatch exit || true
+            sleep 2
+            if pgrep -x Hyprland >/dev/null; then
+                killall Hyprland 2>/dev/null || true
+            fi
+        ) >/dev/null 2>&1 &
+        ;;
     Suspend)
         systemctl suspend ;;
     Reboot)
