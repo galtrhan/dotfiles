@@ -1,3 +1,4 @@
+import Quickshell
 import Quickshell.Hyprland
 import QtQuick
 import ".."
@@ -6,31 +7,26 @@ Row {
     id: root
     spacing: Theme.spacing
 
-    function workspaceForId(id) {
-        for (var i = 0; i < Hyprland.workspaces.count; i++) {
-            var ws = Hyprland.workspaces.get(i);
-            if (ws.id === id)
-                return ws;
-        }
-        return null;
-    }
+    readonly property int maxWorkspaceId: 10
 
     function focusWorkspace(id) {
         Hyprland.dispatch("hl.dsp.focus({ workspace = " + id + " })");
     }
 
     Repeater {
-        model: 4
+        model: root.maxWorkspaceId
 
         delegate: Text {
             required property int index
             readonly property int wsId: index + 1
+            readonly property var ws: Hyprland.workspaces.values.find(function (w) {
+                return w.id === wsId;
+            })
+            readonly property bool isVisible: wsId <= 4 || ws !== undefined
             readonly property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
-            readonly property bool isUrgent: {
-                var ws = root.workspaceForId(wsId);
-                return ws ? ws.urgent : false;
-            }
+            readonly property bool isUrgent: ws ? ws.urgent : false
 
+            visible: isVisible
             text: isActive ? "" : ""
             font.family: Theme.fontFamily
             font.pixelSize: 16
