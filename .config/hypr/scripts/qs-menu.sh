@@ -1,10 +1,12 @@
 #!/bin/bash
 # Quickshell menu picker for script use.
-# Usage: qs-menu.sh [--compact] "Prompt" "Option 1" "Option 2" ...
+# Usage: qs-menu.sh [--compact] "Prompt" ["Option 1" "Option 2" ...]
+#        echo "Option 1\nOption 2" | qs-menu.sh [--compact] "Prompt"
 # Prints the selected option to stdout, or nothing if cancelled.
 #
 # Default: wide picker with search (recording, clipboard, etc.)
 # --compact: narrow centered menu (power menu)
+# Options may be passed as arguments or on stdin (one per line).
 
 set -euo pipefail
 
@@ -23,11 +25,18 @@ TITLE="$1"
 shift
 
 if [[ $# -eq 0 ]]; then
-    echo "No menu options provided." >&2
-    exit 1
+    if [[ -t 0 ]]; then
+        echo "No menu options provided." >&2
+        exit 1
+    fi
+    OPTIONS=$(cat)
+    if [[ -z "$OPTIONS" ]]; then
+        echo "No menu options provided." >&2
+        exit 1
+    fi
+else
+    OPTIONS=$(printf '%s\n' "$@")
 fi
-
-OPTIONS=$(printf '%s\n' "$@")
 
 if [[ "$COMPACT" == true ]]; then
     qs ipc call -- menu show "$TITLE" "$OPTIONS" >/dev/null
