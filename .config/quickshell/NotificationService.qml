@@ -22,10 +22,16 @@ Singleton {
 
     readonly property var osdApps: ["Volume", "Brightness", "Keyboard", "Battery", "Wallpaper"]
     readonly property var historyExcludedApps: ["Volume", "Brightness"]
+    readonly property var badgeExcludedApps: ["blueman", "NetworkManager Applet"]
 
     function isHistoryExcluded(notification): bool {
         const app = notification.appName || "";
         return root.historyExcludedApps.indexOf(app) !== -1;
+    }
+
+    function isBadgeExcluded(notification): bool {
+        const app = notification.appName || "";
+        return root.badgeExcludedApps.indexOf(app) !== -1;
     }
 
     function isHistoryExcludedFromData(notifData): bool {
@@ -155,7 +161,7 @@ Singleton {
                 }
             }
 
-            if (!root.centerOpen && saveToHistory)
+            if (!root.centerOpen && saveToHistory && !root.isBadgeExcluded(notification))
                 root.unreadCount += 1;
         }
     }
