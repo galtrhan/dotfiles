@@ -42,6 +42,7 @@ QtObject {
 
     readonly property bool hasProgress: progress >= 0 && progress <= 100
     readonly property bool isOsd: NotificationService.osdApps.indexOf(appName) !== -1
+    readonly property bool isPopupOnly: NotificationService.isHistoryExcludedFromData(notificationData)
 
     readonly property Connections _conn: Connections {
         target: notificationData.notification
@@ -52,7 +53,7 @@ QtObject {
 
             NotificationService._removeFromPopups(notificationData);
 
-            if (notificationData.isOsd) {
+            if (notificationData.isPopupOnly) {
                 notificationData.closed = true;
                 NotificationService._removeFromHistory(notificationData);
                 notificationData.notification = null;
@@ -188,7 +189,7 @@ QtObject {
             return;
         popupVisible = false;
         NotificationService._removeFromPopups(this);
-        if (!isOsd)
+        if (!isPopupOnly)
             return;
         closed = true;
         NotificationService._removeFromHistory(this);

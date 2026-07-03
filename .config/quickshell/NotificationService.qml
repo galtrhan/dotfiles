@@ -21,6 +21,17 @@ Singleton {
     }
 
     readonly property var osdApps: ["Volume", "Brightness", "Keyboard", "Battery", "Wallpaper"]
+    readonly property var historyExcludedApps: ["Volume", "Brightness"]
+
+    function isHistoryExcluded(notification): bool {
+        const app = notification.appName || "";
+        return root.historyExcludedApps.indexOf(app) !== -1;
+    }
+
+    function isHistoryExcludedFromData(notifData): bool {
+        const app = notifData.appName || "";
+        return root.historyExcludedApps.indexOf(app) !== -1;
+    }
 
     function volumeGroupKey(summary): string {
         const text = (summary || "").trim();
@@ -103,12 +114,17 @@ Singleton {
 
             notification.tracked = true;
 
+            const saveToHistory = !root.isHistoryExcluded(notification);
             const existing = root.findExistingEntry(notification);
             if (existing) {
                 existing.rebind(notification);
-                root.history = [existing, ...root.history.filter(function (n) {
-                    return n !== existing;
-                })];
+                if (saveToHistory) {
+                    root.history = [existing, ...root.history.filter(function (n) {
+                        return n !== existing;
+                    })];
+                } else {
+                    root._removeFromHistory(existing);
+                }
                 if (!root.doNotDisturb)
                     root._promotePopup(existing);
                 return;
@@ -120,11 +136,13 @@ Singleton {
                 timestamp: Date.now()
             });
 
-            root.history = [data, ...root.history];
-            if (root.history.length > Theme.notifMaxHistory) {
-                const removed = root.history.pop();
-                if (removed && !removed.closed)
-                    removed.destroy();
+            if (saveToHistory) {
+                root.history = [data, ...root.history];
+                if (root.history.length > Theme.notifMaxHistory) {
+                    const removed = root.history.pop();
+                    if (removed && !removed.closed)
+                        removed.destroy();
+                }
             }
 
             if (!root.doNotDisturb) {
@@ -137,7 +155,7 @@ Singleton {
                 }
             }
 
-            if (!root.centerOpen)
+            if (!root.centerOpen && saveToHistory)
                 root.unreadCount += 1;
         }
     }
