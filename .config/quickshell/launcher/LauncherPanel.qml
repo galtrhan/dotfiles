@@ -487,6 +487,10 @@ Scope {
             onVisibleChanged: {
                 if (!visible)
                     return;
+                appList.currentIndex = 0;
+                menuList.currentIndex = 0;
+                appList.positionViewAtBeginning();
+                menuList.positionViewAtBeginning();
                 if (LauncherService.mode === LauncherService.modePassword)
                     passwordInput.forceActiveFocus();
                 else if (LauncherService.mode === LauncherService.modeApps)
