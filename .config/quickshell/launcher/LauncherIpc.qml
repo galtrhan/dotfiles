@@ -32,6 +32,10 @@ Scope {
                 menuIpc.cancelled();
             LauncherService.close();
         }
+
+        function emoji_toggle(): void {
+            LauncherService.toggleEmoji();
+        }
     }
 
     IpcHandler {

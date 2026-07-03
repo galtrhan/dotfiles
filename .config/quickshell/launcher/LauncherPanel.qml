@@ -1,6 +1,7 @@
 import Quickshell
 import Quickshell.Widgets
 import Quickshell.Wayland
+import Quickshell.Io
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
@@ -32,6 +33,19 @@ Scope {
         if (root.ipcHandler)
             root.ipcHandler.passwordEntered(value);
         LauncherService.close();
+    }
+
+    function copyEmoji(entry): void {
+        if (!entry || !entry.emoji)
+            return;
+        copyProc.command = ["wl-copy", entry.emoji];
+        copyProc.running = true;
+        LauncherService.close();
+    }
+
+    Process {
+        id: copyProc
+        running: false
     }
 
     Variants {
@@ -68,11 +82,13 @@ Scope {
                 anchors.centerIn: parent
                 width: LauncherService.mode === LauncherService.modeApps
                        ? Theme.launcherAppWidth
-                       : (LauncherService.mode === LauncherService.modeMenu
-                          ? (LauncherService.menuSearchable
-                             ? Theme.launcherPickerWidth
-                             : Theme.launcherMenuWidth)
-                          : Theme.launcherAppWidth)
+                       : (LauncherService.mode === LauncherService.modeEmoji
+                          ? Theme.launcherPickerWidth
+                          : (LauncherService.mode === LauncherService.modeMenu
+                             ? (LauncherService.menuSearchable
+                                ? Theme.launcherPickerWidth
+                                : Theme.launcherMenuWidth)
+                             : Theme.launcherAppWidth))
                 implicitHeight: panelContent.implicitHeight + Theme.barPadding * 2
                 height: Math.min(implicitHeight, modelData.height * 0.75)
                 radius: Theme.borderRadius
@@ -98,6 +114,7 @@ Scope {
                     Text {
                         Layout.fillWidth: true
                         visible: LauncherService.mode !== LauncherService.modeApps
+                                 && LauncherService.mode !== LauncherService.modeEmoji
                         text: LauncherService.title
                         color: Theme.launcherTextDefault
                         font.family: Theme.fontFamily
@@ -112,6 +129,7 @@ Scope {
                         Layout.fillWidth: true
                         Layout.preferredHeight: Theme.launcherFontSize + Theme.launcherInputPaddingV * 2
                         visible: LauncherService.mode === LauncherService.modeApps
+                                 || LauncherService.mode === LauncherService.modeEmoji
                                  || (LauncherService.mode === LauncherService.modeMenu
                                      && LauncherService.menuSearchable)
                         radius: Theme.borderRadius
@@ -134,7 +152,9 @@ Scope {
                             visible: searchInput.text.length === 0 && !searchInput.activeFocus
                             text: LauncherService.mode === LauncherService.modeApps
                                   ? "Search applications…"
-                                  : "Search…"
+                                  : (LauncherService.mode === LauncherService.modeEmoji
+                                     ? "Search emojis…"
+                                     : "Search…")
                             color: Theme.launcherTextInactive
                             font.family: Theme.fontFamily
                             font.pixelSize: Theme.launcherFontSize
@@ -161,6 +181,7 @@ Scope {
                             clip: true
                             focus: LauncherService.visible
                                     && (LauncherService.mode === LauncherService.modeApps
+                                        || LauncherService.mode === LauncherService.modeEmoji
                                         || (LauncherService.mode === LauncherService.modeMenu
                                             && LauncherService.menuSearchable))
 
@@ -186,6 +207,20 @@ Scope {
                                     } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
                                         event.accepted = true;
                                         appList.launchCurrent();
+                                    }
+                                    return;
+                                }
+
+                                if (LauncherService.mode === LauncherService.modeEmoji) {
+                                    if (event.key === Qt.Key_Down) {
+                                        event.accepted = true;
+                                        emojiList.incrementCurrentIndex();
+                                    } else if (event.key === Qt.Key_Up) {
+                                        event.accepted = true;
+                                        emojiList.decrementCurrentIndex();
+                                    } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                                        event.accepted = true;
+                                        emojiList.copyCurrent();
                                     }
                                     return;
                                 }
@@ -376,6 +411,94 @@ Scope {
                     }
 
                     ScrollView {
+                        id: emojiScroll
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Layout.preferredHeight: Theme.barHeight * 10
+                        visible: LauncherService.mode === LauncherService.modeEmoji
+                        clip: true
+
+                        ListView {
+                            id: emojiList
+                            model: ScriptModel {
+                                values: LauncherService.filteredEmojis()
+                            }
+                            currentIndex: LauncherService.selectedIndex
+                            boundsBehavior: Flickable.StopAtBounds
+                            keyNavigationWraps: true
+                            highlightMoveDuration: 80
+
+                            onCurrentIndexChanged: LauncherService.selectedIndex = currentIndex
+
+                            onModelChanged: LauncherService.clampSelectedIndex(count)
+
+                            highlight: Rectangle {
+                                radius: Theme.borderRadius
+                                color: Theme.bgSolid
+                            }
+
+                            delegate: Item {
+                                required property var modelData
+                                required property int index
+                                width: emojiList.width
+                                height: Theme.barHeight
+
+                                RowLayout {
+                                    anchors {
+                                        fill: parent
+                                        leftMargin: Theme.barPadding
+                                        rightMargin: Theme.barPadding
+                                    }
+                                    spacing: Theme.spacing
+
+                                    Text {
+                                        text: modelData.emoji
+                                        color: emojiList.currentIndex === index ? Theme.launcherTextActive : Theme.launcherTextDefault
+                                        font.pixelSize: Theme.launcherFontSize + 4
+                                        verticalAlignment: Text.AlignVCenter
+                                    }
+
+                                    Text {
+                                        Layout.fillWidth: true
+                                        text: modelData.description
+                                        color: emojiList.currentIndex === index ? Theme.launcherTextActive : Theme.launcherTextDefault
+                                        font.family: Theme.fontFamily
+                                        font.pixelSize: Theme.launcherFontSize
+                                        elide: Text.ElideRight
+                                    }
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.copyEmoji(modelData)
+                                    onEntered: emojiList.currentIndex = index
+                                }
+                            }
+
+                            function copyCurrent(): void {
+                                const values = LauncherService.filteredEmojis();
+                                if (currentIndex < 0 || currentIndex >= values.length)
+                                    return;
+                                root.copyEmoji(values[currentIndex]);
+                            }
+
+                            function incrementCurrentIndex(): void {
+                                if (count === 0)
+                                    return;
+                                currentIndex = (currentIndex + 1) % count;
+                            }
+
+                            function decrementCurrentIndex(): void {
+                                if (count === 0)
+                                    return;
+                                currentIndex = currentIndex <= 0 ? count - 1 : currentIndex - 1;
+                            }
+                        }
+                    }
+
+                    ScrollView {
                         id: menuScroll
                         Layout.fillWidth: true
                         Layout.fillHeight: true
@@ -489,11 +612,15 @@ Scope {
                     return;
                 appList.currentIndex = 0;
                 menuList.currentIndex = 0;
+                emojiList.currentIndex = 0;
                 appList.positionViewAtBeginning();
                 menuList.positionViewAtBeginning();
+                emojiList.positionViewAtBeginning();
                 if (LauncherService.mode === LauncherService.modePassword)
                     passwordInput.forceActiveFocus();
                 else if (LauncherService.mode === LauncherService.modeApps)
+                    searchInput.forceActiveFocus();
+                else if (LauncherService.mode === LauncherService.modeEmoji)
                     searchInput.forceActiveFocus();
                 else if (LauncherService.mode === LauncherService.modeMenu && LauncherService.menuSearchable)
                     searchInput.forceActiveFocus();
