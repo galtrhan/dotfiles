@@ -2,6 +2,7 @@ pragma Singleton
 
 import Quickshell
 import Quickshell.Io
+import Quickshell.Hyprland
 import QtQuick
 import "lib/EmojiLogic.js" as EmojiLogic
 
@@ -23,7 +24,15 @@ Singleton {
     property bool menuWaiting: false
     property bool menuSearchable: false
 
+    // Connector name of the monitor that was focused when the launcher was
+    // opened; the panel only maps on that screen. Empty means all screens.
+    property string activeScreenName: ""
+
     readonly property bool visible: mode !== root.modeClosed
+
+    function captureFocusedScreen(): void {
+        root.activeScreenName = Hyprland.focusedMonitor?.name ?? "";
+    }
 
     FileView {
         id: emojiFile
@@ -39,6 +48,7 @@ Singleton {
     }
 
     function openApps(): void {
+        root.captureFocusedScreen();
         root.mode = root.modeApps;
         root.query = "";
         root.selectedIndex = 0;
@@ -46,6 +56,7 @@ Singleton {
     }
 
     function openEmoji(): void {
+        root.captureFocusedScreen();
         root.title = "Emoji";
         root.query = "";
         root.selectedIndex = 0;
@@ -61,6 +72,7 @@ Singleton {
     }
 
     function openMenu(title, options, searchable): void {
+        root.captureFocusedScreen();
         root.title = title;
         root.menuOptions = options;
         root.query = "";
@@ -71,6 +83,7 @@ Singleton {
     }
 
     function openPassword(prompt): void {
+        root.captureFocusedScreen();
         root.title = prompt;
         root.query = "";
         root.mode = root.modePassword;
@@ -86,7 +99,7 @@ Singleton {
     }
 
     function filteredApps(): var {
-        const all = [...DesktopEntries.applications.values];
+        const all = DesktopEntries.applications.values;
         const q = root.query.trim().toLowerCase();
         if (q === "")
             return all;

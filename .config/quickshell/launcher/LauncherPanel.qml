@@ -55,7 +55,12 @@ Scope {
             required property var modelData
             screen: modelData
 
+            // Only map the overlay on the monitor that was focused when the
+            // launcher opened; mapping a full-screen surface per monitor is
+            // slow and shows the launcher everywhere.
             visible: LauncherService.visible
+                     && (LauncherService.activeScreenName === ""
+                         || LauncherService.activeScreenName === modelData.name)
             focusable: true
             color: "transparent"
 
@@ -316,8 +321,12 @@ Scope {
                         ListView {
                             id: appList
                             model: ScriptModel {
-                                values: LauncherService.filteredApps()
+                                // Gated by mode so typing in other modes
+                                // doesn't re-filter this list too.
+                                values: LauncherService.mode === LauncherService.modeApps
+                                        ? LauncherService.filteredApps() : []
                             }
+                            reuseItems: true
                             currentIndex: LauncherService.selectedIndex
                             boundsBehavior: Flickable.StopAtBounds
                             keyNavigationWraps: true
@@ -421,8 +430,10 @@ Scope {
                         ListView {
                             id: emojiList
                             model: ScriptModel {
-                                values: LauncherService.filteredEmojis()
+                                values: LauncherService.mode === LauncherService.modeEmoji
+                                        ? LauncherService.filteredEmojis() : []
                             }
+                            reuseItems: true
                             currentIndex: LauncherService.selectedIndex
                             boundsBehavior: Flickable.StopAtBounds
                             keyNavigationWraps: true
@@ -512,8 +523,10 @@ Scope {
                         ListView {
                             id: menuList
                             model: ScriptModel {
-                                values: LauncherService.filteredMenuOptions()
+                                values: LauncherService.mode === LauncherService.modeMenu
+                                        ? LauncherService.filteredMenuOptions() : []
                             }
+                            reuseItems: true
                             currentIndex: LauncherService.selectedIndex
                             boundsBehavior: Flickable.StopAtBounds
                             keyNavigationWraps: true
