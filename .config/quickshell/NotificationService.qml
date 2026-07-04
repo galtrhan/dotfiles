@@ -21,7 +21,7 @@ Singleton {
     }
 
     readonly property var osdApps: ["Volume", "Brightness", "Keyboard", "Battery", "Wallpaper"]
-    readonly property var historyExcludedApps: ["Volume", "Brightness"]
+    readonly property var historyExcludedApps: ["Volume", "Brightness", "Keyboard"]
     readonly property var badgeExcludedApps: ["blueman", "NetworkManager Applet"]
 
     function isHistoryExcluded(notification): bool {
