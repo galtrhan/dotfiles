@@ -58,10 +58,10 @@ case "$1" in
 	"get")
 		get_backlight
 		;;
-	"up")
+	"up"|"--inc")
 		change_backlight "+${STEP}%"
 		;;
-	"down")
+	"down"|"--dec")
 		change_backlight "-${STEP}%"
 		;;
 	*)

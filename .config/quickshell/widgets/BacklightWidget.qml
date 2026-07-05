@@ -16,7 +16,9 @@ BarLabel {
         return icons[idx];
     }
     visible: brightnessPercent >= 0
-    tooltipText: brightnessPercent >= 0 ? "Brightness " + brightnessPercent + "%" : ""
+    tooltipText: brightnessPercent >= 0 ? "Scroll: brightness · " + brightnessPercent + "%" : ""
+
+    readonly property int step: 10
 
     ScriptPoll {
         command: ["brightnessctl", "info"]
@@ -34,10 +36,16 @@ BarLabel {
 
     MouseArea {
         anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
         onWheel: function (wheel) {
+            if (wheel.angleDelta.y > 0)
+                root.brightnessPercent = Math.min(100, root.brightnessPercent + root.step);
+            else
+                root.brightnessPercent = Math.max(0, root.brightnessPercent - root.step);
+
             brightnessProc.command = wheel.angleDelta.y > 0
-                ? [Paths.hyprScripts + "/brightness.sh", "--inc"]
-                : [Paths.hyprScripts + "/brightness.sh", "--dec"];
+                ? [Paths.hyprScripts + "/brightness.sh", "up"]
+                : [Paths.hyprScripts + "/brightness.sh", "down"];
             brightnessProc.running = true;
         }
     }
