@@ -62,17 +62,15 @@ RowLayout {
         }
     }
 
+    IdleInhibitorWidget {
+        Layout.alignment: Qt.AlignVCenter
+    }
+
     RowLayout {
         Layout.alignment: Qt.AlignVCenter
         visible: root.expanded
         spacing: Theme.spacing
 
-        Separator {
-            Layout.alignment: Qt.AlignVCenter
-        }
-        IdleInhibitorWidget {
-            Layout.alignment: Qt.AlignVCenter
-        }
         Separator {
             Layout.alignment: Qt.AlignVCenter
         }
