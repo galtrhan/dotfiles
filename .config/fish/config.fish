@@ -12,7 +12,7 @@ fish_add_path /home/galtrhan/.usagi/bin
 
 set -x SUDO_ASKPASS ~/.config/hypr/scripts/sudo_askpass.sh
 function sudo --wraps sudo
-    if set -q SUDO_ASKPASS
+    if not isatty stdin; and set -q SUDO_ASKPASS
         command sudo -A $argv
     else
         command sudo $argv

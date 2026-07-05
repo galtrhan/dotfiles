@@ -181,14 +181,14 @@ Scripts live in [`.config/hypr/scripts/`](.config/hypr/scripts/). Hyprland itsel
 
 | Script | Trigger | Description |
 |--------|---------|-------------|
-| [`sudo_askpass.sh`](.config/hypr/scripts/sudo_askpass.sh) | Fish `sudo` wrapper (`sudo -A`) | Graphical sudo password prompt used as `SUDO_ASKPASS` |
+| [`sudo_askpass.sh`](.config/hypr/scripts/sudo_askpass.sh) | Non-interactive `sudo` (no TTY) | Graphical sudo password prompt used as `SUDO_ASKPASS` |
 
 **Sudo askpass behavior:**
 - Sends a critical desktop notification when a password is required
 - Shows a QuickShell password overlay via `qs ipc call menu show_password`
-- Returns the entered password on stdout for Fish's `sudo -A` wrapper (empty string if cancelled)
+- Returns the entered password on stdout for `sudo -A` (empty string if cancelled)
 
-Fish is configured in [`.config/fish/config.fish`](.config/fish/config.fish) to call `sudo -A` automatically when `SUDO_ASKPASS` is set.
+Fish is configured in [`.config/fish/config.fish`](.config/fish/config.fish) to use `sudo -A` only when stdin is not a terminal (e.g. agent subprocesses). Interactive terminal `sudo` prompts in the shell as usual.
 
 Requires QuickShell to be running (started with Hyprland).
 
@@ -280,6 +280,6 @@ QuickShell auto-reloads QML on save. Restart with `Super+B` or `pkill quickshell
 - Each config directory may have its own documentation
 - **Brightness control** (`brightnessctl`) is required for screen brightness adjustments. Installed by `install.sh`
 - **Mute LED control** for `XF86AudioMute` and `XF86AudioMicMute` uses udev ownership rules installed by `install.sh`
-- **Sudo askpass** requires Fish (for the `sudo -A` wrapper) and QuickShell running for the password overlay
+- **Sudo askpass** requires Fish (for the non-TTY `sudo -A` wrapper), QuickShell running for the password overlay, and applies when stdin is not a terminal
 - **Desktop notifications** are handled by QuickShell (`notify-send` / `libnotify`). Disable or mask `dunst.service` if migrating from an older setup
 - For development or contributions, see [AGENTS.md](./AGENTS.md)

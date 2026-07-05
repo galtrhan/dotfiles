@@ -48,7 +48,7 @@ Shell scripts for system integration:
 - `wallpaper_rotate.sh`, `wallpaper_control.sh`, `wallpaper_persistence.sh`, `wallpaper_restore.sh` — Wallpaper rotation/persistence across restarts
 - `power.sh` — Power management (lock, suspend) via QuickShell menu
 - `qs-menu.sh` — Generic QuickShell menu picker for shell scripts
-- `sudo_askpass.sh` — Graphical sudo password prompt via QuickShell
+- `sudo_askpass.sh` — Graphical sudo password prompt via QuickShell (non-interactive `sudo` only)
 - `screenshot.sh` — Screenshot capture with visual feedback
 - `screen_capture.sh` — Video recording with `wf-recorder` (region select, clipboard, notifications)
 - `screen_capture_menu.sh` — QuickShell menu to pick audio source before recording
