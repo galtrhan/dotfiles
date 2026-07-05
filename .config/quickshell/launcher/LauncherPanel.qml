@@ -177,7 +177,7 @@ Scope {
                             }
                             text: LauncherService.query
                             color: Theme.launcherTextDefault
-                            selectionColor: Theme.bgSolid
+                            selectionColor: Theme.launcherHighlight
                             selectedTextColor: Theme.launcherTextActive
                             font.family: Theme.fontFamily
                             font.pixelSize: Theme.launcherFontSize
@@ -286,7 +286,7 @@ Scope {
                             }
                             text: LauncherService.query
                             color: Theme.launcherTextDefault
-                            selectionColor: Theme.bgSolid
+                            selectionColor: Theme.launcherHighlight
                             selectedTextColor: Theme.launcherTextActive
                             font.family: Theme.fontFamily
                             font.pixelSize: Theme.launcherFontSize
@@ -338,7 +338,7 @@ Scope {
 
                             highlight: Rectangle {
                                 radius: Theme.borderRadius
-                                color: Theme.bgSolid
+                                color: Theme.launcherHighlight
                             }
 
                             delegate: Item {
@@ -445,7 +445,7 @@ Scope {
 
                             highlight: Rectangle {
                                 radius: Theme.borderRadius
-                                color: Theme.bgSolid
+                                color: Theme.launcherHighlight
                             }
 
                             delegate: Item {
@@ -557,7 +557,7 @@ Scope {
 
                             highlight: Rectangle {
                                 radius: Theme.borderRadius
-                                color: Theme.bgSolid
+                                color: Theme.launcherHighlight
                             }
 
                             delegate: Item {

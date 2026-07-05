@@ -31,7 +31,15 @@ Singleton {
     readonly property bool visible: mode !== root.modeClosed
 
     function captureFocusedScreen(): void {
-        root.activeScreenName = Hyprland.focusedMonitor?.name ?? "";
+        const focused = Hyprland.focusedMonitor?.name ?? "";
+        if (focused !== "") {
+            root.activeScreenName = focused;
+            return;
+        }
+        if (Quickshell.screens.length > 0)
+            root.activeScreenName = Quickshell.screens[0].name;
+        else
+            root.activeScreenName = "";
     }
 
     FileView {

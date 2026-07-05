@@ -8,7 +8,7 @@ A Wayland-native video recording tool for Hyprland with intuitive region selecti
 - **State Management**: Track recording state (active/inactive) with PID tracking
 - **Audio Capture**: Optional audio recording support
 - **Clipboard Integration**: Automatically copies recorded video to clipboard via `wl-copy`
-- **Clipboard History**: Works with `cliphist` for persistent clipboard history
+- **Clipboard History**: Text and image clips are stored by `cliphist` (video/mp4 is not)
 - **Thumbnail Fallback**: Generates video thumbnail when direct video copy fails
 - **Desktop Notifications**: Real-time status updates via QuickShell (via `notify-send`)
 - **Graceful Shutdown**: Properly finalizes video file on stop, with timeout handling
@@ -111,12 +111,9 @@ The script attempts to copy recorded videos to clipboard in this order:
 
 ### Clipboard History Integration
 
-If `cliphist` is installed and your Hyprland config runs:
-```
-exec-once = wl-paste --watch cliphist store
-```
+Hyprland autostart runs `cliphist` watchers for **text** and **image** clipboard types only (configured in `.config/hypr/hyprland.lua`). Screen recordings copied as `video/mp4` are not stored in cliphist; the file is saved under `~/Videos/Capture/` and can be copied to the clipboard for immediate paste, but it will not appear in clipboard history (`Super+Shift+V`).
 
-Then successfully copied videos will automatically appear in your clipboard history.
+Text copied from a successful recording (for example the file path fallback) is stored in cliphist like any other text clip.
 
 ## Notifications
 

@@ -2,6 +2,8 @@
 
 Personal Arch Linux dotfiles setup using **GNU stow** for managing configuration files. All configs are symlinked from this repo into `~/.config/`, making this the single source of truth.
 
+This setup is optimized for a **single-monitor** desktop. Multi-monitor behavior (for example launcher screen targeting) is supported but not the primary focus.
+
 ## What's Included
 
 ### Window Manager & Desktop
@@ -175,7 +177,7 @@ stow -R .
 
 ## Hyprland Scripts
 
-Scripts live in [`.config/hypr/scripts/`](.config/hypr/scripts/). Hyprland itself is configured via [`.config/hypr/hyprland.lua`](.config/hypr/hyprland.lua) (legacy `.conf` files are unused).
+Scripts live in [`.config/hypr/scripts/`](.config/hypr/scripts/). Hyprland is configured via [`.config/hypr/hyprland.lua`](.config/hypr/hyprland.lua).
 
 ### Authentication
 
@@ -257,6 +259,18 @@ qs ipc call -- menu show "Power Menu" $'Lock\nLogout\nSuspend'
 
 QuickShell auto-reloads QML on save. Restart with `Super+B` or `pkill quickshell; quickshell &`.
 
+## Configuration
+
+Common tuning points:
+
+| Setting | File | Property / location |
+|---------|------|---------------------|
+| Notification badge exclusions (tray apps that should not increment the unread count) | [`.config/quickshell/NotificationService.qml`](.config/quickshell/NotificationService.qml) | `badgeExcludedApps` |
+| Clipboard history size (text / image) | [`.config/hypr/hyprland.lua`](.config/hypr/hyprland.lua) | `cliphist -max-items` in the `wl-paste --watch` autostart lines (default: 100 text, 10 image) |
+| Launcher list highlight color | [`.config/quickshell/Theme.qml`](.config/quickshell/Theme.qml) | `launcherHighlight` |
+
+Notification history exclusions (volume/brightness/keyboard OSD) are in the same `NotificationService.qml` file under `historyExcludedApps`.
+
 ## Directory Structure
 
 ```
@@ -275,6 +289,7 @@ QuickShell auto-reloads QML on save. Restart with `Super+B` or `pkill quickshell
 
 ## Notes
 
+- Optimized for a **single monitor**; multi-monitor setups may need launcher/notification tweaks
 - This setup is tailored for Wayland (Hyprland) and may require adjustments for other environments
 - Config submodules are included for tmux plugins—clone with `--recurse-submodules`
 - Each config directory may have its own documentation

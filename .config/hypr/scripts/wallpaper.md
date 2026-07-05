@@ -37,7 +37,7 @@ This system combines two powerful features:
 ### Configuration
 - `wallpaper-rotate.service` - Systemd user service file
 - `wallpaper_state` - State file (created automatically)
-- `hyprland.conf` - Updated with startup restoration
+- `hyprland.lua` - Startup restoration via `wallpaper_restore.sh`
 
 ## 🚀 Quick Start
 
@@ -117,7 +117,7 @@ systemctl --user restart wallpaper-rotate.service
 ### Keyboard Shortcut
 - **Shortcut**: `SUPER + SHIFT + B`
 - **Action**: Change wallpaper immediately
-- **Location**: Added to `~/.config/hypr/configs/keybinds.conf`
+- **Location**: Added to `~/.config/hypr/configs/keybinds.lua`
 
 ## 🔄 How Persistence Works
 
@@ -248,9 +248,9 @@ To reset the persistence system:
 The system is integrated into your Hyprland startup sequence:
 
 ```bash
-# In hyprland.conf
-exec-once = hyprpaper
-exec-once = ~/.config/hypr/scripts/wallpaper_restore.sh    # Restore wallpaper on startup
+# In hyprland.lua (hyprland.start handler)
+hl.exec_cmd("hyprpaper")
+hl.exec_cmd(home .. "/.config/hypr/scripts/wallpaper_restore.sh")
 ```
 
 ### Wallpaper Scripts

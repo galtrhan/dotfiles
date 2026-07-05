@@ -13,7 +13,7 @@ Singleton {
     readonly property int launcherInputPaddingH: 15
 
     readonly property color bg: Qt.rgba(20 / 255, 20 / 255, 20 / 255, 0.75)
-    readonly property color bgSolid: "#2185a6"
+    readonly property color launcherHighlight: "#2185a6"
     readonly property color launcherInputBg: Qt.rgba(20 / 255, 20 / 255, 20 / 255, 0.9)
     readonly property color launcherInputBorder: Qt.rgba(200 / 255, 200 / 255, 200 / 255, .5)
     readonly property color launcherTextActive: "#ffffff"

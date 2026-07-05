@@ -13,8 +13,8 @@
 # - Uses notify-send when available for desktop notifications.
 # - Stores runtime state (PID & output path) in $XDG_RUNTIME_DIR or /tmp.
 # - On stop, attempts to copy resulting video to the Wayland clipboard via wl-copy (if available).
-#   Your Hyprland config already runs wl-paste --watch cliphist store, so copying with wl-copy
-#   should make cliphist pick it up automatically (if cliphist is running).
+#   Hyprland autostart stores text and image clipboard history via cliphist; video/mp4 is not
+#   stored in cliphist (recordings are saved under ~/Videos/Capture/).
 #
 set -uo pipefail
 
@@ -237,10 +237,8 @@ stop_recording() {
         fi
 
         if [[ "${copy_ok}" -eq 0 ]]; then
-            # If cliphist is installed and your hypr config runs wl-paste --watch cliphist store,
-            # that will automatically store the copied clip.
             if exists "${CMD_CLIPHIST}"; then
-                notify_with_thumbnail "Screen capture finished" "Saved: ${OUTFILE} — copied to clipboard using: ${copy_method} (cliphist should store it)."
+                notify_with_thumbnail "Screen capture finished" "Saved: ${OUTFILE} — copied to clipboard using: ${copy_method}."
             else
                 notify_with_thumbnail "Screen capture finished" "Saved: ${OUTFILE} — copied to clipboard using: ${copy_method}."
             fi
