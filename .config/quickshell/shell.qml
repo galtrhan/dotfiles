@@ -1,5 +1,6 @@
 //@ pragma UseQApplication
 import Quickshell
+import Quickshell.Io
 import QtQuick
 import "bar"
 import "launcher"
@@ -10,12 +11,21 @@ Scope {
     NotificationPopup {}
     NotificationCenter {}
 
+    IpcHandler {
+        target: "bar"
+
+        function toggle(): void {
+            BarService.toggle();
+        }
+    }
+
     Variants {
         model: Quickshell.screens
 
         PanelWindow {
             required property var modelData
             screen: modelData
+            visible: BarService.visible
             anchors {
                 top: true
                 left: true
@@ -29,7 +39,7 @@ Scope {
             implicitHeight: Theme.barHeight
             color: "transparent"
             aboveWindows: true
-            exclusiveZone: Theme.barHeight
+            exclusiveZone: BarService.visible ? Theme.barHeight : 0
 
             Rectangle {
                 anchors.fill: parent

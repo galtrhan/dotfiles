@@ -139,7 +139,8 @@ stow -R .
 | `Super+C` | Toggle floating |
 | `Super+F` | Fullscreen |
 | `Super+Shift+V` | Clipboard history (Cliphist) |
-| `Super+B` | Restart QuickShell |
+| `Super+B` | Toggle QuickShell bar |
+| `Super+Shift+O` | Restart QuickShell |
 | `Super+O` | Restart QuickShell (hard restart) |
 | `Super+N` | Toggle notification center |
 | `Super+Shift+N` | Toggle Do Not Disturb |
@@ -257,7 +258,7 @@ qs ipc call -- menu show "Power Menu" $'Lock\nLogout\nSuspend'
 ~/.config/hypr/scripts/qs-menu.sh "Recording Audio" "None (no audio)" "System Audio (output)"
 ```
 
-QuickShell auto-reloads QML on save. Restart with `Super+B` or `pkill quickshell; quickshell &`.
+QuickShell auto-reloads QML on save. Restart with `Super+Shift+O` or `pkill quickshell; quickshell &`.
 
 ## Configuration
 

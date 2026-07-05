@@ -20,6 +20,7 @@ hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("pkill -x quickshell; quickshell &"))
 hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screen_capture_menu.sh"))
 
 hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/wallpaper_control.sh change"))
+hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("pkill quickshell || quickshell"))
 
 hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "l" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "r" }))
@@ -67,6 +68,6 @@ hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("qs ipc call notifications center_tog
 hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("qs ipc call notifications dnd_toggle"))
 hl.bind(mainMod .. " + CTRL + N", hl.dsp.exec_cmd("qs ipc call notifications dismiss_all"))
 
-hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("pkill quickshell || quickshell"))
+hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("qs ipc call bar toggle"))
 
 hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd("shmooz"))
