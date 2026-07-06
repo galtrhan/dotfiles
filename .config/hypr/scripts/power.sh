@@ -6,7 +6,7 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 if [[ "$1" = "lock" ]]; then
-    pidof hyprlock || hyprlock --immediate
+    pidof hyprlock || hyprlock --grace 0
     exit 0
 fi
 
