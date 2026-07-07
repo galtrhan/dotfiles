@@ -401,6 +401,7 @@ Scope {
                             function launchEntry(entry): void {
                                 if (!entry)
                                     return;
+                                LauncherService.recordAppLaunch(entry);
                                 entry.execute();
                                 LauncherService.close();
                             }

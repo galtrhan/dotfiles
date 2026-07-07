@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Hyprland
 import QtQuick
+import "lib/AppUsageLogic.js" as AppUsageLogic
 import "lib/EmojiLogic.js" as EmojiLogic
 
 Singleton {
@@ -23,6 +24,7 @@ Singleton {
     property int selectedIndex: 0
     property bool menuWaiting: false
     property bool menuSearchable: false
+    property var appUsage: ({})
 
     // Connector name of the monitor that was focused when the launcher was
     // opened; the panel only maps on that screen. Empty means all screens.
@@ -53,6 +55,13 @@ Singleton {
                 root.emojis = [];
             }
         }
+    }
+
+    FileView {
+        id: usageFile
+        path: Quickshell.statePath("launcher-usage.json")
+
+        onLoaded: root.appUsage = AppUsageLogic.loadUsage(usageFile.text())
     }
 
     function openApps(): void {
@@ -106,11 +115,19 @@ Singleton {
         root.menuSearchable = false;
     }
 
+    function recordAppLaunch(entry): void {
+        if (!entry || !entry.id)
+            return;
+
+        root.appUsage = AppUsageLogic.recordLaunch(root.appUsage, entry.id);
+        usageFile.setText(JSON.stringify(root.appUsage));
+    }
+
     function filteredApps(): var {
         const all = DesktopEntries.applications.values;
         const q = root.query.trim().toLowerCase();
         if (q === "")
-            return all;
+            return AppUsageLogic.sortApps(all, root.appUsage);
 
         return all.filter(function (entry) {
             const name = (entry.name || "").toLowerCase();
