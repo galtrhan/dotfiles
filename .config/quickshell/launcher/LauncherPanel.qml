@@ -38,6 +38,7 @@ Scope {
     function copyEmoji(entry): void {
         if (!entry || !entry.emoji)
             return;
+        LauncherService.recordEmojiSelection(entry);
         copyProc.command = ["wl-copy", entry.emoji];
         copyProc.running = true;
         LauncherService.close();

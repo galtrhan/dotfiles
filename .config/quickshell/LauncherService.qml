@@ -25,6 +25,7 @@ Singleton {
     property bool menuWaiting: false
     property bool menuSearchable: false
     property var appUsage: ({})
+    property var emojiUsage: ({})
 
     // Connector name of the monitor that was focused when the launcher was
     // opened; the panel only maps on that screen. Empty means all screens.
@@ -62,6 +63,13 @@ Singleton {
         path: Quickshell.statePath("launcher-usage.json")
 
         onLoaded: root.appUsage = AppUsageLogic.loadUsage(usageFile.text())
+    }
+
+    FileView {
+        id: emojiUsageFile
+        path: Quickshell.statePath("launcher-emoji-usage.json")
+
+        onLoaded: root.emojiUsage = AppUsageLogic.loadUsage(emojiUsageFile.text())
     }
 
     function openApps(): void {
@@ -123,6 +131,14 @@ Singleton {
         usageFile.setText(JSON.stringify(root.appUsage));
     }
 
+    function recordEmojiSelection(entry): void {
+        if (!entry || !entry.emoji)
+            return;
+
+        root.emojiUsage = AppUsageLogic.recordLaunch(root.emojiUsage, entry.emoji);
+        emojiUsageFile.setText(JSON.stringify(root.emojiUsage));
+    }
+
     function filteredApps(): var {
         const all = DesktopEntries.applications.values;
         const q = root.query.trim().toLowerCase();
@@ -155,6 +171,10 @@ Singleton {
     }
 
     function filteredEmojis(): var {
+        const q = root.query.trim();
+        if (q === "")
+            return EmojiLogic.sortEmojis(root.emojis, root.emojiUsage);
+
         return EmojiLogic.filterEmojis(root.emojis, root.query);
     }
 
