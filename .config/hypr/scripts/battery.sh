@@ -62,7 +62,9 @@ main() {
 
     for threshold in "${THRESHOLDS[@]}"; do
         if (( capacity <= threshold )) && ! is_notified "$threshold"; then
-            if (( threshold <= 10 )); then
+            if (( threshold <= 5 )); then
+                notify "critical" "REACTOR CRITICAL" "POWER CORE AT ${capacity}% — IMMEDIATE SHUTDOWN REQUIRED" "$capacity"
+            elif (( threshold <= 10 )); then
                 notify "critical" "Battery Critical" "${capacity}% — plug in now!" "$capacity"
             elif (( threshold == 15 )); then
                 notify "critical" "Battery Low" "${capacity}% — find a charger." "$capacity"

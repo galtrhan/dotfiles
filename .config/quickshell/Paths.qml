@@ -11,4 +11,6 @@ Singleton {
     readonly property string runtimeDir: Quickshell.env("XDG_RUNTIME_DIR") || "/tmp"
     readonly property string screenCapturePid: runtimeDir + "/screen_capture.pid"
     readonly property string lnd: localBin + "/lnd"
+    readonly property string soundsDir: configDir + "/quickshell/sounds"
+    readonly property string batteryMeltdownSound: soundsDir + "/meltdown.mp3"
 }

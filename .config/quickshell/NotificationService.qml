@@ -34,6 +34,13 @@ Singleton {
         return root.badgeExcludedApps.indexOf(app) !== -1;
     }
 
+    function isBatteryMeltdown(notification): bool {
+        const app = notification.appName || "";
+        if (app !== "Battery")
+            return false;
+        return (notification.summary || "").startsWith("REACTOR");
+    }
+
     function isHistoryExcludedFromData(notifData): bool {
         const app = notifData.appName || "";
         return root.historyExcludedApps.indexOf(app) !== -1;
@@ -120,6 +127,12 @@ Singleton {
 
             notification.tracked = true;
 
+            const meltdown = root.isBatteryMeltdown(notification);
+            if (meltdown) {
+                const cap = root.parseProgress(notification.hints);
+                BatteryMeltdownService.activate(cap);
+            }
+
             const saveToHistory = !root.isHistoryExcluded(notification);
             const existing = root.findExistingEntry(notification);
             if (existing) {
@@ -131,7 +144,7 @@ Singleton {
                 } else {
                     root._removeFromHistory(existing);
                 }
-                if (!root.doNotDisturb)
+                if (!root.doNotDisturb && !meltdown)
                     root._promotePopup(existing);
                 return;
             }
@@ -151,7 +164,7 @@ Singleton {
                 }
             }
 
-            if (!root.doNotDisturb) {
+            if (!root.doNotDisturb && !meltdown) {
                 data.popupVisible = true;
                 root._promotePopup(data);
                 if (root.popups.length > Theme.notifMaxPopups) {

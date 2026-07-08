@@ -10,6 +10,7 @@ Scope {
     LauncherIpc {}
     NotificationPopup {}
     NotificationCenter {}
+    BatteryMeltdownOverlay {}
 
     IpcHandler {
         target: "bar"
