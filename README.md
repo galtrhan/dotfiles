@@ -87,6 +87,7 @@ After stowing, enable the wallpaper rotation service:
 ```bash
 systemctl --user enable wallpaper-rotate.service
 systemctl --user start wallpaper-rotate.service
+systemctl --user enable --now battery-notify.timer
 ```
 
 #### On Artix (runit)
@@ -201,7 +202,7 @@ Requires QuickShell to be running (started with Hyprland).
 |--------|---------|-------------|
 | [`power.sh`](.config/hypr/scripts/power.sh) | `Super+P` | QuickShell menu: lock, logout, suspend, reboot, shutdown |
 | [`qs-menu.sh`](.config/hypr/scripts/qs-menu.sh) | Called by scripts | Generic QuickShell menu picker (replaces dmenu-style prompts) |
-| [`battery.sh`](.config/hypr/scripts/battery.sh) | `battery-notify.service` | Low-battery desktop notifications at 20/15/10/5% |
+| [`battery.sh`](.config/hypr/scripts/battery.sh) | `battery-notify.timer` | Low-battery notifications at 20/15/10%; **5% meltdown overlay** with alarm, countdown, and auto-suspend. See [`.config/hypr/scripts/battery.md`](.config/hypr/scripts/battery.md). |
 
 ### Hardware Controls
 
@@ -260,6 +261,12 @@ qs ipc call -- menu show "Power Menu" $'Lock\nLogout\nSuspend'
 
 QuickShell auto-reloads QML on save. Restart with `Super+Shift+O` or `pkill quickshell; quickshell &`.
 
+### Battery Meltdown Overlay
+
+At **5% battery** while discharging, QuickShell shows a full-screen critical overlay (not the corner popup): flashing red UI, looping `meltdown.mp3` alarm, and a **60-second countdown** after which the system suspends. Click to dismiss or plug in to cancel.
+
+Requires `battery-notify.timer`, `ffmpeg` (`ffplay`), and `~/.config/quickshell/sounds/meltdown.mp3`. Full details: [`.config/hypr/scripts/battery.md`](.config/hypr/scripts/battery.md).
+
 ## Configuration
 
 Common tuning points:
@@ -267,6 +274,9 @@ Common tuning points:
 | Setting | File | Property / location |
 |---------|------|---------------------|
 | Notification badge exclusions (tray apps that should not increment the unread count) | [`.config/quickshell/NotificationService.qml`](.config/quickshell/NotificationService.qml) | `badgeExcludedApps` |
+| Battery meltdown suspend countdown | [`.config/quickshell/BatteryMeltdownService.qml`](.config/quickshell/BatteryMeltdownService.qml) | `suspendDelaySec` |
+| Battery meltdown alarm file | [`.config/quickshell/Paths.qml`](.config/quickshell/Paths.qml) | `batteryMeltdownSound` |
+| Low-battery thresholds | [`.config/hypr/scripts/battery.sh`](.config/hypr/scripts/battery.sh) | `THRESHOLDS` |
 | Clipboard history size (text / image) | [`.config/hypr/hyprland.lua`](.config/hypr/hyprland.lua) | `cliphist -max-items` in the `wl-paste --watch` autostart lines (default: 100 text, 10 image) |
 | Launcher list highlight color | [`.config/quickshell/Theme.qml`](.config/quickshell/Theme.qml) | `launcherHighlight` |
 
@@ -298,4 +308,5 @@ Notification history exclusions (volume/brightness/keyboard OSD) are in the same
 - **Mute LED control** for `XF86AudioMute` and `XF86AudioMicMute` uses udev ownership rules installed by `install.sh`
 - **Sudo askpass** requires Fish (for the non-TTY `sudo -A` wrapper), QuickShell running for the password overlay, and applies when stdin is not a terminal
 - **Desktop notifications** are handled by QuickShell (`notify-send` / `libnotify`). Disable or mask `dunst.service` if migrating from an older setup
+- **Battery meltdown** at 5% uses a QuickShell full-screen overlay with alarm sound and auto-suspend countdown — see [`.config/hypr/scripts/battery.md`](.config/hypr/scripts/battery.md)
 - For development or contributions, see [AGENTS.md](./AGENTS.md)

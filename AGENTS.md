@@ -33,6 +33,7 @@ To activate dotfiles: `stow .` from the repo root (creates symlinks in `~`).
 - **fish**: Shell with scripted configuration
 - **Hyprland**: Wayland window manager with custom scripts (volume, brightness, power management, wallpaper control)
 - **QuickShell**: QtQuick-based status bar, notification center, app launcher, and script menus (QML in `.config/quickshell/`)
+  - **Battery meltdown** (`BatteryMeltdownService.qml`, `notifications/BatteryMeltdownOverlay.qml`): full-screen 5% battery alert with `meltdown.mp3` alarm, 60s suspend countdown, triggered by `REACTOR CRITICAL` notifications from `battery.sh`
 - **Neovim**: Text editor configuration (large, includes plugins)
 - **Tmux**: Terminal multiplexer with plugin manager (tpm) and plugins:
   - `tmux-resurrect`: Session persistence
@@ -45,6 +46,7 @@ Shell scripts for system integration:
 
 **Hyprland scripts** (`.config/hypr/scripts/`):
 - `brightness.sh`, `volume.sh` — System volume/brightness control with QuickShell OSD notifications
+- `battery.sh` — Low-battery `notify-send` alerts (20/15/10%); at 5% triggers QuickShell **battery meltdown** overlay
 - `wallpaper_rotate.sh`, `wallpaper_control.sh`, `wallpaper_persistence.sh`, `wallpaper_restore.sh` — Wallpaper rotation/persistence across restarts
 - `power.sh` — Power management (lock, suspend) via QuickShell menu
 - `qs-menu.sh` — Generic QuickShell menu picker for shell scripts
@@ -113,6 +115,7 @@ stow -nv .
 - Fish shell configuration sourced from multiple `.config/fish/` files—check sourcing order when modifying.
 - Individual config directories (nvim, tmux plugins, etc.) may have their own documentation/READMEs.
 - **`lnd`** (Latvian Name Days) is an external tool at [codeberg.org/galtrhan/latvian-name-days](https://codeberg.org/galtrhan/latvian-name-days). Build with `zig build -Doptimize=ReleaseSmall` and copy to `~/.local/bin/lnd`.
+- **Battery notifications**: `battery.sh` + `battery-notify.timer`; 5% meltdown docs in `.config/hypr/scripts/battery.md`. Alarm file: `~/.config/quickshell/sounds/meltdown.mp3` (user-provided).
 
 ## Config Changes and Reloading
 
