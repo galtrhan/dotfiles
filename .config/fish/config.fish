@@ -16,5 +16,7 @@ function sudo --wraps sudo
         command sudo -A $argv
     else
         command sudo $argv
-    end
+end
+
+alias agent='cursor-agent'
 end

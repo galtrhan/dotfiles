@@ -23,3 +23,9 @@ hl.window_rule({
     center = true,
     size = { 768, 480 },
 })
+
+hl.window_rule({
+    name = "Zed",
+    match = { class = "dev.zed.Zed" },
+    monitor = "1",
+})
