@@ -6,9 +6,6 @@ Wants=graphical-session.target
 [Service]
 Type=oneshot
 ExecStart=%h/.config/hypr/scripts/battery.sh
-Environment=DISPLAY=%E{DISPLAY}
-Environment=WAYLAND_DISPLAY=%E{WAYLAND_DISPLAY}
-Environment=DBUS_SESSION_BUS_ADDRESS=%E{DBUS_SESSION_BUS_ADDRESS}
 
 [Install]
 WantedBy=graphical-session.target

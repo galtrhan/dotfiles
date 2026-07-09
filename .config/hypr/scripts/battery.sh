@@ -41,6 +41,7 @@ notify() {
     else
         notify-send -a "Battery" -u "$urgency" -t 5000 "$title" "$message"
     fi
+    return $?
 }
 
 main() {
@@ -71,7 +72,9 @@ main() {
             else
                 notify "normal" "Battery Warning" "${capacity}% remaining." "$capacity"
             fi
-            mark_notified "$threshold"
+            if [[ $? -eq 0 ]]; then
+                mark_notified "$threshold"
+            fi
         fi
     done
 
