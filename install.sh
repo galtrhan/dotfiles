@@ -13,7 +13,7 @@ pacman_packages=(
 	hyprland
 	hyprcursor
 	hypridle
-	hyprlock
+	# hyprlock: custom build from github.com/galtrhan/hyprlock (broken LCD effect)
 	hyprpaper
 	hyprshot
 	quickshell

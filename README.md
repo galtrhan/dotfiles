@@ -8,6 +8,7 @@ This setup is optimized for a **single-monitor** desktop. Multi-monitor behavior
 
 ### Window Manager & Desktop
 - **Hyprland** - Wayland window manager (Lua config) with custom scripts for auth, power, media, wallpaper, and screen capture
+- **Hyprlock** - Custom build from [galtrhan/hyprlock](https://github.com/galtrhan/hyprlock) with broken LCD effect (progressive screen glitch on failed auth/lid open)
 - **QuickShell** - Status bar, notification center, app launcher, and script menus (QML)
 - **Shmooz** - Screen magnifier (zoom, annotation, spotlight, color picker)
 
@@ -309,4 +310,5 @@ Notification history exclusions (volume/brightness/keyboard OSD) are in the same
 - **Sudo askpass** requires Fish (for the non-TTY `sudo -A` wrapper), QuickShell running for the password overlay, and applies when stdin is not a terminal
 - **Desktop notifications** are handled by QuickShell (`notify-send` / `libnotify`). Disable or mask `dunst.service` if migrating from an older setup
 - **Battery meltdown** at 5% uses a QuickShell full-screen overlay with alarm sound and auto-suspend countdown — see [`.config/hypr/scripts/battery.md`](.config/hypr/scripts/battery.md)
+- **Hyprlock** is a custom build from [galtrhan/hyprlock](https://github.com/galtrhan/hyprlock) — not the upstream `hyprlock` package. The `broken_lcd` effect and `--grace` flag require this fork. Build with cmake (see repo README) and `sudo cmake --install build`
 - For development or contributions, see [AGENTS.md](./AGENTS.md)

@@ -32,6 +32,7 @@ To activate dotfiles: `stow .` from the repo root (creates symlinks in `~`).
 
 - **fish**: Shell with scripted configuration
 - **Hyprland**: Wayland window manager with custom scripts (volume, brightness, power management, wallpaper control)
+- **Hyprlock**: Custom build from [galtrhan/hyprlock](https://github.com/galtrhan/hyprlock) — adds broken LCD effect (progressive screen glitch on failed auth / laptop lid open) and `--grace` flag. Not the upstream package; must be built from source with cmake.
 - **QuickShell**: QtQuick-based status bar, notification center, app launcher, and script menus (QML in `.config/quickshell/`)
   - **Battery meltdown** (`BatteryMeltdownService.qml`, `notifications/BatteryMeltdownOverlay.qml`): full-screen 5% battery alert with `meltdown.mp3` alarm, 60s suspend countdown, triggered by `REACTOR CRITICAL` notifications from `battery.sh`
 - **Neovim**: Text editor configuration (large, includes plugins)
@@ -116,6 +117,7 @@ stow -nv .
 - Individual config directories (nvim, tmux plugins, etc.) may have their own documentation/READMEs.
 - **`lnd`** (Latvian Name Days) is an external tool at [codeberg.org/galtrhan/latvian-name-days](https://codeberg.org/galtrhan/latvian-name-days). Build with `zig build -Doptimize=ReleaseSmall` and copy to `~/.local/bin/lnd`.
 - **Battery notifications**: `battery.sh` + `battery-notify.timer`; 5% meltdown docs in `.config/hypr/scripts/battery.md`. Alarm file: `~/.config/quickshell/sounds/meltdown.mp3` (user-provided).
+- **Hyprlock** uses a custom fork (`github.com/galtrhan/hyprlock`) that adds the `broken_lcd` effect and `--grace` flag. The `install.sh` does not install the upstream `hyprlock` package — build from source with `cmake --no-warn-unused-cli -DCMAKE_BUILD_TYPE:STRING=Release -S . -B ./build && cmake --build ./build --config Release --target hyprlock -j$(nproc) && sudo cmake --install build`.
 
 ## Config Changes and Reloading
 
