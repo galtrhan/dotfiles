@@ -17,7 +17,7 @@ pacman_packages=(
 	hyprpaper
 	hyprshot
 	quickshell
-	nautilus
+	hyprfm
 	networkmanager
 	network-manager-applet
 	blueman

@@ -3,7 +3,7 @@ package.path = home .. "/.config/hypr/?.lua;" .. package.path
 
 local terminal = "ghostty"
 local browser = "zen-browser"
-local fileManager = "nautilus"
+local fileManager = "hyprfm"
 local menu = "qs ipc call launcher toggle"
 
 hl.env("XCURSOR_SIZE", "24")
@@ -16,7 +16,6 @@ hl.env("XDG_SESSION_TYPE", "wayland")
 hl.env("XDG_SESSION_DESKTOP", "Hyprland")
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
 hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
-hl.env("GTK_THEME", "Adwaita:dark")
 hl.env("GDK_BACKEND", "wayland")
 hl.env("WLR_NO_HARDWARE_CURSORS", "1")
 hl.env("WLR_DRM_NO_ATOMIC", "1")

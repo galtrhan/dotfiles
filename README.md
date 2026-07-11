@@ -133,7 +133,7 @@ stow -R .
 |-----|--------|
 | `Super+Return` | Open terminal (Ghostty) |
 | `Super+W` | Open browser (Zen) |
-| `Super+E` | Open file manager (Nautilus) |
+| `Super+E` | Open file manager (HyprFM) |
 | `Super+Space` | Application launcher (QuickShell) |
 | `Super+L` | Lock screen (Hyprlock) |
 | `Super+P` | Power menu |
