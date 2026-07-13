@@ -51,6 +51,18 @@ QtObject {
             if (notificationData.closed || notificationData.archived)
                 return;
 
+            if (notificationData.notification)
+                notificationData.syncFrom(notificationData.notification);
+
+            if (!NotificationService.hasDisplayText(notificationData)) {
+                notificationData.closed = true;
+                NotificationService._removeFromPopups(notificationData);
+                NotificationService._removeFromHistory(notificationData);
+                notificationData.notification = null;
+                notificationData.destroy();
+                return;
+            }
+
             NotificationService._removeFromPopups(notificationData);
 
             if (notificationData.isPopupOnly) {

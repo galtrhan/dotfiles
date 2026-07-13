@@ -11,41 +11,76 @@ Rectangle {
     property bool showTimer: false
     property bool compact: false
     property bool fullDismiss: false
+    property int badgeCount: 0
+    property bool dismissAsGroup: false
+    property string groupAppName: ""
+    property bool toggleExpandOnClick: false
+    property bool interactive: true
+    property bool stackedAppearance: false
+    property bool showGroupBadge: false
+
+    readonly property int sidePadding: compact ? 8 : 12
+    readonly property int headerHeight: compact ? 28 : 32
+    readonly property color cardBorderColor: !modelData ? Theme.notifBorder
+        : modelData.urgency === NotificationUrgency.Critical ? Theme.notifUrgencyCritical
+        : modelData.urgency === NotificationUrgency.Low ? Theme.notifUrgencyLow
+        : Theme.notifBorder
 
     visible: modelData !== null
 
+    width: Theme.notifWidth
     implicitWidth: Theme.notifWidth
-    implicitHeight: cardContent.implicitHeight + (compact ? 16 : 24)
+    implicitHeight: cardContent.implicitHeight + sidePadding * 2
     radius: Theme.borderRadius
     color: Theme.notifBg
-    border.color: modelData.urgency === NotificationUrgency.Critical ? Theme.notifUrgencyCritical
-        : modelData.urgency === NotificationUrgency.Low ? Theme.notifUrgencyLow
-        : Theme.notifBorder
-    border.width: 1
+    border.color: cardBorderColor
+    border.width: stackedAppearance ? 0 : 1
     clip: true
 
     HoverHandler {
         id: cardHover
-        onHoveredChanged: root.modelData.hovered = hovered
+        enabled: root.interactive && root.modelData !== null
+        onHoveredChanged: {
+            if (root.modelData)
+                root.modelData.hovered = hovered;
+        }
     }
 
     ColumnLayout {
         id: cardContent
         anchors {
             fill: parent
-            margins: compact ? 8 : 12
+            margins: sidePadding
         }
         spacing: 6
 
-        RowLayout {
+        Item {
             Layout.fillWidth: true
-            spacing: 8
+            Layout.preferredHeight: headerHeight
 
-            Rectangle {
-                Layout.preferredWidth: compact ? 20 : 24
-                Layout.preferredHeight: compact ? 20 : 24
-                radius: 4
-                color: "transparent"
+            Text {
+                id: appNameText
+                anchors {
+                    left: iconSlot.visible ? iconSlot.right : parent.left
+                    leftMargin: iconSlot.visible ? 8 : 0
+                    right: groupBadge.visible ? groupBadge.left : closeArea.left
+                    rightMargin: 8
+                    verticalCenter: parent.verticalCenter
+                }
+                text: root.modelData.appName || "Notification"
+                color: Theme.notifFg
+                font.family: Theme.fontFamily
+                font.pixelSize: compact ? 11 : 12
+                font.bold: true
+                elide: Text.ElideRight
+            }
+
+            Item {
+                id: iconSlot
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                width: compact ? 20 : 24
+                height: compact ? 20 : 24
                 visible: root.modelData.appIcon !== "" || root.modelData.image !== ""
 
                 IconImage {
@@ -64,23 +99,39 @@ Rectangle {
                 }
             }
 
-            Text {
-                text: root.modelData.appName || "Notification"
-                color: "#ffffff"
-                font.family: Theme.fontFamily
-                font.pixelSize: compact ? 20 : 22
-                font.bold: true
-                Layout.alignment: Qt.AlignVCenter
-                elide: Text.ElideRight
-                Layout.fillWidth: true
+            Rectangle {
+                id: groupBadge
+                anchors {
+                    right: closeArea.left
+                    rightMargin: 8
+                    verticalCenter: parent.verticalCenter
+                }
+                width: badgeLabel.implicitWidth + 10
+                height: 18
+                radius: 9
+                color: Qt.rgba(255, 255, 255, 0.15)
+                visible: root.showGroupBadge && root.badgeCount > 1
+
+                Text {
+                    id: badgeLabel
+                    anchors.centerIn: parent
+                    text: String(root.badgeCount)
+                    color: Theme.notifFg
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 10
+                    font.bold: true
+                }
             }
 
             Rectangle {
-                Layout.preferredWidth: compact ? 36 : 36
-                Layout.preferredHeight: compact ? 36 : 36
+                id: closeArea
+                anchors.right: parent.right
+                anchors.verticalCenter: parent.verticalCenter
+                width: 36
+                height: 36
                 radius: 18
                 color: closeHover.containsMouse ? Theme.notifBorder : "transparent"
-                Layout.alignment: Qt.AlignVCenter
+                visible: root.interactive
 
                 Text {
                     anchors.centerIn: parent
@@ -95,7 +146,12 @@ Rectangle {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    onClicked: root.fullDismiss ? root.modelData.dismiss() : root.modelData.removePopup()
+                    onClicked: {
+                        if (root.dismissAsGroup)
+                            NotificationService.dismissGroup(root.groupAppName);
+                        else
+                            root.fullDismiss ? root.modelData.dismiss() : root.modelData.removePopup();
+                    }
                 }
             }
         }
@@ -203,19 +259,67 @@ Rectangle {
         }
     }
 
+    Rectangle {
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: 1
+        radius: 0
+        color: cardBorderColor
+        visible: stackedAppearance
+    }
+
+    Rectangle {
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.right: parent.right
+        height: 1
+        radius: 0
+        color: cardBorderColor
+        visible: stackedAppearance
+    }
+
+    Rectangle {
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: 3
+        radius: 0
+        color: cardBorderColor
+        visible: stackedAppearance
+    }
+
+    Rectangle {
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: 3
+        radius: 0
+        color: cardBorderColor
+        visible: stackedAppearance
+    }
+
     MouseArea {
         anchors.fill: parent
         z: -1
+        enabled: root.interactive
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         cursorShape: Qt.PointingHandCursor
         onClicked: function (mouse) {
             if (mouse.button === Qt.RightButton) {
-                root.modelData.dismiss()
-                return
+                if (root.dismissAsGroup)
+                    NotificationService.dismissGroup(root.groupAppName);
+                else
+                    root.modelData.dismiss();
+                return;
+            }
+            if (root.toggleExpandOnClick) {
+                NotificationService.toggleGroupExpanded(root.groupAppName);
+                return;
             }
             if (mouse.y < 40)
-                return
-            root.fullDismiss ? root.modelData.dismiss() : root.modelData.removePopup()
+                return;
+            root.fullDismiss ? root.modelData.dismiss() : root.modelData.removePopup();
         }
     }
 }

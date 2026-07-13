@@ -76,6 +76,7 @@ Scope {
 
                         NotificationCard {
                             id: card
+                            width: Theme.notifWidth
                             modelData: parent.modelData
                             showTimer: true
                             compact: false

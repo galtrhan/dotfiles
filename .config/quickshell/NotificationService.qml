@@ -23,6 +23,45 @@ Singleton {
     readonly property var osdApps: ["Volume", "Brightness", "Keyboard", "Battery", "Wallpaper"]
     readonly property var historyExcludedApps: ["Volume", "Brightness", "Keyboard"]
     readonly property var badgeExcludedApps: ["blueman", "NetworkManager Applet"]
+    readonly property var groupedApps: ["blueman", "NetworkManager Applet"]
+    property var expandedGroups: ({})
+
+    function isGroupedApp(appName): bool {
+        return root.groupedApps.indexOf(appName || "") !== -1;
+    }
+
+    function groupItems(appName): var {
+        return root.history.filter(function (n) {
+            return !n.closed && (n.appName || "") === appName;
+        });
+    }
+
+    function isGroupRepresentative(notifData): bool {
+        if (!notifData || notifData.closed)
+            return false;
+        const app = notifData.appName || "";
+        if (!root.isGroupedApp(app) || root.isGroupExpanded(app))
+            return false;
+        const items = root.groupItems(app);
+        return items.length > 0 && items[0] === notifData;
+    }
+
+    function hasDisplayText(notifData): bool {
+        if (!notifData)
+            return false;
+        return (notifData.appName || "").length > 0
+            || (notifData.summary || "").length > 0
+            || (notifData.body || "").length > 0;
+    }
+
+    function isCenterEntryVisible(notifData): bool {
+        if (!notifData || notifData.closed || !root.hasDisplayText(notifData))
+            return false;
+        const app = notifData.appName || "";
+        if (!root.isGroupedApp(app) || root.isGroupExpanded(app))
+            return true;
+        return root.isGroupRepresentative(notifData);
+    }
 
     function isHistoryExcluded(notification): bool {
         const app = notification.appName || "";
@@ -149,11 +188,11 @@ Singleton {
                 return;
             }
 
-            const data = notifDataComp.createObject(root, {
-                notification: notification,
+            const data = notifDataComp.createObject(root, Object.assign({
                 seqId: String(root._seqCounter++),
                 timestamp: Date.now()
-            });
+            }, root.snapshotNotification(notification)));
+            data.syncFrom(notification);
 
             if (saveToHistory) {
                 root.history = [data, ...root.history];
@@ -177,6 +216,31 @@ Singleton {
             if (!root.centerOpen && saveToHistory && !root.isBadgeExcluded(notification))
                 root.unreadCount += 1;
         }
+    }
+
+    function snapshotNotification(notification): object {
+        const rawTimeout = notification.expireTimeout;
+        let expireTimeout = rawTimeout;
+        if (expireTimeout <= 0) {
+            if (notification.urgency === NotificationUrgency.Critical)
+                expireTimeout = Theme.notifTimeoutCritical;
+            else if (notification.urgency === NotificationUrgency.Low)
+                expireTimeout = Theme.notifTimeoutLow;
+            else
+                expireTimeout = Theme.notifTimeoutNormal;
+        }
+
+        return {
+            notification: notification,
+            notifId: String(notification.id || ""),
+            summary: notification.summary || "",
+            body: notification.body || "",
+            appIcon: notification.appIcon || "",
+            appName: notification.appName || "",
+            image: notification.image || "",
+            urgency: notification.urgency,
+            expireTimeout: expireTimeout
+        };
     }
 
     function parseProgress(hints): int {
@@ -250,5 +314,27 @@ Singleton {
 
     function toggleDnd(): void {
         root.doNotDisturb = !root.doNotDisturb;
+    }
+
+    function toggleGroupExpanded(appName): void {
+        const next = Object.assign({}, root.expandedGroups);
+        next[appName] = !(next[appName] || false);
+        root.expandedGroups = next;
+    }
+
+    function isGroupExpanded(appName): bool {
+        return root.expandedGroups[appName] || false;
+    }
+
+    function dismissGroup(appName): void {
+        const items = root.history.filter(function (n) {
+            return !n.closed && (n.appName || "") === appName;
+        });
+        for (const n of items)
+            n.dismiss();
+
+        const next = Object.assign({}, root.expandedGroups);
+        delete next[appName];
+        root.expandedGroups = next;
     }
 }

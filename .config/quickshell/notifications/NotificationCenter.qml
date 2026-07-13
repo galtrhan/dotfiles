@@ -16,7 +16,11 @@ Scope {
             screen: modelData
 
             readonly property int panelPadding: 24
-            readonly property int chromeHeight: headerRow.implicitHeight + 1 + centerColumn.spacing + panelPadding
+            readonly property int innerPadding: 12
+            readonly property int sectionSpacing: 8
+            readonly property int listBottomPadding: sectionSpacing * 2
+            readonly property int verticalChromePadding: innerPadding + sectionSpacing
+            readonly property int chromeHeight: headerRow.implicitHeight + 1 + sectionSpacing + verticalChromePadding
             readonly property int maxBodyHeight: Math.max(80, modelData.height * 0.75 - chromeHeight)
             readonly property int bodyHeight: NotificationService.history.length === 0
                 ? 80
@@ -56,9 +60,14 @@ Scope {
 
                 ColumnLayout {
                     id: centerColumn
-                    anchors.fill: parent
-                    anchors.margins: 12
-                    spacing: 8
+                    anchors {
+                        fill: parent
+                        topMargin: innerPadding
+                        leftMargin: innerPadding
+                        rightMargin: innerPadding
+                        bottomMargin: sectionSpacing
+                    }
+                    spacing: sectionSpacing
 
                     RowLayout {
                         id: headerRow
@@ -182,29 +191,54 @@ Scope {
                         ColumnLayout {
                             id: historyList
                             width: parent.width
-                            spacing: 8
+                            spacing: sectionSpacing
 
                             Repeater {
                                 model: ScriptModel {
-                                    values: NotificationService.history
+                                    values: {
+                                        const _expanded = NotificationService.expandedGroups;
+                                        return NotificationService.history;
+                                    }
                                     objectProp: "seqId"
                                 }
 
                                 delegate: Item {
                                     required property var modelData
                                     Layout.fillWidth: true
-                                    implicitWidth: card.implicitWidth
-                                    implicitHeight: card.implicitHeight
+                                    visible: NotificationService.isCenterEntryVisible(modelData)
+
+                                    readonly property bool showAsGroup:
+                                        modelData !== null
+                                        && NotificationService.isGroupRepresentative(modelData)
+
+                                    implicitWidth: parent.width
+                                    implicitHeight: showAsGroup
+                                        ? groupCard.implicitHeight
+                                        : singleCard.implicitHeight
+
+                                    NotificationGroup {
+                                        id: groupCard
+                                        width: Theme.notifWidth
+                                        visible: parent.showAsGroup
+                                        appName: modelData ? modelData.appName : ""
+                                        items: modelData ? NotificationService.groupItems(modelData.appName) : []
+                                    }
 
                                     NotificationCard {
-                                        id: card
+                                        id: singleCard
                                         width: parent.width
+                                        visible: !parent.showAsGroup
                                         modelData: parent.modelData
                                         showTimer: false
                                         compact: true
                                         fullDismiss: true
                                     }
                                 }
+                            }
+
+                            Item {
+                                Layout.fillWidth: true
+                                Layout.preferredHeight: listBottomPadding
                             }
                         }
                     }
