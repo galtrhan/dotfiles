@@ -17,7 +17,7 @@ pacman_packages=(
 	hyprpaper
 	hyprshot
 	quickshell
-	hyprfm
+	thunar
 	networkmanager
 	network-manager-applet
 	blueman

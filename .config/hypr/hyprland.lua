@@ -3,7 +3,7 @@ package.path = home .. "/.config/hypr/?.lua;" .. package.path
 
 local terminal = "ghostty"
 local browser = "zen-browser"
-local fileManager = "hyprfm"
+local fileManager = "thunar"
 local menu = "qs ipc call launcher toggle"
 
 hl.env("XCURSOR_SIZE", "24")
