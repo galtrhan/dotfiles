@@ -36,10 +36,17 @@ notify() {
     local title="$2"
     local message="$3"
     local value="$4"
+    local timeout="${5:-}"
+
+    local -a timeout_args=()
+    if [[ -n "$timeout" ]]; then
+        timeout_args=(-t "$timeout")
+    fi
+
     if [[ -n "$value" ]]; then
-        notify-send -a "Battery" -u "$urgency" -t 5000 -h int:value:"$value" "$title" "$message"
+        notify-send -a "Battery" -u "$urgency" "${timeout_args[@]}" -h int:value:"$value" "$title" "$message"
     else
-        notify-send -a "Battery" -u "$urgency" -t 5000 "$title" "$message"
+        notify-send -a "Battery" -u "$urgency" "${timeout_args[@]}" "$title" "$message"
     fi
     return $?
 }
@@ -64,13 +71,13 @@ main() {
     for threshold in "${THRESHOLDS[@]}"; do
         if (( capacity <= threshold )) && ! is_notified "$threshold"; then
             if (( threshold <= 5 )); then
-                notify "critical" "REACTOR CRITICAL" "POWER CORE AT ${capacity}% — IMMEDIATE SHUTDOWN REQUIRED" "$capacity"
+                notify "critical" "REACTOR CRITICAL" "POWER CORE AT ${capacity}% — IMMEDIATE SHUTDOWN REQUIRED" "$capacity" 60000
             elif (( threshold <= 10 )); then
                 notify "critical" "Battery Critical" "${capacity}% — plug in now!" "$capacity"
             elif (( threshold == 15 )); then
                 notify "critical" "Battery Low" "${capacity}% — find a charger." "$capacity"
             else
-                notify "normal" "Battery Warning" "${capacity}% remaining." "$capacity"
+                notify "normal" "Battery Warning" "${capacity}% remaining." "$capacity" 5000
             fi
             if [[ $? -eq 0 ]]; then
                 mark_notified "$threshold"

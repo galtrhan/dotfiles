@@ -43,6 +43,7 @@ QtObject {
     readonly property bool hasProgress: progress >= 0 && progress <= 100
     readonly property bool isOsd: NotificationService.osdApps.indexOf(appName) !== -1
     readonly property bool isPopupOnly: NotificationService.isHistoryExcludedFromData(notificationData)
+    readonly property bool isPersistent: NotificationService.isPersistentFromData(notificationData)
 
     readonly property Connections _conn: Connections {
         target: notificationData.notification
@@ -134,7 +135,7 @@ QtObject {
                  && !notificationData.archived
                  && notificationData.popupVisible
                  && !notificationData.hovered
-                 && notificationData.urgency !== NotificationUrgency.Critical
+                 && !notificationData.isPersistent
                  && notificationData.effectiveTimeout > 0
         interval: notificationData.effectiveTimeout
         onTriggered: notificationData.expirePopup()

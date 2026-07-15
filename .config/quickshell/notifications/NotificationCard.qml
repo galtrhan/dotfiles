@@ -26,6 +26,22 @@ Rectangle {
         : modelData.urgency === NotificationUrgency.Low ? Theme.notifUrgencyLow
         : Theme.notifBorder
 
+    readonly property bool shouldAnimateTimer: root.showTimer
+            && root.modelData
+            && !root.modelData.hasProgress
+            && !root.modelData.isPersistent
+            && root.modelData.effectiveTimeout > 0
+
+    function restartTimerAnimation(): void {
+        if (!root.shouldAnimateTimer) {
+            timerAnim.stop();
+            return;
+        }
+        timerAnim.stop();
+        progressFill.width = progressFill.parent.width;
+        timerAnim.restart();
+    }
+
     visible: modelData !== null
 
     width: Theme.notifWidth
@@ -234,27 +250,25 @@ Rectangle {
                        : parent.width
 
                 SequentialAnimation {
-                    running: root.showTimer
-                             && !root.modelData.hasProgress
-                             && root.modelData.urgency !== NotificationUrgency.Critical
-                             && root.modelData.effectiveTimeout > 0
+                    id: timerAnim
                     PauseAnimation { duration: 50 }
                     NumberAnimation {
                         target: progressFill
                         property: "width"
                         from: progressFill.parent.width
                         to: 0
-                        duration: root.modelData.effectiveTimeout
+                        duration: root.modelData ? root.modelData.effectiveTimeout : 0
                     }
                 }
 
                 Connections {
                     target: root.modelData
                     function onTimerGenerationChanged(): void {
-                        if (root.showTimer && !root.modelData.hasProgress)
-                            progressFill.width = progressFill.parent.width;
+                        root.restartTimerAnimation();
                     }
                 }
+
+                Component.onCompleted: root.restartTimerAnimation()
             }
         }
     }

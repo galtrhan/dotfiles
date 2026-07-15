@@ -80,6 +80,24 @@ Singleton {
         return (notification.summary || "").startsWith("REACTOR");
     }
 
+    function isPersistent(notification): bool {
+        const app = notification.appName || "";
+        if (app !== "Battery")
+            return false;
+        const summary = (notification.summary || "").trim();
+        return summary === "Battery Low" || summary === "Battery Critical";
+    }
+
+    function isPersistentFromData(notifData): bool {
+        if (!notifData)
+            return false;
+        const app = notifData.appName || "";
+        if (app !== "Battery")
+            return false;
+        const summary = (notifData.summary || "").trim();
+        return summary === "Battery Low" || summary === "Battery Critical";
+    }
+
     function isHistoryExcludedFromData(notifData): bool {
         const app = notifData.appName || "";
         return root.historyExcludedApps.indexOf(app) !== -1;
