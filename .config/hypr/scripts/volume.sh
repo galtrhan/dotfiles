@@ -19,9 +19,58 @@ is_muted() {
     wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -q "MUTED"
 }
 
-# Check if mic is muted
+# List PipeWire audio source node IDs (excludes monitor/speaker nodes)
+list_audio_sources() {
+    wpctl status 2>/dev/null | awk '
+        /Sources:/ { in_sources=1; next }
+        in_sources && /^ ├─ Filters:/ { exit }
+        in_sources && /^ └─ Streams:/ { exit }
+        in_sources && /^ │/ {
+            line = $0
+            sub(/^ │[\* ]*/, "", line)
+            id = line
+            sub(/\..*/, "", id)
+            if (id ~ /^[0-9]+$/) print id
+        }'
+}
+
+# Mic is muted only when every capture source is muted
 is_mic_muted() {
-    wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | grep -q "MUTED"
+    local source_id
+    local sources
+    sources=$(list_audio_sources)
+
+    if [[ -z "$sources" ]]; then
+        wpctl get-volume @DEFAULT_AUDIO_SOURCE@ | grep -q "MUTED"
+        return
+    fi
+
+    while read -r source_id; do
+        if ! wpctl get-volume "$source_id" 2>/dev/null | grep -q "MUTED"; then
+            return 1
+        fi
+    done <<< "$sources"
+}
+
+set_all_mic_mute() {
+    local mute_state="$1"
+    local source_id
+    local sources
+    local changed=false
+    sources=$(list_audio_sources)
+
+    if [[ -z "$sources" ]]; then
+        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ "$mute_state"
+        return
+    fi
+
+    while read -r source_id; do
+        if wpctl set-mute "$source_id" "$mute_state" 2>/dev/null; then
+            changed=true
+        fi
+    done <<< "$sources"
+
+    [[ "$changed" == true ]]
 }
 
 # Write LED state only when writable
@@ -100,9 +149,9 @@ toggle_mute() {
 # Toggle Mic
 toggle_mic() {
     if is_mic_muted; then
-        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0 && notify-send -a "Volume" -u normal -t 3000 "Microphone Switched ON"
+        set_all_mic_mute 0 && notify-send -a "Volume" -u normal -t 3000 "Microphone Switched ON"
     else
-        wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 1 && notify-send -a "Volume" -u critical -t 3000 "Microphone Switched OFF"
+        set_all_mic_mute 1 && notify-send -a "Volume" -u critical -t 3000 "Microphone Switched OFF"
     fi
     sync_mic_led
 }
