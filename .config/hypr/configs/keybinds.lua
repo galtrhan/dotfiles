@@ -1,7 +1,7 @@
 local home = os.getenv("HOME")
 local terminal = "ghostty"
 local browser = "zen-browser"
-local fileManager = "thunar"
+local fileManager = "pcmanfm"
 local menu = "qs ipc call launcher toggle"
 local mainMod = "SUPER"
 
