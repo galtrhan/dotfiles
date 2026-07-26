@@ -19,6 +19,7 @@ BarLabel {
         path: Quickshell.statePath("temps-history.json")
     }
 
+    icon: ""
     text: displayText
     labelColor: {
         if (tempsClass === "cool")
@@ -40,7 +41,7 @@ BarLabel {
                 var data = JSON.parse(text);
                 var temps = TempsLogic.parseTemps(data);
                 if (temps.length === 0) {
-                    root.displayText = " ??°C";
+                    root.displayText = "??°C";
                     root.tooltipBody = "No temperature data";
                     root.tempsClass = "";
                     return;
@@ -51,7 +52,7 @@ BarLabel {
                 var rolling = TempsLogic.rollingAverage(history, cpuTemp, root.historySize);
                 historyFile.setText(JSON.stringify(rolling.history));
 
-                root.displayText = " " + rolling.average + "°C";
+                root.displayText = rolling.average + "°C";
                 root.tooltipBody = TempsLogic.buildTooltip(temps);
                 root.tempsClass = TempsLogic.tempClass(rolling.average);
             } catch (e) {

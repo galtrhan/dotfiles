@@ -2,13 +2,16 @@ import QtQuick
 import ".."
 import "../components"
 
-Item {
+BarLabel {
     id: root
 
     property bool recording: false
 
-    implicitWidth: label.implicitWidth
-    implicitHeight: label.implicitHeight
+    icon: ""
+    text: "REC"
+    labelColor: Theme.recording
+    labelWeight: Font.Bold
+    visible: recording
 
     ScriptPoll {
         command: ["sh", "-c", "pid=$(cat '" + Paths.screenCapturePid + "' 2>/dev/null) && kill -0 \"$pid\" 2>/dev/null && echo recording || echo idle"]
@@ -16,13 +19,5 @@ Item {
         onOutput: function (text) {
             root.recording = text.trim() === "recording";
         }
-    }
-
-    BarLabel {
-        id: label
-        text: "● REC"
-        labelColor: Theme.recording
-        labelWeight: Font.Bold
-        visible: root.recording
     }
 }

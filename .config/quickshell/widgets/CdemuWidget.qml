@@ -10,11 +10,11 @@ Item {
     implicitWidth: row.implicitWidth
     implicitHeight: Theme.barHeight
 
-    // Verified against JetBrainsMono Nerd Font glyph names
-    readonly property string iconEmpty: "󰉉"  // md-floppy
-    readonly property string iconIso: "󰋊"    // md-harddisk
-    readonly property string iconCd: "󰗮"     // md-disc
-    readonly property string iconDvd: "󰿎"    // md-movie_open
+    // FA icons (in JetBrainsMono Nerd Font)
+    readonly property string iconEmpty: ""
+    readonly property string iconIso: ""
+    readonly property string iconCd: ""
+    readonly property string iconDvd: ""
 
     function mediaIcon(loaded, filename) {
         if (!loaded)
@@ -30,10 +30,6 @@ Item {
         return iconCd;
     }
 
-    function driveText(loaded, filename) {
-        return mediaIcon(loaded, filename);
-    }
-
     RowLayout {
         id: row
         anchors.fill: parent
@@ -41,8 +37,7 @@ Item {
 
         BarLabel {
             Layout.alignment: Qt.AlignVCenter
-            text: root.driveText(CdemuService.loaded, CdemuService.filename)
-            labelSize: Theme.fontSize + 6
+            icon: root.mediaIcon(CdemuService.loaded, CdemuService.filename)
             labelColor: CdemuService.loaded ? Theme.workspaceActive : Theme.fgMuted
             tooltipText: CdemuService.loaded
                 ? "CDEmu 1: " + CdemuService.filename + "\nLeft: open · Right: eject"
@@ -66,8 +61,7 @@ Item {
         BarLabel {
             Layout.alignment: Qt.AlignVCenter
             visible: CdemuService.loaded || CdemuService.loaded2
-            text: root.driveText(CdemuService.loaded2, CdemuService.filename2)
-            labelSize: Theme.fontSize + 6
+            icon: root.mediaIcon(CdemuService.loaded2, CdemuService.filename2)
             labelColor: CdemuService.loaded2 ? Theme.workspaceActive : Theme.fgMuted
             tooltipText: CdemuService.loaded2
                 ? "CDEmu 2: " + CdemuService.filename2 + "\nLeft: open · Right: eject"

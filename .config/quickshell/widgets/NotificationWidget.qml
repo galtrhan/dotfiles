@@ -5,8 +5,8 @@ import "../components"
 Item {
     id: root
 
-    implicitWidth: bellLabel.width + badge.width
-    implicitHeight: Math.max(bellLabel.height, badge.height)
+    implicitWidth: bellLabel.implicitWidth + (badge.visible ? Math.max(0, badge.width - 4) : 0)
+    implicitHeight: Theme.barHeight
 
     property color iconColor: Theme.fgBright
     property string tooltipText: {
@@ -19,8 +19,7 @@ Item {
 
     BarLabel {
         id: bellLabel
-        anchors.verticalCenter: parent.verticalCenter
-        text: NotificationService.doNotDisturb ? "󰂛" : "󰂚"
+        icon: NotificationService.doNotDisturb ? "" : ""
         labelColor: root.iconColor
         tooltipText: root.tooltipText
     }
@@ -28,9 +27,9 @@ Item {
     Rectangle {
         id: badge
         anchors {
-            top: bellLabel.top
             right: bellLabel.right
-            topMargin: -2
+            verticalCenter: bellLabel.verticalCenter
+            verticalCenterOffset: -Math.round(Theme.iconSize / 2) + 2
             rightMargin: -4
         }
         width: Math.max(14, badgeText.implicitWidth + 6)

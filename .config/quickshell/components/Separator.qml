@@ -5,6 +5,6 @@ import "."
 BarLabel {
     property string variant: "dot"
 
-    text: variant === "line" ? "|" : ""
+    text: variant === "line" ? "|" : "·"
     labelColor: Theme.fgMuted
 }

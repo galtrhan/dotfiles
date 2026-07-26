@@ -8,12 +8,14 @@ BarLabel {
 
     property int brightnessPercent: -1
 
-    text: {
-        var icons = ["", "", "", "", "", "", "", "", "", "", "", "", "", "", ""];
+    icon: {
         if (brightnessPercent < 0)
             return "";
-        var idx = Math.min(Math.floor(brightnessPercent / 7), icons.length - 1);
-        return icons[idx];
+        if (brightnessPercent < 34)
+            return "";
+        if (brightnessPercent < 67)
+            return "";
+        return "";
     }
     visible: brightnessPercent >= 0
     tooltipText: brightnessPercent >= 0 ? "Scroll: brightness · " + brightnessPercent + "%" : ""

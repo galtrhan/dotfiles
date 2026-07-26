@@ -6,7 +6,7 @@ import "../components"
 BarLabel {
     id: root
 
-    text: "⏻ "
+    icon: ""
     labelColor: powerColor
     tooltipText: "Left: power menu · Right: lock"
 

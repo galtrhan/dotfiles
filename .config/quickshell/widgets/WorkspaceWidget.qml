@@ -7,6 +7,7 @@ import ".."
 RowLayout {
     id: root
     spacing: Theme.spacing
+    Layout.fillHeight: true
 
     readonly property int maxWorkspaceId: 10
 
@@ -17,9 +18,15 @@ RowLayout {
     Repeater {
         model: root.maxWorkspaceId
 
-        delegate: Text {
+        delegate: Item {
             required property int index
             Layout.alignment: Qt.AlignVCenter
+            Layout.fillHeight: true
+            Layout.preferredWidth: wsLabel.implicitWidth
+            width: wsLabel.implicitWidth
+            height: Theme.barHeight
+            visible: isVisible
+
             readonly property int wsId: index + 1
             readonly property var ws: Hyprland.workspaces.values.find(function (w) {
                 return w.id === wsId;
@@ -28,18 +35,23 @@ RowLayout {
             readonly property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
             readonly property bool isUrgent: ws ? ws.urgent : false
 
-            visible: isVisible
-            text: isActive ? "" : ""
-            font.family: Theme.fontFamily
-            font.pixelSize: Theme.fontSize
-            color: {
-                if (isActive)
-                    return Theme.workspaceActive;
-                if (isUrgent)
-                    return Theme.workspaceUrgent;
-                return Theme.workspaceDefault;
+            Text {
+                id: wsLabel
+                anchors.left: parent.left
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.verticalCenterOffset: Theme.barOpticalOffset
+                text: isActive ? "" : ""
+                font.family: Theme.fontFamily
+                font.pixelSize: Theme.iconSize
+                color: {
+                    if (isActive)
+                        return Theme.workspaceActive;
+                    if (isUrgent)
+                        return Theme.workspaceUrgent;
+                    return Theme.workspaceDefault;
+                }
+                font.weight: isActive ? 700 : 400
             }
-            font.weight: isActive ? 700 : 400
 
             MouseArea {
                 anchors.fill: parent

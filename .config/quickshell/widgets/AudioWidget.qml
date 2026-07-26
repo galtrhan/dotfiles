@@ -8,9 +8,12 @@ import "../components"
 RowLayout {
     id: root
     spacing: Theme.spacing
+    Layout.fillHeight: true
 
     readonly property PwNode sink: Pipewire.defaultAudioSink
     readonly property PwNode source: Pipewire.defaultAudioSource
+    readonly property int sinkPct: volumePercent(sink)
+    readonly property int sourcePct: volumePercent(source)
 
     PwObjectTracker {
         objects: [root.sink, root.source]
@@ -26,35 +29,17 @@ RowLayout {
     }
 
     function volumeIcon(vol) {
-        if (vol <= 0)
-            return "󰖁";
         if (vol < 33)
             return "";
         if (vol < 66)
             return "";
-        return "󰕾";
-    }
-
-    function formatOutput() {
-        var pct = volumePercent(sink);
-        if (pct < 0)
-            return "";
-        var icon = sink.audio.muted ? "󰖁" : volumeIcon(pct);
-        return icon + " " + pct + "%";
-    }
-
-    function formatMic() {
-        var pct = volumePercent(source);
-        if (pct < 0)
-            return "";
-        if (source.audio.muted)
-            return "";
-        return " " + pct + "%";
+        return "";
     }
 
     BarLabel {
         Layout.alignment: Qt.AlignVCenter
-        text: formatOutput()
+        icon: root.sinkPct < 0 ? "" : (root.sink?.audio?.muted ? "" : root.volumeIcon(root.sinkPct))
+        text: root.sinkPct < 0 ? "" : (root.sinkPct + "%")
         labelColor: root.sink?.audio?.muted ? Theme.micMuted : Theme.fgBright
         tooltipText: "Scroll: volume · Right-click: pavucontrol"
 
@@ -82,7 +67,12 @@ RowLayout {
 
     BarLabel {
         Layout.alignment: Qt.AlignVCenter
-        text: formatMic()
+        icon: {
+            if (root.sourcePct < 0)
+                return "";
+            return root.source?.audio?.muted ? "" : "";
+        }
+        text: (root.sourcePct < 0 || root.source?.audio?.muted) ? "" : (root.sourcePct + "%")
         labelColor: root.source?.audio?.muted ? Theme.micMuted : Theme.fgBright
         visible: root.source !== null
         tooltipText: "Scroll: mic volume · Right-click: pavucontrol"

@@ -8,8 +8,10 @@ import "."
 RowLayout {
     id: root
     spacing: Theme.spacing
+    Layout.fillHeight: true
     property bool expanded: false
 
+    // MD outline batteries — FA solid batteries read too heavy in the bar
     readonly property var batteryIcons: ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
     readonly property var extraBatteryPaths: ["BAT1", "BAT0"]
 
@@ -17,15 +19,12 @@ RowLayout {
         return Math.round(device.percentage * 100);
     }
 
-    function formatBattery(device) {
-        var pct = percent(device);
-        var iconIdx = Math.min(Math.floor(pct / 10), 10);
-        var icon = batteryIcons[iconIdx];
+    function batteryGlyph(device) {
         if (device.state === UPowerDeviceState.Charging)
-            icon = "";
-        else if (device.state === UPowerDeviceState.FullyCharged)
-            icon = "󱘖";
-        return icon + " " + pct + "%";
+            return "󰂣";
+        if (device.state === UPowerDeviceState.FullyCharged)
+            return "󱘖";
+        return batteryIcons[Math.min(Math.floor(percent(device) / 10), 10)];
     }
 
     function batteryColor(device) {
@@ -51,7 +50,8 @@ RowLayout {
     BarLabel {
         Layout.alignment: Qt.AlignVCenter
         visible: UPower.displayDevice.ready
-        text: root.formatBattery(UPower.displayDevice)
+        icon: root.batteryGlyph(UPower.displayDevice)
+        text: root.percent(UPower.displayDevice) + "%"
         labelColor: root.batteryColor(UPower.displayDevice)
         tooltipText: "Click to expand battery details"
 
@@ -97,7 +97,8 @@ RowLayout {
                 Layout.alignment: Qt.AlignVCenter
                 readonly property var device: root.findBattery(modelData)
                 visible: device !== null
-                text: device ? root.formatBattery(device) : ""
+                icon: device ? root.batteryGlyph(device) : ""
+                text: device ? (root.percent(device) + "%") : ""
                 labelColor: device ? root.batteryColor(device) : Theme.fgBright
             }
         }

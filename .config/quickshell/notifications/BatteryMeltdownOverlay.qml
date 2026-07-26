@@ -107,7 +107,7 @@ Scope {
                         Text {
                             Layout.fillWidth: true
                             horizontalAlignment: Text.AlignHCenter
-                            text: "☢  BATTERY CRITICAL  ☢"
+                            text: "  BATTERY CRITICAL  "
                             font.family: Theme.fontFamily
                             font.pixelSize: 36
                             font.bold: true

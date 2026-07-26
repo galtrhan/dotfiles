@@ -7,6 +7,7 @@ import ".."
 
 RowLayout {
     spacing: Theme.spacing
+    Layout.fillHeight: true
 
     Repeater {
         model: SystemTray.items
@@ -14,12 +15,17 @@ RowLayout {
         delegate: Item {
             id: trayIcon
             required property SystemTrayItem modelData
+            Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
-            width: Theme.fontSize + 2
-            height: Theme.fontSize + 2
+            Layout.preferredWidth: Theme.iconSize
+            width: Theme.iconSize
+            height: Theme.barHeight
 
             IconImage {
-                anchors.fill: parent
+                anchors.centerIn: parent
+                anchors.verticalCenterOffset: Theme.barOpticalOffset
+                width: Theme.iconSize
+                height: Theme.iconSize
                 source: modelData.icon
             }
 

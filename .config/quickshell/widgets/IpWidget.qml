@@ -9,7 +9,7 @@ BarLabel {
     property string ip: ""
     readonly property bool hasIp: ip !== ""
 
-    text: "󰖟"
+    icon: ""
     labelColor: hasIp ? "white" : Theme.fgMuted
     tooltipText: hasIp ? ip : "No IP"
 

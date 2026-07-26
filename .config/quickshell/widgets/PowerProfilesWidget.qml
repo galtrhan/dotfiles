@@ -10,7 +10,7 @@ BarLabel {
         "Performance": ""
     })
 
-    text: {
+    icon: {
         var name = PowerProfile.toString(PowerProfiles.profile);
         return profileIcons[name] || "";
     }
