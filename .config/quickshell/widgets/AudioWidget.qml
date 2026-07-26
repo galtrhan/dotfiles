@@ -14,6 +14,8 @@ RowLayout {
     readonly property PwNode source: Pipewire.defaultAudioSource
     readonly property int sinkPct: volumePercent(sink)
     readonly property int sourcePct: volumePercent(source)
+    readonly property bool sinkSilent: sinkPct === 0 || !!(sink?.audio?.muted)
+    readonly property bool sourceSilent: sourcePct === 0 || !!(source?.audio?.muted)
 
     PwObjectTracker {
         objects: [root.sink, root.source]
@@ -38,9 +40,9 @@ RowLayout {
 
     BarLabel {
         Layout.alignment: Qt.AlignVCenter
-        icon: root.sinkPct < 0 ? "" : (root.sink?.audio?.muted ? "" : root.volumeIcon(root.sinkPct))
+        icon: root.sinkPct < 0 ? "" : (root.sinkSilent ? "" : root.volumeIcon(root.sinkPct))
         text: root.sinkPct < 0 ? "" : (root.sinkPct + "%")
-        labelColor: root.sink?.audio?.muted ? Theme.micMuted : Theme.fgBright
+        labelColor: root.sinkSilent ? Theme.micMuted : Theme.fgBright
         tooltipText: "Scroll: volume · Right-click: pavucontrol"
 
         MouseArea {
@@ -70,10 +72,10 @@ RowLayout {
         icon: {
             if (root.sourcePct < 0)
                 return "";
-            return root.source?.audio?.muted ? "" : "";
+            return root.sourceSilent ? "" : "";
         }
-        text: (root.sourcePct < 0 || root.source?.audio?.muted) ? "" : (root.sourcePct + "%")
-        labelColor: root.source?.audio?.muted ? Theme.micMuted : Theme.fgBright
+        text: (root.sourcePct < 0 || root.sourceSilent) ? "" : (root.sourcePct + "%")
+        labelColor: root.sourceSilent ? Theme.micMuted : Theme.fgBright
         visible: root.source !== null
         tooltipText: "Scroll: mic volume · Right-click: pavucontrol"
 
