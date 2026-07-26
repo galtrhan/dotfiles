@@ -15,15 +15,7 @@ is_recording() {
 }
 
 if is_recording; then
-    SELECTED=$("$SCRIPT_DIR/qs-menu.sh" "Recording active" "Stop recording")
-    case "$SELECTED" in
-        "Stop recording")
-            exec "$SCRIPT_DIR/screen_capture.sh" stop
-            ;;
-        *)
-            exit 1
-            ;;
-    esac
+    exec "$SCRIPT_DIR/screen_capture.sh" stop
 else
     SELECTED=$("$SCRIPT_DIR/qs-menu.sh" "Recording Audio" \
         "None (no audio)" \

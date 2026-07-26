@@ -13,19 +13,23 @@ Scope {
     property var ipcHandler: null
 
     function finishMenuSelection(value): void {
+        LauncherService.menuSelected(value);
         if (root.ipcHandler)
             root.ipcHandler.selected(value);
         LauncherService.close();
     }
 
     function finishMenuCancel(): void {
-        if (!root.ipcHandler)
-            return LauncherService.close();
-
-        if (LauncherService.mode === LauncherService.modePassword)
-            root.ipcHandler.passwordEntered("");
-        else if (LauncherService.menuWaiting)
-            root.ipcHandler.cancelled();
+        if (LauncherService.mode === LauncherService.modePassword) {
+            if (root.ipcHandler)
+                root.ipcHandler.passwordEntered("");
+        } else if (LauncherService.menuWaiting) {
+            LauncherService.menuCancelled();
+            if (root.ipcHandler)
+                root.ipcHandler.cancelled();
+        } else {
+            LauncherService.menuCancelled();
+        }
         LauncherService.close();
     }
 
@@ -531,7 +535,7 @@ Scope {
                             reuseItems: true
                             currentIndex: LauncherService.selectedIndex
                             boundsBehavior: Flickable.StopAtBounds
-                            keyNavigationWraps: true
+                            keyNavigationWraps: false
                             highlightMoveDuration: 80
                             focus: LauncherService.visible
                                    && LauncherService.mode === LauncherService.modeMenu
@@ -609,13 +613,15 @@ Scope {
                             function incrementCurrentIndex(): void {
                                 if (count === 0)
                                     return;
-                                currentIndex = (currentIndex + 1) % count;
+                                if (currentIndex < count - 1)
+                                    currentIndex += 1;
                             }
 
                             function decrementCurrentIndex(): void {
                                 if (count === 0)
                                     return;
-                                currentIndex = currentIndex <= 0 ? count - 1 : currentIndex - 1;
+                                if (currentIndex > 0)
+                                    currentIndex -= 1;
                             }
                         }
                     }

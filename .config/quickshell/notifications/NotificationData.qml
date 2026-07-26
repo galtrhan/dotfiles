@@ -87,7 +87,7 @@ QtObject {
 
         function onBodyChanged(): void {
             if (notificationData.notification)
-                notificationData.body = notificationData.notification.body || "";
+                notificationData.body = NotificationService.stripMarkup(notificationData.notification.body || "");
         }
 
         function onAppIconChanged(): void {
@@ -147,7 +147,7 @@ QtObject {
 
         notifId = String(notification.id || "");
         summary = notification.summary || "";
-        body = notification.body || "";
+        body = NotificationService.stripMarkup(notification.body || "");
         appIcon = notification.appIcon || "";
         appName = notification.appName || "";
         image = notification.image || "";

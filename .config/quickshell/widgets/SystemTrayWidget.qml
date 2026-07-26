@@ -15,8 +15,8 @@ RowLayout {
             id: trayIcon
             required property SystemTrayItem modelData
             Layout.alignment: Qt.AlignVCenter
-            width: Theme.fontSize
-            height: Theme.fontSize
+            width: Theme.fontSize + 2
+            height: Theme.fontSize + 2
 
             IconImage {
                 anchors.fill: parent

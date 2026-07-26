@@ -172,7 +172,7 @@ Singleton {
         id: server
         actionsSupported: true
         bodySupported: true
-        bodyMarkupSupported: true
+        bodyMarkupSupported: false
         imageSupported: true
         persistenceSupported: true
         keepOnReload: false
@@ -252,13 +252,26 @@ Singleton {
             notification: notification,
             notifId: String(notification.id || ""),
             summary: notification.summary || "",
-            body: notification.body || "",
+            body: root.stripMarkup(notification.body || ""),
             appIcon: notification.appIcon || "",
             appName: notification.appName || "",
             image: notification.image || "",
             urgency: notification.urgency,
             expireTimeout: expireTimeout
         };
+    }
+
+    function stripMarkup(text): string {
+        if (!text)
+            return "";
+        return String(text)
+            .replace(/<[^>]+>/g, "")
+            .replace(/&nbsp;/g, " ")
+            .replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">")
+            .replace(/&quot;/g, "\"")
+            .replace(/&amp;/g, "&")
+            .trim();
     }
 
     function parseProgress(hints): int {

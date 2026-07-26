@@ -43,7 +43,7 @@ Singleton {
 
     readonly property color tooltipBg: "#1e1e2e"
     readonly property color tooltipBorder: "#11111b"
-    readonly property color tooltipFg: "#ffd700"
+    readonly property color tooltipFg: "#40e0d0"
 
     readonly property int borderRadius: 8
     readonly property int barPadding: 8

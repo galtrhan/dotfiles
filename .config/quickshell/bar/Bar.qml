@@ -21,6 +21,12 @@ Item {
         Separator {
             Layout.alignment: Qt.AlignVCenter
         }
+        CdemuWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
+        Separator {
+            Layout.alignment: Qt.AlignVCenter
+        }
         SystemTrayWidget {
             Layout.alignment: Qt.AlignVCenter
         }
@@ -32,18 +38,19 @@ Item {
         ClockWidget {
             Layout.alignment: Qt.AlignVCenter
         }
+        Separator {
+            variant: "line"
+            Layout.alignment: Qt.AlignVCenter
+        }
+        IpWidget {
+            Layout.alignment: Qt.AlignVCenter
+        }
 
         Item {
             Layout.fillWidth: true
         }
 
         RecIndicator {
-            Layout.alignment: Qt.AlignVCenter
-        }
-        NotificationWidget {
-            Layout.alignment: Qt.AlignVCenter
-        }
-        IpWidget {
             Layout.alignment: Qt.AlignVCenter
         }
         TempsWidget {
@@ -57,6 +64,9 @@ Item {
         }
         Separator {
             variant: "line"
+            Layout.alignment: Qt.AlignVCenter
+        }
+        NotificationWidget {
             Layout.alignment: Qt.AlignVCenter
         }
         PowerWidget {

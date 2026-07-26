@@ -13,7 +13,7 @@ hl.bind(mainMod .. " + C", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + L", hl.dsp.exec_cmd("pidof hyprlock || hyprlock --grace 0"))
 hl.bind(mainMod .. " + P", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/power.sh"))
 hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("bash -c 'SELECTED=$(cliphist list | " .. home .. "/.config/hypr/scripts/qs-menu.sh Clipboard); [ -n \"$SELECTED\" ] && echo \"$SELECTED\" | cliphist decode | wl-copy'"))
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/clipboard_menu.sh"))
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("qs ipc call launcher emoji_toggle"))
 hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("pkill -x quickshell; quickshell &"))
 

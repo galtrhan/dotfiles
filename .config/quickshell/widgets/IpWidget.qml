@@ -7,24 +7,24 @@ BarLabel {
     id: root
 
     property string ip: ""
+    readonly property bool hasIp: ip !== ""
 
-    text: ip !== "" ? "[" + ip + "]" : ""
-    labelColor: Theme.ipColor
-    visible: ip !== ""
-    tooltipText: ip !== "" ? "Click to copy IP" : ""
+    text: "󰖟"
+    labelColor: hasIp ? "white" : Theme.fgMuted
+    tooltipText: hasIp ? ip : "No IP"
 
     ScriptPoll {
         command: ["curl", "-s", "--max-time", "3", "https://api.ipify.org"]
         interval: 30000
         onOutput: function (text) {
-            root.ip = text.trim() || "N/A";
+            root.ip = text.trim();
         }
     }
 
     MouseArea {
         anchors.fill: parent
-        cursorShape: Qt.PointingHandCursor
-        enabled: root.visible
+        cursorShape: root.hasIp ? Qt.PointingHandCursor : Qt.ArrowCursor
+        enabled: root.hasIp
         onClicked: {
             copyProc.command = ["sh", "-c", "printf '%s' '" + root.ip.replace(/'/g, "'\\''") + "' | wl-copy && notify-send 'IP address copied!'"];
             copyProc.running = true;

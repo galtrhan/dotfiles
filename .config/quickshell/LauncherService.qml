@@ -24,6 +24,7 @@ Singleton {
     property int selectedIndex: 0
     property bool menuWaiting: false
     property bool menuSearchable: false
+    property int menuPinnedCount: 0
     property var appUsage: ({})
     property var emojiUsage: ({})
 
@@ -32,6 +33,9 @@ Singleton {
     property string activeScreenName: ""
 
     readonly property bool visible: mode !== root.modeClosed
+
+    signal menuSelected(string value)
+    signal menuCancelled()
 
     function captureFocusedScreen(): void {
         const focused = Hyprland.focusedMonitor?.name ?? "";
@@ -96,13 +100,14 @@ Singleton {
             root.openEmoji();
     }
 
-    function openMenu(title, options, searchable): void {
+    function openMenu(title, options, searchable, pinnedCount): void {
         root.captureFocusedScreen();
         root.title = title;
         root.menuOptions = options;
         root.query = "";
         root.selectedIndex = 0;
         root.menuSearchable = searchable === true;
+        root.menuPinnedCount = Math.max(0, pinnedCount || 0);
         root.mode = root.modeMenu;
         root.menuWaiting = true;
     }
@@ -121,6 +126,7 @@ Singleton {
         root.selectedIndex = 0;
         root.menuWaiting = false;
         root.menuSearchable = false;
+        root.menuPinnedCount = 0;
     }
 
     function recordAppLaunch(entry): void {
@@ -161,13 +167,16 @@ Singleton {
     }
 
     function filteredMenuOptions(): var {
+        const pinned = root.menuOptions.slice(0, root.menuPinnedCount);
+        const rest = root.menuOptions.slice(root.menuPinnedCount);
         const q = root.query.trim().toLowerCase();
         if (q === "")
             return root.menuOptions;
 
-        return root.menuOptions.filter(function (option) {
+        const filtered = rest.filter(function (option) {
             return option.toLowerCase().includes(q);
         });
+        return pinned.concat(filtered);
     }
 
     function filteredEmojis(): var {
