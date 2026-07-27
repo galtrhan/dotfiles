@@ -1,19 +1,19 @@
 # Battery Notifications
 
-Low-battery warnings are sent by `battery.sh` on a systemd timer and displayed by QuickShell.
+`battery.sh` sends low-battery warnings on a systemd timer. QuickShell displays them.
 
 ## Thresholds
 
-While discharging, notifications fire once per threshold (state resets when charging starts):
+While discharging, each threshold fires once. The state resets when charging starts:
 
 | Level | Type | Delivery |
 |-------|------|----------|
-| 20% | Warning | Corner popup + notification history |
-| 15% | Critical | Corner popup + notification history |
-| 10% | Critical | Corner popup + notification history |
+| 20% | Warning | Corner popup and notification history |
+| 15% | Critical | Corner popup and notification history |
+| 10% | Critical | Corner popup and notification history |
 | 5% | **Meltdown** | Full-screen overlay (see below) |
 
-Thresholds are configured in [`battery.sh`](battery.sh) (`THRESHOLDS` array).
+Thresholds are set in [`battery.sh`](battery.sh) (`THRESHOLDS` array).
 
 ## Battery Meltdown (5%)
 
@@ -23,11 +23,11 @@ At 5%, `battery.sh` sends a dbus notification with summary `REACTOR CRITICAL`. Q
 - Full-screen red flashing overlay on all monitors
 - Looping alarm sound (`~/.config/quickshell/sounds/meltdown.mp3` via `ffplay`)
 - 60-second suspend countdown (`SUSPENDING IN M:SS`)
-- **Click anywhere** to dismiss overlay and alarm; countdown resets
-- **Plug in charger** — overlay, sound, and countdown cancel immediately
-- **Countdown reaches zero** — `systemctl suspend` is run
+- **Click anywhere** to dismiss overlay and alarm. The countdown resets.
+- **Plug in charger** — overlay, sound, and countdown cancel at once
+- **Countdown reaches zero** — `systemctl suspend` runs
 
-Meltdown bypasses Do Not Disturb. The notification is still saved to history.
+Meltdown ignores Do Not Disturb. The notification is still saved to history.
 
 ### Files
 
@@ -49,7 +49,7 @@ Enable the timer after stowing configs:
 systemctl --user enable --now battery-notify.timer
 ```
 
-Place alarm audio at `~/.config/quickshell/sounds/meltdown.mp3`. Requires `ffmpeg` (`ffplay`) — installed by `install.sh`.
+Place alarm audio at `~/.config/quickshell/sounds/meltdown.mp3`. Requires `ffmpeg` (`ffplay`). `install.sh` installs it.
 
 ### Customization
 

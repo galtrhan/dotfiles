@@ -1,45 +1,45 @@
-# Complete Wallpaper System for Hyprland
+# Wallpaper System for Hyprland
 
-A comprehensive wallpaper management system that provides automatic rotation, persistence across restarts, and full control over your desktop wallpapers using hyprpaper.
+Wallpaper management for Hyprland with hyprpaper. Supports automatic rotation, persistence across restarts, and manual control.
 
-## 🎯 System Overview
+## System Overview
 
-This system combines two powerful features:
-- **Automatic Rotation**: Changes wallpapers at specified intervals
-- **Persistence**: Remembers and restores your wallpaper across restarts
+The system has two parts:
+- **Automatic rotation**: Changes wallpapers at set intervals
+- **Persistence**: Saves and restores your wallpaper across restarts
 
-## ✨ Features
+## Features
 
 ### Rotation System
-- ✅ **Automatic Rotation**: Changes wallpapers every 30 minutes by default
-- ✅ **Random Selection**: Picks random wallpapers from your collection
-- ✅ **Desktop Notifications**: Shows notifications when wallpapers change
-- ✅ **Easy Control**: Simple commands to start, stop, and manage
-- ✅ **Boot Integration**: Automatically starts when you log in
-- ✅ **Immediate Changes**: Change wallpaper on demand with `SUPER + SHIFT + B`
+- Changes wallpapers every 30 minutes by default
+- Picks a random wallpaper from your collection
+- Shows a desktop notification when the wallpaper changes
+- Commands to start, stop, and manage rotation
+- Starts on login
+- Change wallpaper on demand with `SUPER + SHIFT + B`
 
 ### Persistence System
-- ✅ **Automatic Tracking**: Saves wallpaper state whenever it changes
-- ✅ **Startup Restoration**: Automatically restores wallpaper on Hyprland startup
-- ✅ **Manual Control**: Save and restore wallpapers on demand
-- ✅ **Fallback System**: Sets random wallpaper if saved state is invalid
-- ✅ **State Management**: Easy commands to manage wallpaper persistence
+- Saves wallpaper state on each change
+- Restores wallpaper on Hyprland startup
+- Save and restore wallpapers on demand
+- Sets a random wallpaper if saved state is invalid
+- Commands to manage wallpaper persistence
 
-## 📁 Files
+## Files
 
 ### Core Scripts
 - `wallpaper_rotate.sh` - Main rotation script (runs continuously)
 - `wallpaper_cron.sh` - Single wallpaper change script (for cron jobs)
-- `wallpaper_control.sh` - Control script for managing the service
-- `wallpaper_persistence.sh` - Core persistence management script
+- `wallpaper_control.sh` - Control script for the service
+- `wallpaper_persistence.sh` - Persistence management script
 - `wallpaper_restore.sh` - Startup restoration script
 
 ### Configuration
 - `wallpaper-rotate.service` - Systemd user service file
-- `wallpaper_state` - State file (created automatically)
+- `wallpaper_state` - State file (created on first change)
 - `hyprland.lua` - Startup restoration via `wallpaper_restore.sh`
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Check Status
 ```bash
@@ -62,7 +62,7 @@ This system combines two powerful features:
 ~/.config/hypr/scripts/wallpaper_control.sh save
 ```
 
-## 🎮 Control Commands
+## Control Commands
 
 ### Wallpaper Control Script
 | Command | Description |
@@ -71,7 +71,7 @@ This system combines two powerful features:
 | `stop` | Stop wallpaper rotation |
 | `restart` | Restart the service |
 | `status` | Show service status |
-| `change` | Change wallpaper immediately |
+| `change` | Change wallpaper now |
 | `enable` | Enable auto-start on boot |
 | `disable` | Disable auto-start on boot |
 | `save` | Save current wallpaper state |
@@ -83,22 +83,23 @@ This system combines two powerful features:
 |---------|-------------|
 | `save` | Save current wallpaper state |
 | `restore` | Restore saved wallpaper |
-| `set <path>` | Set specific wallpaper with persistence |
+| `set <path>` | Set a specific wallpaper with persistence |
 | `status` | Show current state |
 | `clear` | Clear saved state |
 | `help` | Show help message |
 
-## ⚙️ Configuration
+## Configuration
 
 ### Wallpaper Directory
-Wallpapers are loaded from: `~/Pictures/Wallpapers/`
+Wallpapers load from: `~/Pictures/Wallpapers/`
 
 ### Supported Formats
 - PNG, JPG, JPEG, BMP, WebP
 
 ### Rotation Interval
 Default: 30 minutes
-To change, edit the service file:
+
+To change the interval, edit the service file:
 ```bash
 nano ~/.config/systemd/user/wallpaper-rotate.service
 ```
@@ -116,23 +117,23 @@ systemctl --user restart wallpaper-rotate.service
 
 ### Keyboard Shortcut
 - **Shortcut**: `SUPER + SHIFT + B`
-- **Action**: Change wallpaper immediately
-- **Location**: Added to `~/.config/hypr/configs/keybinds.lua`
+- **Action**: Change wallpaper now
+- **Location**: `~/.config/hypr/configs/keybinds.lua`
 
-## 🔄 How Persistence Works
+## How Persistence Works
 
 ### Automatic Persistence
-1. **Every wallpaper change** automatically saves the new wallpaper path
-2. **On Hyprland startup**, the restore script runs after hyprpaper starts
-3. **If saved wallpaper exists**, it's restored; otherwise, a random one is set
+1. Every wallpaper change saves the new wallpaper path
+2. On Hyprland startup, the restore script runs after hyprpaper starts
+3. If the saved wallpaper exists, it is restored. Otherwise a random one is set.
 
 ### State File
 - **Location**: `~/.config/hypr/wallpaper_state`
 - **Content**: Full path to the last active wallpaper
-- **Auto-created**: When wallpapers change
-- **Auto-cleaned**: If saved wallpaper no longer exists
+- **Created**: When wallpapers change
+- **Cleared**: If the saved wallpaper no longer exists
 
-## 📖 Manual Usage
+## Manual Usage
 
 ### Direct Script Execution
 ```bash
@@ -173,7 +174,7 @@ crontab -e
 ~/.config/hypr/scripts/wallpaper_persistence.sh clear
 ```
 
-## 🔧 Systemd Service Management
+## Systemd Service Management
 
 ### Manual Service Control
 ```bash
@@ -199,7 +200,7 @@ systemctl --user disable wallpaper-rotate.service
 journalctl --user -u wallpaper-rotate.service -f
 ```
 
-## 🛠️ Troubleshooting
+## Troubleshooting
 
 ### Service Not Found
 ```bash
@@ -211,9 +212,9 @@ ls -la ~/.config/systemd/user/wallpaper-rotate.service
 ```
 
 ### Wallpaper Not Changing
-- Ensure hyprland is running
-- Check if hyprctl is available
-- Verify wallpaper directory exists and contains images
+- Make sure Hyprland is running
+- Check that hyprctl is available
+- Verify the wallpaper directory exists and contains images
 
 ### Permission Issues
 ```bash
@@ -222,15 +223,15 @@ chmod +x ~/.config/hypr/scripts/*.sh
 ```
 
 ### Wallpaper Not Restoring
-1. Check if state file exists: `ls ~/.config/hypr/wallpaper_state`
-2. Check if saved wallpaper exists: `cat ~/.config/hypr/wallpaper_state`
+1. Check if the state file exists: `ls ~/.config/hypr/wallpaper_state`
+2. Check if the saved wallpaper exists: `cat ~/.config/hypr/wallpaper_state`
 3. Test manual restore: `~/.config/hypr/scripts/wallpaper_persistence.sh restore`
 
 ### Invalid State File
 If the saved wallpaper no longer exists:
-- The system will automatically clear the invalid state
-- A random wallpaper will be set as fallback
-- The new wallpaper will be saved as the new state
+- The system clears the invalid state
+- A random wallpaper is set as fallback
+- The new wallpaper is saved as the new state
 
 ### Manual Reset
 To reset the persistence system:
@@ -238,14 +239,14 @@ To reset the persistence system:
 # Clear saved state
 ~/.config/hypr/scripts/wallpaper_persistence.sh clear
 
-# Set a new wallpaper (will be saved automatically)
+# Set a new wallpaper (saved on change)
 ~/.config/hypr/scripts/wallpaper_control.sh change
 ```
 
-## 🎯 Integration
+## Integration
 
 ### Hyprland Configuration
-The system is integrated into your Hyprland startup sequence:
+The system is part of the Hyprland startup sequence:
 
 ```bash
 # In hyprland.lua (hyprland.start handler)
@@ -254,45 +255,30 @@ hl.exec_cmd(home .. "/.config/hypr/scripts/wallpaper_restore.sh")
 ```
 
 ### Wallpaper Scripts
-Both wallpaper change scripts now include persistence:
+Both wallpaper change scripts include persistence:
 - `wallpaper_cron.sh` - Saves state on manual changes
 - `wallpaper_rotate.sh` - Saves state on automatic changes
 
-## 📝 Notes
+## Notes
 
 ### Rotation System
-- The "wallpaper failed (not preloaded)" warning is normal and doesn't affect functionality
-- Wallpapers are changed using `hyprctl hyprpaper wallpaper` command
-- The service automatically restarts if it crashes
-- Notifications require QuickShell to be running
+- The "wallpaper failed (not preloaded)" warning is normal and does not affect function
+- Wallpapers change with the `hyprctl hyprpaper wallpaper` command
+- The service restarts if it crashes
+- Notifications need QuickShell to be running
 
 ### Persistence System
-- The system works with both manual and automatic wallpaper changes
-- State is saved immediately when wallpapers change
-- Restoration happens early in the Hyprland startup process
-- The system is designed to be robust and handle edge cases gracefully
+- Works with both manual and automatic wallpaper changes
+- State is saved at once when wallpapers change
+- Restoration runs early in the Hyprland startup process
+- Handles missing or invalid state without user action
 
-## 🎉 Benefits
-
-### Rotation Benefits
-- **Dynamic Desktop**: Never get bored with the same wallpaper
-- **Automatic Management**: No manual intervention required
-- **Flexible Timing**: Customizable rotation intervals
-- **Easy Control**: Simple commands and keyboard shortcuts
-
-### Persistence Benefits
-- **No Lost Wallpapers**: Your current wallpaper persists across restarts
-- **Seamless Experience**: Works automatically without user intervention
-- **Fallback Safety**: Always has a wallpaper, even if state is invalid
-- **Manual Control**: Can save/restore wallpapers on demand
-- **Memory Efficient**: Only saves the current wallpaper path
-
-## 🔄 Complete Workflow
+## Workflow
 
 1. **System starts** → Wallpaper restore script runs → Last wallpaper is restored
 2. **Rotation service starts** → Changes wallpaper every 30 minutes
-3. **Each change** → Wallpaper is saved for persistence
+3. **Each change** → Wallpaper path is saved for persistence
 4. **Manual changes** → Also saved for persistence
 5. **System restart** → Process repeats from step 1
 
-This creates a seamless, persistent wallpaper experience that remembers your preferences and keeps your desktop fresh with automatic rotation! 🖼️✨
+On each boot, the last wallpaper is restored. Rotation then keeps the desktop wallpapers current.

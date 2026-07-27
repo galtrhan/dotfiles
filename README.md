@@ -1,14 +1,14 @@
 # ~/.dotfiles
 
-Personal Arch Linux dotfiles setup using **GNU stow** for managing configuration files. All configs are symlinked from this repo into `~/.config/`, making this the single source of truth.
+Personal Arch Linux dotfiles that use **GNU stow** to manage configuration files. Stow creates symlinks from this repo into `~/.config/`. This repo is the source of truth.
 
-This setup is optimized for a **single-monitor** desktop. Multi-monitor behavior (for example launcher screen targeting) is supported but not the primary focus.
+This setup targets a **single-monitor** desktop. Multi-monitor behavior (for example launcher screen targeting) works, but is not the main focus.
 
-## What's Included
+## Included Components
 
 ### Window Manager & Desktop
 - **Hyprland** - Wayland window manager (Lua config) with custom scripts for auth, power, media, wallpaper, and screen capture
-- **Hyprlock** - Custom build from [galtrhan/hyprlock](https://github.com/galtrhan/hyprlock) with broken LCD effect (progressive screen glitch on failed auth/lid open)
+- **Hyprlock** - Custom build from [galtrhan/hyprlock](https://github.com/galtrhan/hyprlock) with broken LCD effect (progressive screen glitch on failed auth or lid open)
 - **QuickShell** - Status bar, notification center, app launcher, and script menus (QML)
 - **Shmooz** - Screen magnifier (zoom, annotation, spotlight, color picker)
 
@@ -25,7 +25,7 @@ This setup is optimized for a **single-monitor** desktop. Multi-monitor behavior
 - **Systemd** - User service units (wallpaper rotation, battery notifications)
 
 ### Screen Recording
-- **Screen Capture** - Video recording with `wf-recorder` (region select, audio source picker, clipboard integration, desktop notifications). See [`.config/hypr/scripts/screen_capture.md`](.config/hypr/scripts/screen_capture.md).
+- **Screen Capture** - Video recording with `wf-recorder` (region select, audio source picker, clipboard, desktop notifications). See [`.config/hypr/scripts/screen_capture.md`](.config/hypr/scripts/screen_capture.md).
 
 ## Installation
 
@@ -51,19 +51,19 @@ chmod +x install.sh
 ./install.sh
 ```
 
-The script will:
-1. Update pacman database
+The script does this:
+1. Update the pacman database
 2. Install all required packages
 3. Remove any existing default configs
-4. Initialize/update git submodules (tmux plugins)
-5. Install udev LED permission rules for mute/mic mute keys
+4. Initialize and update git submodules (tmux plugins)
+5. Install udev LED permission rules for mute and mic mute keys
 6. Apply stow to create symlinks
-7. Disable dunst if it was previously enabled (QuickShell owns notifications)
-8. Start bluetooth service
+7. Disable dunst if it was enabled before (QuickShell owns notifications)
+8. Start the bluetooth service
 
 ### Manual Installation
 
-If you prefer to install packages separately:
+If you install packages yourself:
 
 ```bash
 git clone --recurse-submodules https://codeberg.org/galtrhan/dotfiles ~/.dotfiles
@@ -79,7 +79,7 @@ stow .  # Create symlinks for all configs
 
 ### Init System Setup
 
-Services are provided for both **systemd** (Arch) and **runit** (Artix):
+Services exist for **systemd** (Arch) and **runit** (Artix):
 
 #### On Arch (systemd)
 
@@ -100,7 +100,7 @@ mkdir -p ~/.local/share/runit/sv
 ln -s ~/.config/runit/sv/wallpaper-rotate ~/.local/share/runit/sv/
 ```
 
-Then ensure `runsvdir` monitors your service directory. If not already running, add to your shell startup (e.g., `~/.config/fish/config.fish`):
+Then make sure `runsvdir` monitors your service directory. If it is not already running, add this to your shell startup (for example `~/.config/fish/config.fish`):
 
 ```bash
 runsvdir -P ~/.local/share/runit/sv
@@ -110,7 +110,7 @@ runsvdir -P ~/.local/share/runit/sv
 
 ```bash
 # Apply all configs
-git submodule update --init --recursive  # Ensure tmux plugins are present
+git submodule update --init --recursive  # Make sure tmux plugins are present
 stow .
 
 # Apply specific configs only
@@ -152,7 +152,7 @@ stow -R .
 ### Screen Capture & Recording
 | Key | Action |
 |-----|--------|
-| `Super+Print` | Audio source picker → start/stop video recording |
+| `Super+Print` | Audio source picker → start or stop video recording |
 | `Print` | Screenshot (region) |
 
 ### Screen Magnifier
@@ -193,7 +193,7 @@ Scripts live in [`.config/hypr/scripts/`](.config/hypr/scripts/). Hyprland is co
 - Shows a QuickShell password overlay via `qs ipc call menu show_password`
 - Returns the entered password on stdout for `sudo -A` (empty string if cancelled)
 
-Fish is configured in [`.config/fish/config.fish`](.config/fish/config.fish) to use `sudo -A` only when stdin is not a terminal (e.g. agent subprocesses). Interactive terminal `sudo` prompts in the shell as usual.
+Fish is configured in [`.config/fish/config.fish`](.config/fish/config.fish) to use `sudo -A` only when stdin is not a terminal (for example agent subprocesses). Interactive terminal `sudo` prompts in the shell as usual.
 
 Requires QuickShell to be running (started with Hyprland).
 
@@ -203,15 +203,15 @@ Requires QuickShell to be running (started with Hyprland).
 |--------|---------|-------------|
 | [`power.sh`](.config/hypr/scripts/power.sh) | `Super+P` | QuickShell menu: lock, logout, suspend, reboot, shutdown |
 | [`qs-menu.sh`](.config/hypr/scripts/qs-menu.sh) | Called by scripts | Generic QuickShell menu picker (replaces dmenu-style prompts) |
-| [`battery.sh`](.config/hypr/scripts/battery.sh) | `battery-notify.timer` | Low-battery notifications at 20/15/10%; **5% meltdown overlay** with alarm, countdown, and auto-suspend. See [`.config/hypr/scripts/battery.md`](.config/hypr/scripts/battery.md). |
+| [`battery.sh`](.config/hypr/scripts/battery.sh) | `battery-notify.timer` | Low-battery notifications at 20/15/10%. **5% meltdown overlay** with alarm, countdown, and auto-suspend. See [`.config/hypr/scripts/battery.md`](.config/hypr/scripts/battery.md). |
 
 ### Hardware Controls
 
 | Script | Trigger | Description |
 |--------|---------|-------------|
 | [`brightness.sh`](.config/hypr/scripts/brightness.sh) | `XF86MonBrightnessUp/Down` | Adjust backlight via `brightnessctl` with QuickShell OSD feedback |
-| [`volume.sh`](.config/hypr/scripts/volume.sh) | `XF86Audio*` keys | Volume/mute/mic control via PipeWire (`wpctl`) with QuickShell OSD feedback and ThinkPad mute LED sync |
-| [`kbd_monitor.sh`](.config/hypr/scripts/kbd_monitor.sh) | Hyprland autostart | Monitors keyboard backlight changes and shows QuickShell notifications |
+| [`volume.sh`](.config/hypr/scripts/volume.sh) | `XF86Audio*` keys | Volume, mute, and mic control via PipeWire (`wpctl`) with QuickShell OSD feedback and ThinkPad mute LED sync |
+| [`kbd_monitor.sh`](.config/hypr/scripts/kbd_monitor.sh) | Hyprland autostart | Watches keyboard backlight changes and shows QuickShell notifications |
 
 ### Window Layout
 
@@ -226,8 +226,8 @@ Requires QuickShell to be running (started with Hyprland).
 | [`wallpaper_control.sh`](.config/hypr/scripts/wallpaper_control.sh) | CLI for rotation service and on-demand changes (`Super+Shift+B` → `change`) |
 | [`wallpaper_restore.sh`](.config/hypr/scripts/wallpaper_restore.sh) | Restores last wallpaper on Hyprland startup |
 | [`wallpaper_rotate.sh`](.config/hypr/scripts/wallpaper_rotate.sh) | Rotation loop used by `wallpaper-rotate.service` |
-| [`wallpaper_cron.sh`](.config/hypr/scripts/wallpaper_cron.sh) | Single wallpaper change (used by control script / cron) |
-| [`wallpaper_persistence.sh`](.config/hypr/scripts/wallpaper_persistence.sh) | Save/restore wallpaper state across restarts |
+| [`wallpaper_cron.sh`](.config/hypr/scripts/wallpaper_cron.sh) | Single wallpaper change (used by control script or cron) |
+| [`wallpaper_persistence.sh`](.config/hypr/scripts/wallpaper_persistence.sh) | Save and restore wallpaper state across restarts |
 
 Full wallpaper system docs: [`.config/hypr/scripts/wallpaper.md`](.config/hypr/scripts/wallpaper.md)
 
@@ -235,8 +235,8 @@ Full wallpaper system docs: [`.config/hypr/scripts/wallpaper.md`](.config/hypr/s
 
 | Script | Trigger | Description |
 |--------|---------|-------------|
-| [`screen_capture_menu.sh`](.config/hypr/scripts/screen_capture_menu.sh) | `Super+Print` | QuickShell picker for audio source, then start/stop recording |
-| [`screen_capture.sh`](.config/hypr/scripts/screen_capture.sh) | Called by menu | Region recording via `wf-recorder` + `slurp`, clipboard copy, notifications |
+| [`screen_capture_menu.sh`](.config/hypr/scripts/screen_capture_menu.sh) | `Super+Print` | QuickShell picker for audio source, then start or stop recording |
+| [`screen_capture.sh`](.config/hypr/scripts/screen_capture.sh) | Called by menu | Region recording via `wf-recorder` and `slurp`, clipboard copy, notifications |
 | [`screenshot.sh`](.config/hypr/scripts/screenshot.sh) / [`screenshot.py`](.config/hypr/scripts/screenshot.py) | `Print` | Region screenshot via `hyprshot` |
 
 Full screen capture docs: [`.config/hypr/scripts/screen_capture.md`](.config/hypr/scripts/screen_capture.md)
@@ -260,11 +260,11 @@ qs ipc call -- menu show "Power Menu" $'Lock\nLogout\nSuspend'
 ~/.config/hypr/scripts/qs-menu.sh "Recording Audio" "None (no audio)" "System Audio (output)"
 ```
 
-QuickShell auto-reloads QML on save. Restart with `Super+Shift+O` or `pkill quickshell; quickshell &`.
+QuickShell reloads QML on save. Restart with `Super+Shift+O` or `pkill quickshell; quickshell &`.
 
 ### Battery Meltdown Overlay
 
-At **5% battery** while discharging, QuickShell shows a full-screen critical overlay (not the corner popup): flashing red UI, looping `meltdown.mp3` alarm, and a **60-second countdown** after which the system suspends. Click to dismiss or plug in to cancel.
+At **5% battery** while discharging, QuickShell shows a full-screen critical overlay (not the corner popup). The overlay uses a flashing red UI, a looping `meltdown.mp3` alarm, and a **60-second countdown**. When the countdown ends, the system suspends. Click to dismiss, or plug in to cancel.
 
 Requires `battery-notify.timer`, `ffmpeg` (`ffplay`), and `~/.config/quickshell/sounds/meltdown.mp3`. Full details: [`.config/hypr/scripts/battery.md`](.config/hypr/scripts/battery.md).
 
@@ -281,7 +281,7 @@ Common tuning points:
 | Clipboard history size (text / image) | [`.config/hypr/hyprland.lua`](.config/hypr/hyprland.lua) | `cliphist -max-items` in the `wl-paste --watch` autostart lines (default: 100 text, 10 image) |
 | Launcher list highlight color | [`.config/quickshell/Theme.qml`](.config/quickshell/Theme.qml) | `launcherHighlight` |
 
-Notification history exclusions (volume/brightness/keyboard OSD) are in the same `NotificationService.qml` file under `historyExcludedApps`.
+Notification history exclusions (volume, brightness, keyboard OSD) are in the same `NotificationService.qml` file under `historyExcludedApps`.
 
 ## Directory Structure
 
@@ -301,14 +301,14 @@ Notification history exclusions (volume/brightness/keyboard OSD) are in the same
 
 ## Notes
 
-- Optimized for a **single monitor**; multi-monitor setups may need launcher/notification tweaks
-- This setup is tailored for Wayland (Hyprland) and may require adjustments for other environments
-- Config submodules are included for tmux plugins—clone with `--recurse-submodules`
-- Each config directory may have its own documentation
-- **Brightness control** (`brightnessctl`) is required for screen brightness adjustments. Installed by `install.sh`
-- **Mute LED control** for `XF86AudioMute` and `XF86AudioMicMute` uses udev ownership rules installed by `install.sh`
-- **Sudo askpass** requires Fish (for the non-TTY `sudo -A` wrapper), QuickShell running for the password overlay, and applies when stdin is not a terminal
-- **Desktop notifications** are handled by QuickShell (`notify-send` / `libnotify`). Disable or mask `dunst.service` if migrating from an older setup
-- **Battery meltdown** at 5% uses a QuickShell full-screen overlay with alarm sound and auto-suspend countdown — see [`.config/hypr/scripts/battery.md`](.config/hypr/scripts/battery.md)
-- **Hyprlock** is a custom build from [galtrhan/hyprlock](https://github.com/galtrhan/hyprlock) — not the upstream `hyprlock` package. The `broken_lcd` effect and `--grace` flag require this fork. Build with cmake (see repo README) and `sudo cmake --install build`
+- Targets a **single monitor**. Multi-monitor setups may need launcher or notification tweaks.
+- This setup is for Wayland (Hyprland). Other environments may need changes.
+- Config submodules are included for tmux plugins. Clone with `--recurse-submodules`.
+- Each config directory may have its own documentation.
+- **Brightness control** (`brightnessctl`) is required for screen brightness. `install.sh` installs it.
+- **Mute LED control** for `XF86AudioMute` and `XF86AudioMicMute` uses udev ownership rules that `install.sh` installs.
+- **Sudo askpass** needs Fish (for the non-TTY `sudo -A` wrapper) and QuickShell for the password overlay. It applies when stdin is not a terminal.
+- **Desktop notifications** are handled by QuickShell (`notify-send` / `libnotify`). Disable or mask `dunst.service` if you migrate from an older setup.
+- **Battery meltdown** at 5% uses a QuickShell full-screen overlay with alarm sound and auto-suspend countdown. See [`.config/hypr/scripts/battery.md`](.config/hypr/scripts/battery.md).
+- **Hyprlock** is a custom build from [galtrhan/hyprlock](https://github.com/galtrhan/hyprlock), not the upstream `hyprlock` package. The `broken_lcd` effect and `--grace` flag need this fork. Build with cmake (see repo README) and `sudo cmake --install build`.
 - For development or contributions, see [AGENTS.md](./AGENTS.md)

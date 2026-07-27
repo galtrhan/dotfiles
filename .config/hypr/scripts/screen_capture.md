@@ -1,17 +1,17 @@
 # Screen Capture Script
 
-A Wayland-native video recording tool for Hyprland with intuitive region selection, clipboard integration, and desktop notifications.
+Wayland video recording for Hyprland. Supports region selection, clipboard copy, and desktop notifications.
 
 ## Features
 
-- **Region Selection**: Select recording area interactively with `slurp`
-- **State Management**: Track recording state (active/inactive) with PID tracking
-- **Audio Capture**: Optional audio recording support
-- **Clipboard Integration**: Automatically copies recorded video to clipboard via `wl-copy`
+- **Region Selection**: Select the recording area with `slurp`
+- **State Management**: Track recording state (active or inactive) with PID tracking
+- **Audio Capture**: Optional audio recording
+- **Clipboard Integration**: Copies the recorded video to the clipboard via `wl-copy`
 - **Clipboard History**: Text and image clips are stored by `cliphist` (video/mp4 is not)
-- **Thumbnail Fallback**: Generates video thumbnail when direct video copy fails
-- **Desktop Notifications**: Real-time status updates via QuickShell (via `notify-send`)
-- **Graceful Shutdown**: Properly finalizes video file on stop, with timeout handling
+- **Thumbnail Fallback**: Creates a video thumbnail when direct video copy fails
+- **Desktop Notifications**: Status updates via QuickShell (`notify-send`)
+- **Clean Stop**: Finalizes the video file on stop, with timeout handling
 
 ## Usage
 
@@ -43,8 +43,8 @@ A Wayland-native video recording tool for Hyprland with intuitive region selecti
 ~/.config/hypr/scripts/screen_capture.sh start
 ```
 
-1. Click and drag to select recording region
-2. Recording starts; a notification confirms the output file path
+1. Click and drag to select the recording region
+2. Recording starts. A notification shows the output file path.
 3. To stop: `~/.config/hypr/scripts/screen_capture.sh stop`
 
 ### Screen recording with audio
@@ -67,10 +67,10 @@ A Wayland-native video recording tool for Hyprland with intuitive region selecti
 
 ## Audio Source Menu
 
-`screen_capture_menu.sh` provides a QuickShell menu to pick an audio source before recording:
+`screen_capture_menu.sh` shows a QuickShell menu to pick an audio source before recording:
 
 - **None (no audio)** — video only
-- **System Audio (output)** — captures application/system sounds
+- **System Audio (output)** — captures application and system sounds
 - **Digital Microphone (internal)** — built-in laptop mic
 - **Stereo Microphone (external)** — external mic jack
 
@@ -88,22 +88,22 @@ bind = $mainMod ALT, Print, exec, ~/.config/hypr/scripts/screen_capture.sh stop
 
 Videos are saved to: `~/Videos/Capture/YYYY-MM-DD_HH-MM-SS.mp4`
 
-The directory is created automatically on first use.
+The directory is created on first use.
 
 ## Clipboard Handling
 
-The script attempts to copy recorded videos to clipboard in this order:
+The script tries to copy recorded videos to the clipboard in this order:
 
 1. **Direct video copy** (via `wl-copy --type=video/mp4`)
-   - Works with paste-as-file functionality in compatible apps
-   - Requires `wf-recorder` to finalize the file properly
-   
+   - Works with paste-as-file in compatible apps
+   - Needs `wf-recorder` to finalize the file correctly
+
 2. **File path as text** (fallback)
    - Copies the file path so you can paste it as text
-   
+
 3. **Thumbnail generation** (secondary fallback)
-   - Generates a PNG thumbnail from the first frame
-   - Attempts to copy thumbnail as image data
+   - Creates a PNG thumbnail from the first frame
+   - Tries to copy the thumbnail as image data
    - Requires `ffmpeg`
 
 4. **Plain text notification** (last resort)
@@ -111,7 +111,7 @@ The script attempts to copy recorded videos to clipboard in this order:
 
 ### Clipboard History Integration
 
-Hyprland autostart runs `cliphist` watchers for **text** and **image** clipboard types only (configured in `.config/hypr/hyprland.lua`). Screen recordings copied as `video/mp4` are not stored in cliphist; the file is saved under `~/Videos/Capture/` and can be copied to the clipboard for immediate paste, but it will not appear in clipboard history (`Super+Shift+V`).
+Hyprland autostart runs `cliphist` watchers for **text** and **image** clipboard types only (configured in `.config/hypr/hyprland.lua`). Screen recordings copied as `video/mp4` are not stored in cliphist. The file is saved under `~/Videos/Capture/`. You can copy it to the clipboard for immediate paste, but it will not appear in clipboard history (`Super+Shift+V`).
 
 Text copied from a successful recording (for example the file path fallback) is stored in cliphist like any other text clip.
 
@@ -122,8 +122,8 @@ The script sends desktop notifications for:
 - **Start**: Confirms recording with output file path and audio status
 - **Stop (Success)**: Shows file location and clipboard copy method used
   - Includes a thumbnail preview image (if `ffmpeg` is available)
-- **Stop (Error)**: Alerts if recording failed or file not found
-- **Status**: Shows active recording PID or confirms no recording active
+- **Stop (Error)**: Alerts if recording failed or the file was not found
+- **Status**: Shows active recording PID, or confirms no recording is active
 - **Requirements**: Alerts if required tools are missing
 
 Notification styling (colors, timeouts, position) is configured in `.config/quickshell/`.
@@ -144,23 +144,23 @@ Notification styling (colors, timeouts, position) is configured in `.config/quic
 
 ### Optional
 
-- Hyprland — Tested on Wayland; should work on other Wayland compositors
+- Hyprland — Tested on Wayland. Should work on other Wayland compositors.
 
 ## State Files
 
-The script maintains runtime state in `$XDG_RUNTIME_DIR` (or `/tmp`):
+The script keeps runtime state in `$XDG_RUNTIME_DIR` (or `/tmp`):
 
-- `screen_capture.pid` — PID of active recording process
-- `screen_capture.out` — Path to output video file
+- `screen_capture.pid` — PID of the active recording process
+- `screen_capture.out` — Path to the output video file
 
-These are cleaned up automatically on successful stop. Manual cleanup (if needed):
+These are cleaned up on successful stop. Manual cleanup (if needed):
 ```bash
 rm -f "${XDG_RUNTIME_DIR:-/tmp}/screen_capture.{pid,out}"
 ```
 
 ## Troubleshooting
 
-### Recording won't start
+### Recording will not start
 
 **Missing tools:**
 ```bash
@@ -175,8 +175,8 @@ pacman -S wf-recorder slurp libnotify wl-clipboard ffmpeg
 
 ### Clipboard copy fails
 
-- Ensure `wl-copy` is installed: `which wl-copy`
-- Check that your compositor is running in Wayland mode
+- Make sure `wl-copy` is installed: `which wl-copy`
+- Check that your compositor runs in Wayland mode
 - Verify you have write permissions to `XDG_RUNTIME_DIR`
 
 ### Recording stops unexpectedly
@@ -186,9 +186,9 @@ pacman -S wf-recorder slurp libnotify wl-clipboard ffmpeg
 
 ## Performance Notes
 
-- Video encoding happens in real-time; performance depends on system resources
-- For smoother playback on slower systems, consider recording smaller regions
-- Audio capture adds minimal overhead
+- Video encoding runs in real time. Performance depends on system resources.
+- For smoother playback on slower systems, record a smaller region.
+- Audio capture adds little overhead.
 
 ## See Also
 
