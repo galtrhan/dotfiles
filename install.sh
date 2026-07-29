@@ -10,6 +10,7 @@ pacman_packages=(
 	docker-buildx
 	rootlesskit
 	slirp4netns
+	passt
 	hyprland
 	hyprcursor
 	hypridle
@@ -121,5 +122,11 @@ fi
 echo "Enabling & starting bluetooth service..."
 sudo systemctl enable bluetooth
 sudo systemctl start bluetooth
+
+# Enable & start rootless Docker
+echo "Enabling & starting rootless Docker..."
+systemctl --user daemon-reload
+systemctl --user enable docker.service
+systemctl --user start docker.service
 
 echo "Installation complete."
