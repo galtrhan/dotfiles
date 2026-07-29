@@ -21,7 +21,7 @@ RowLayout {
 
     function batteryGlyph(device) {
         if (device.state === UPowerDeviceState.Charging)
-            return "󰂣";  // md-battery-charging-outline
+            return "󰢟";  // md-battery-charging-outline
         if (device.state === UPowerDeviceState.FullyCharged)
             return batteryIcons[10];  // md-battery (full)
         return batteryIcons[Math.min(Math.floor(percent(device) / 10), 10)];

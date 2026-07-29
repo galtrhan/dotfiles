@@ -32,21 +32,22 @@ function parseTemps(data) {
 }
 
 function findCpuTemp(temps) {
-    var targets = ["Package id 0", "CPU", "Tctl", "Tdie"];
-    for (var t = 0; t < targets.length; t++) {
-        for (var i = 0; i < temps.length; i++) {
-            if (temps[i].label === targets[t])
-                return temps[i].value;
-        }
-    }
     var relevant = [];
     for (var j = 0; j < temps.length; j++) {
         var chip = temps[j].chip;
-        if (chip.indexOf("coretemp") >= 0 || chip.indexOf("k10temp") >= 0 || chip.indexOf("thinkpad") >= 0)
+        if (chip.indexOf("coretemp") >= 0 || chip.indexOf("k10temp") >= 0 || chip.indexOf("thinkpad") >= 0) {
+            var label = temps[j].label;
+            if (label.indexOf("Package") >= 0 || label === "Tctl" || label === "Tdie")
+                continue;
             relevant.push(temps[j].value);
+        }
     }
-    if (relevant.length > 0)
-        return Math.max.apply(null, relevant);
+    if (relevant.length > 0) {
+        var sum = 0;
+        for (var k = 0; k < relevant.length; k++)
+            sum += relevant[k];
+        return Math.round(sum / relevant.length);
+    }
     if (temps.length === 0)
         return 0;
     var max = temps[0].value;
