@@ -6,6 +6,49 @@ This setup targets a **single-monitor** desktop. Multi-monitor behavior (for exa
 
 ## Included Components
 
+### Rootless Docker
+
+These dotfiles configure Docker to run rootless with the pasta network driver.
+Rootless Docker does not need root privileges to run containers.
+Pasta does not need the tun kernel module, so kernel updates do not break Docker.
+
+What dotfiles provides:
+
+- `install.sh` installs passt (provides pasta), Docker, Compose, rootlesskit, and slirp4netns.
+- `.config/systemd/user/docker.service` defines the rootless Docker systemd service.
+- `.config/systemd/user/docker.service.d/pasta.conf` sets the pasta network driver and implicit port driver.
+
+After install.sh runs, enable and start Docker:
+
+```bash
+systemctl --user enable --now docker.service
+```
+
+Verify it works:
+
+```bash
+docker info
+```
+
+If Docker does not start, check the service log:
+
+```bash
+systemctl --user status docker.service
+journalctl --user -xeu docker.service
+```
+
+### Common problem: tun kernel module missing
+
+A kernel update can remove the tun kernel module from `/lib/modules`.
+The pasta network driver does not need the tun module.
+Install.sh installs passt. The systemd drop-in then uses pasta automatically.
+If pasta is already installed but Docker still does not start, run:
+
+```bash
+systemctl --user daemon-reload
+systemctl --user restart docker.service
+```
+
 ### Window Manager & Desktop
 - **Hyprland** - Wayland window manager (Lua config) with custom scripts for auth, power, media, wallpaper, and screen capture
 - **Hyprlock** - Custom build from [galtrhan/hyprlock](https://github.com/galtrhan/hyprlock) with broken LCD effect (progressive screen glitch on failed auth or lid open)
