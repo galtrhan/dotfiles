@@ -5,7 +5,7 @@ set -x DOCKER_HOST unix://$XDG_RUNTIME_DIR/docker.sock
 # uv
 fish_add_path "/home/galtrhan/.local/bin"
 fish_add_path "/home/galtrhan/.local/share/fvm/default/bin"
-set -gx GOPATH "$HOME/.local/go"
+set -gx GOPATH "$HOME/.local/share/go"
 fish_add_path "$GOPATH/bin"
 set -x ANDROID_SDK_ROOT /opt/android-sdk
 
