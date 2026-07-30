@@ -4,12 +4,13 @@ set -x DOCKER_HOST unix://$XDG_RUNTIME_DIR/docker.sock
 
 # uv
 fish_add_path "/home/galtrhan/.local/bin"
-fish_add_path /home/galtrhan/fvm/default/bin
+fish_add_path "/home/galtrhan/.local/share/fvm/default/bin"
 set -x ANDROID_SDK_ROOT /opt/android-sdk
 
 # usagi
 fish_add_path /home/galtrhan/.usagi/bin
 
+set -x NODE_COMPILE_CACHE /tmp/node-compile-cache
 set -x SUDO_ASKPASS ~/.config/hypr/scripts/sudo_askpass.sh
 function sudo --wraps sudo
     if not isatty stdin; and set -q SUDO_ASKPASS
