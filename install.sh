@@ -33,6 +33,7 @@ pacman_packages=(
 	wl-clipboard
 	ffmpeg
 	libnotify
+	macchanger
 	brightnessctl
 	gnome-keyring
 	gparted

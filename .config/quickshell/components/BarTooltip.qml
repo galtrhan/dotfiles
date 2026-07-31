@@ -8,6 +8,7 @@ PopupWindow {
 
     required property Item anchorItem
     property string text: ""
+    property int textFormat: Text.PlainText
 
     visible: text !== ""
     color: "transparent"
@@ -37,6 +38,7 @@ PopupWindow {
 
         Text {
             text: root.text
+            textFormat: root.textFormat
             color: Theme.tooltipFg
             font.family: Theme.fontFamily
             font.pixelSize: Theme.fontSize

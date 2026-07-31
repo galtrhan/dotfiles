@@ -281,6 +281,7 @@ Full wallpaper system docs: [`.config/hypr/scripts/wallpaper.md`](.config/hypr/s
 | [`screen_capture_menu.sh`](.config/hypr/scripts/screen_capture_menu.sh) | `Super+Print` | QuickShell picker for audio source, then start or stop recording |
 | [`screen_capture.sh`](.config/hypr/scripts/screen_capture.sh) | Called by menu | Region recording via `wf-recorder` and `slurp`, clipboard copy, notifications |
 | [`screenshot.sh`](.config/hypr/scripts/screenshot.sh) / [`screenshot.py`](.config/hypr/scripts/screenshot.py) | `Print` | Region screenshot via `hyprshot` |
+| [`ip_widget.sh`](.config/hypr/scripts/ip_widget.sh) | QuickShell IP widget right click | Save current MAC to history and randomize MAC with `macchanger` |
 
 Full screen capture docs: [`.config/hypr/scripts/screen_capture.md`](.config/hypr/scripts/screen_capture.md)
 
@@ -305,6 +306,24 @@ qs ipc call -- menu show "Power Menu" $'Lock\nLogout\nSuspend'
 
 QuickShell reloads QML on save. Restart with `Super+Shift+O` or `pkill quickshell; quickshell &`.
 
+### IP Widget
+
+The status bar IP widget shows your public IP address. It polls `api.ipify.org` every 30 seconds.
+
+| Action | Result |
+|--------|--------|
+| Hover | Tooltip shows public IP, current MAC, and up to three previous MAC addresses |
+| Left click | Copy public IP to clipboard |
+| Right click | Save current MAC to history and set a random MAC with `macchanger` |
+
+The tooltip lists the current MAC at full brightness. Each older MAC in history is 10% dimmer than the line above it.
+
+MAC history is stored at `~/.local/state/quickshell/mac-history`. The file keeps the last three MAC addresses. When you randomize, the script removes the oldest entry if the list is full.
+
+The script is [`.config/hypr/scripts/ip_widget.sh`](.config/hypr/scripts/ip_widget.sh). It uses the default route network interface. Random MAC change needs `sudo` and uses the graphical askpass prompt when QuickShell runs the script.
+
+`install.sh` installs `macchanger`.
+
 ### Battery Meltdown Overlay
 
 At **5% battery** while discharging, QuickShell shows a full-screen critical overlay (not the corner popup). The overlay uses a flashing red UI, a looping `meltdown.mp3` alarm, and a **60-second countdown**. When the countdown ends, the system suspends. Click to dismiss, or plug in to cancel.
@@ -321,6 +340,8 @@ Common tuning points:
 | Battery meltdown suspend countdown | [`.config/quickshell/BatteryMeltdownService.qml`](.config/quickshell/BatteryMeltdownService.qml) | `suspendDelaySec` |
 | Battery meltdown alarm file | [`.config/quickshell/Paths.qml`](.config/quickshell/Paths.qml) | `batteryMeltdownSound` |
 | Low-battery thresholds | [`.config/hypr/scripts/battery.sh`](.config/hypr/scripts/battery.sh) | `THRESHOLDS` |
+| IP widget MAC history size | [`.config/hypr/scripts/ip_widget.sh`](.config/hypr/scripts/ip_widget.sh) | `MAX_HISTORY` |
+| IP widget MAC history file | `~/.local/state/quickshell/mac-history` | Written by `ip_widget.sh` |
 | Clipboard history size (text / image) | [`.config/hypr/hyprland.lua`](.config/hypr/hyprland.lua) | `cliphist -max-items` in the `wl-paste --watch` autostart lines (default: 100 text, 10 image) |
 | Launcher list highlight color | [`.config/quickshell/Theme.qml`](.config/quickshell/Theme.qml) | `launcherHighlight` |
 

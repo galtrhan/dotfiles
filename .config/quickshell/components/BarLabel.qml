@@ -8,6 +8,7 @@ Item {
     property string text: ""
     property string icon: ""
     property string tooltipText: ""
+    property int tooltipFormat: Text.PlainText
     property color labelColor: Theme.fgBright
     property int labelSize: Theme.fontSize
     property int iconSize: Theme.iconSize
@@ -50,6 +51,7 @@ Item {
     BarTooltip {
         anchorItem: root
         text: root.tooltipText
+        textFormat: root.tooltipFormat
         visible: root.tooltipVisible
     }
 }
