@@ -20,6 +20,8 @@ hl.bind(mainMod .. " + O", hl.dsp.exec_cmd("pkill -x quickshell; quickshell &"))
 hl.bind(mainMod .. " + Print", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/screen_capture_menu.sh"))
 
 hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/wallpaper_control.sh change"))
+hl.bind(mainMod .. " + SHIFT + H", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/wallpaper_manage.sh collect"))
+hl.bind(mainMod .. " + SHIFT + J", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/wallpaper_manage.sh discard"))
 hl.bind(mainMod .. " + SHIFT + O", hl.dsp.exec_cmd("pkill quickshell || quickshell"))
 
 hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "l" }))
