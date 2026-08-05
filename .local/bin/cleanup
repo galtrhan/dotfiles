@@ -1,0 +1,79 @@
+#!/bin/bash
+# cleanup - reclaim disk space from build & package caches
+# Usage: cleanup [-y]
+
+YES=false
+case "$1" in
+  -y|--yes) YES=true ;;
+esac
+
+confirm() {
+  [ "$YES" = true ] && return 0
+  if command -v gum >/dev/null 2>&1; then
+    gum confirm --default=false "$1" && return 0
+    return 1
+  fi
+  read -r -p "$1 [y/N] " ans
+  case "$ans" in y|Y|yes|YES) return 0 ;; esac
+  return 1
+}
+
+size() { du -sh "$1" 2>/dev/null | cut -f1; }
+
+pacman_dir=/var/cache/pacman/pkg
+gradle_dir="$HOME/.gradle"
+android_dir="$HOME/.android"
+yay_dir="$HOME/.cache/yay"
+pub_cache="$HOME/.pub-cache"
+
+echo "== Space check =="
+echo "  pacman cache:  $(size "$pacman_dir")"
+echo "  gradle:        $(size "$gradle_dir")"
+echo "  android:       $(size "$android_dir")"
+echo "  yay:           $(size "$yay_dir")"
+echo "  pub-cache:     $(size "$pub_cache")"
+[ -d "$android_dir/avd" ] && echo "  AVDs (kept):   $(size "$android_dir/avd")"
+[ -f pubspec.yaml ] && echo "  flutter:       build $(size build) + .dart_tool $(size .dart_tool)"
+echo
+
+if [ -d "$pacman_dir" ]; then
+  if confirm "Purge old pacman cache, keep 3 newest (was $(size "$pacman_dir"))?"; then
+    sudo paccache -r || echo "  paccache failed"
+  fi
+fi
+
+if [ -d "$yay_dir" ]; then
+  if confirm "Clear yay cache (was $(size "$yay_dir"))?"; then
+    yay -Sc --noconfirm
+  fi
+fi
+
+if [ -d "$gradle_dir" ]; then
+  if confirm "Purge ~/.gradle caches/wrappers/daemons (was $(size "$gradle_dir"))?"; then
+    rm -rf "$gradle_dir"/caches "$gradle_dir"/wrapper/dists "$gradle_dir"/daemon "$gradle_dir"/configuration-cache
+    echo "  gradle cleaned"
+  fi
+fi
+
+if [ -d "$android_dir" ]; then
+  if confirm "Clean ~/.android caches, keep AVDs (was $(size "$android_dir"))?"; then
+    rm -rf "$android_dir"/cache "$android_dir"/build-cache "$android_dir"/tmp
+    echo "  android cleaned"
+  fi
+fi
+
+if [ -f pubspec.yaml ]; then
+  if confirm "Clean this Flutter project's build/ and .dart_tool/?"; then
+    rm -rf build .dart_tool
+    echo "  flutter cleaned - run 'flutter pub get' to regenerate"
+  fi
+fi
+
+if [ -d "$pub_cache" ]; then
+  if confirm "Purge ~/.pub-cache (was $(size "$pub_cache"), re-downloads on next pub get)?"; then
+    rm -rf "$pub_cache"
+    echo "  pub-cache cleaned"
+  fi
+fi
+
+echo "Done."
