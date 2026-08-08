@@ -5,6 +5,7 @@
 
 WALLPAPER_STATE_FILE="$HOME/.config/hypr/wallpaper_state"
 WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+COLLECTION_DIR="$WALLPAPER_DIR/Collection"
 
 # Wait for hyprpaper to be ready (reduced delay to minimize flickering)
 sleep 0.5
@@ -34,7 +35,7 @@ restore_wallpaper() {
 # Function to set a random wallpaper if no saved state
 set_random_wallpaper() {
     echo "Setting random wallpaper as fallback"
-    local random_wallpaper=$(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.bmp" -o -iname "*.webp" \) | shuf -n 1)
+    local random_wallpaper=$(find "$WALLPAPER_DIR" -path "$COLLECTION_DIR" -prune -o -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.bmp" -o -iname "*.webp" \) -print | shuf -n 1)
     
     if [[ -n "$random_wallpaper" && -f "$random_wallpaper" ]]; then
         hyprctl hyprpaper preload "$random_wallpaper"

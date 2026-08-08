@@ -19,6 +19,7 @@ BarLabel {
     }
     visible: brightnessPercent >= 0
     tooltipText: brightnessPercent >= 0 ? "Scroll: brightness · " + brightnessPercent + "%" : ""
+    hoverEnabled: true
 
     readonly property int step: 10
 

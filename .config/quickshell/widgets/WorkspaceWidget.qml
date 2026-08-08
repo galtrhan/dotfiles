@@ -34,6 +34,7 @@ RowLayout {
             readonly property bool isVisible: wsId <= 4 || ws !== undefined
             readonly property bool isActive: Hyprland.focusedWorkspace && Hyprland.focusedWorkspace.id === wsId
             readonly property bool isUrgent: ws ? ws.urgent : false
+            property bool hovered: false
 
             Text {
                 id: wsLabel
@@ -44,6 +45,8 @@ RowLayout {
                 font.family: Theme.fontFamily
                 font.pixelSize: Theme.iconSize
                 color: {
+                    if (hovered)
+                        return Theme.hoverColor;
                     if (isActive)
                         return Theme.workspaceActive;
                     if (isUrgent)
@@ -51,12 +54,21 @@ RowLayout {
                     return Theme.workspaceDefault;
                 }
                 font.weight: isActive ? 700 : 400
+
+                Behavior on color {
+                    ColorAnimation {
+                        duration: Theme.hoverTransitionDuration
+                    }
+                }
             }
 
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
+                hoverEnabled: true
                 onClicked: root.focusWorkspace(wsId)
+                onEntered: parent.hovered = true
+                onExited: parent.hovered = false
                 onWheel: function (wheel) {
                     Hyprland.dispatch(wheel.angleDelta.y > 0 ? 'hl.dsp.focus({ workspace = "e-1" })' : 'hl.dsp.focus({ workspace = "e+1" })');
                 }

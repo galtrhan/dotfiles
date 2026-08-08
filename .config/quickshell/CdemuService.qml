@@ -99,12 +99,25 @@ Singleton {
         return "";
     }
 
-    function openPicker(device) {
-        root.pendingDevice = device;
+    function showPicker(device) {
         var opts = [root.openOption];
         for (var i = 0; i < root.recentImages.length; i++)
             opts.push(root.extractFilename(root.recentImages[i]));
         LauncherService.openMenu("CDEmu " + (device + 1), opts, true, 1);
+    }
+
+    function openPicker(device) {
+        root.pendingDevice = device;
+        if (root.recentImages.length === 0) {
+            root.pendingDevice = -1;
+            root.browseDevice = device;
+            browseProc.running = true;
+            return;
+        }
+        recentCheckProc.command = ["sh", "-c",
+            "for path do [ -e \"$path\" ] && printf '%s\\n' \"$path\"; done",
+            "cdemu-recent-check"].concat(root.recentImages);
+        recentCheckProc.running = true;
     }
 
     function applySelection(value) {
@@ -187,6 +200,39 @@ Singleton {
                 root.browseDevice = -1;
                 if (path.length > 0 && device >= 0)
                     root.loadOnDevice(device, path);
+            }
+        }
+    }
+
+    Process {
+        id: recentCheckProc
+        running: false
+        stdout: StdioCollector {
+            onStreamFinished: {
+                var valid = this.text.trim().length > 0 ? this.text.trim().split("\n") : [];
+                var changed = valid.length !== root.recentImages.length;
+                if (!changed) {
+                    for (var i = 0; i < valid.length; i++) {
+                        if (valid[i] !== root.recentImages[i]) {
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+                root.recentImages = valid;
+                if (changed)
+                    root.saveRecent();
+
+                var device = root.pendingDevice;
+                if (device < 0)
+                    return;
+                if (valid.length === 0) {
+                    root.pendingDevice = -1;
+                    root.browseDevice = device;
+                    browseProc.running = true;
+                    return;
+                }
+                root.showPicker(device);
             }
         }
     }

@@ -27,6 +27,7 @@ BarLabel {
 
     text: ClockLogic.formatDateTime(clock.date, verboseFormat)
     tooltipText: namedaysTooltip
+    hoverEnabled: true
 
     MouseArea {
         anchors.fill: parent

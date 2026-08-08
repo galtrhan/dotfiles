@@ -6,6 +6,7 @@
 
 # Configuration
 WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+COLLECTION_DIR="$WALLPAPER_DIR/Collection"
 DEFAULT_INTERVAL=30
 
 # Get interval from argument or use default
@@ -14,7 +15,7 @@ INTERVAL=${1:-$DEFAULT_INTERVAL}
 # Function to get random wallpaper
 get_random_wallpaper() {
     # Find all image files in wallpaper directory
-    find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.bmp" -o -iname "*.webp" \) | shuf -n 1
+    find "$WALLPAPER_DIR" -path "$COLLECTION_DIR" -prune -o -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.bmp" -o -iname "*.webp" \) -print | shuf -n 1
 }
 
 # Function to change wallpaper

@@ -4,10 +4,11 @@
 # This script changes wallpaper once and exits
 
 WALLPAPER_DIR="$HOME/Pictures/Wallpapers"
+COLLECTION_DIR="$WALLPAPER_DIR/Collection"
 
 # Function to get random wallpaper
 get_random_wallpaper() {
-    find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.bmp" -o -iname "*.webp" \) | shuf -n 1
+    find "$WALLPAPER_DIR" -path "$COLLECTION_DIR" -prune -o -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.bmp" -o -iname "*.webp" \) -print | shuf -n 1
 }
 
 # Function to change wallpaper

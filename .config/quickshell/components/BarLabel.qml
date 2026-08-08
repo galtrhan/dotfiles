@@ -10,10 +10,12 @@ Item {
     property string tooltipText: ""
     property int tooltipFormat: Text.PlainText
     property color labelColor: Theme.fgBright
+    property color hoverColor: Theme.hoverColor
     property int labelSize: Theme.fontSize
     property int iconSize: Theme.iconSize
     property int labelWeight: Font.Normal
     property bool tooltipVisible: false
+    property bool hoverEnabled: false
 
     // One Text so icon+label share a baseline; iconSize when an icon is set.
     readonly property string displayText: {
@@ -39,13 +41,19 @@ Item {
         font.family: Theme.fontFamily
         font.pixelSize: root.displaySize
         font.weight: root.labelWeight
-        color: root.labelColor
+        color: root.hoverEnabled && hover.hovered ? root.hoverColor : root.labelColor
+
+        Behavior on color {
+            ColorAnimation {
+                duration: Theme.hoverTransitionDuration
+            }
+        }
     }
 
     HoverHandler {
         id: hover
-        enabled: root.tooltipText !== ""
-        onHoveredChanged: root.tooltipVisible = hovered
+        enabled: root.hoverEnabled || root.tooltipText !== ""
+    onHoveredChanged: root.tooltipVisible = hovered && root.tooltipText !== ""
     }
 
     BarTooltip {

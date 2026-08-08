@@ -25,7 +25,7 @@ get_current_wallpaper() {
 
 # Function to get a random wallpaper
 get_random_wallpaper() {
-    find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.bmp" -o -iname "*.webp" \) | shuf -n 1
+    find "$WALLPAPER_DIR" -path "$COLLECTION_DIR" -prune -o -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" -o -iname "*.bmp" -o -iname "*.webp" \) -print | shuf -n 1
 }
 
 # Function to move current wallpaper to the collection and keep it active

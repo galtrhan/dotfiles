@@ -32,6 +32,7 @@ BarLabel {
     }
     visible: displayText !== ""
     tooltipText: tooltipBody
+    hoverEnabled: true
 
     ScriptPoll {
         command: ["sensors", "-j"]

@@ -25,6 +25,8 @@ Singleton {
     readonly property color fg: "#cba6f7"
     readonly property color fgMuted: "#6e6a86"
     readonly property color fgBright: "#e5d9f5"
+    readonly property color hoverColor: "#ffffff"
+    readonly property int hoverTransitionDuration: 200
 
     readonly property color workspaceActive: "#33ccff"
     readonly property color workspaceDefault: "#6e6a86"
@@ -43,6 +45,7 @@ Singleton {
     readonly property color powerColor: "white"
     readonly property color powerHover: "orange"
     readonly property color idleActive: "#39ff14"
+    readonly property color cdemuLoaded: "#90ee90"
 
     readonly property color tooltipBg: "#1e1e2e"
     readonly property color tooltipBorder: "#11111b"

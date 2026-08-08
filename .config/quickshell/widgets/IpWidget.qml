@@ -17,6 +17,7 @@ BarLabel {
     labelColor: hasIp ? "white" : Theme.fgMuted
     tooltipFormat: Text.RichText
     tooltipText: buildTooltipText()
+    hoverEnabled: true
 
     function dimmedColor(opacity) {
         var c = Qt.color(Theme.tooltipFg);

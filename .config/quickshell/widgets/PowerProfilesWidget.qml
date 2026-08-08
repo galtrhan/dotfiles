@@ -16,6 +16,7 @@ BarLabel {
     }
     visible: PowerProfiles.profile !== PowerProfile.PowerSaver || PowerProfiles.hasPerformanceProfile
     tooltipText: "Click to cycle power profile"
+    hoverEnabled: true
 
     MouseArea {
         anchors.fill: parent

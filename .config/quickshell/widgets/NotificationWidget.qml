@@ -21,6 +21,8 @@ Item {
         id: bellLabel
         icon: NotificationService.doNotDisturb ? "" : ""
         labelColor: root.iconColor
+        hoverEnabled: true
+        hoverColor: Theme.notifAccent
         tooltipText: root.tooltipText
     }
 

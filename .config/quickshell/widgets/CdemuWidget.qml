@@ -12,8 +12,7 @@ Item {
 
     // FA icons (in JetBrainsMono Nerd Font)
     readonly property string iconEmpty: ""
-    readonly property string iconIso: ""
-    readonly property string iconCd: ""
+    readonly property string iconCd: ""
     readonly property string iconDvd: ""
 
     function mediaIcon(loaded, filename) {
@@ -23,7 +22,7 @@ Item {
         var dot = name.lastIndexOf(".");
         var ext = dot >= 0 ? name.slice(dot + 1) : "";
         if (ext === "iso" || ext === "img")
-            return iconIso;
+            return iconCd;
         if (ext === "mds" || ext === "mdf" || ext === "nrg" || ext === "dvd")
             return iconDvd;
         // .cue / .bin / .toc / .ccd and anything else → CD
@@ -38,7 +37,8 @@ Item {
         BarLabel {
             Layout.alignment: Qt.AlignVCenter
             icon: root.mediaIcon(CdemuService.loaded, CdemuService.filename)
-            labelColor: CdemuService.loaded ? Theme.workspaceActive : Theme.fgMuted
+            labelColor: CdemuService.loaded ? Theme.cdemuLoaded : Theme.fgMuted
+            hoverEnabled: true
             tooltipText: CdemuService.loaded
                 ? "CDEmu 1: " + CdemuService.filename + "\nLeft: open · Right: eject"
                 : "CDEmu 1: no disc loaded\nLeft: open"
@@ -62,7 +62,8 @@ Item {
             Layout.alignment: Qt.AlignVCenter
             visible: CdemuService.loaded || CdemuService.loaded2
             icon: root.mediaIcon(CdemuService.loaded2, CdemuService.filename2)
-            labelColor: CdemuService.loaded2 ? Theme.workspaceActive : Theme.fgMuted
+            labelColor: CdemuService.loaded2 ? Theme.cdemuLoaded : Theme.fgMuted
+            hoverEnabled: true
             tooltipText: CdemuService.loaded2
                 ? "CDEmu 2: " + CdemuService.filename2 + "\nLeft: open · Right: eject"
                 : "CDEmu 2: no disc loaded\nLeft: open"

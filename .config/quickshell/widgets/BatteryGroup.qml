@@ -53,6 +53,7 @@ RowLayout {
         icon: root.batteryGlyph(UPower.displayDevice)
         text: root.percent(UPower.displayDevice) + "%"
         labelColor: root.batteryColor(UPower.displayDevice)
+        hoverEnabled: true
         tooltipText: "Click to expand battery details"
 
         MouseArea {
