@@ -52,7 +52,7 @@ systemctl --user restart docker.service
 ### Window Manager & Desktop
 - **Hyprland** - Wayland window manager (Lua config) with custom scripts for auth, power, media, wallpaper, and screen capture
 - **Hyprlock** - Custom build from [galtrhan/hyprlock](https://github.com/galtrhan/hyprlock) with broken LCD effect (progressive screen glitch on failed auth or lid open)
-- **QuickShell** - Status bar, notification center, app launcher, and script menus (QML)
+- **QuickShell** - Status bar, notification center, app launcher, and script menus (QML). Bar includes Cursor plan usage via `cursor_usage_widget.py`.
 - **Shmooz** - Screen magnifier (zoom, annotation, spotlight, color picker)
 
 ### Shell & Terminal
@@ -282,6 +282,7 @@ Full wallpaper system docs: [`.config/hypr/scripts/wallpaper.md`](.config/hypr/s
 | [`screen_capture.sh`](.config/hypr/scripts/screen_capture.sh) | Called by menu | Region recording via `wf-recorder` and `slurp`, clipboard copy, notifications |
 | [`screenshot.sh`](.config/hypr/scripts/screenshot.sh) / [`screenshot.py`](.config/hypr/scripts/screenshot.py) | `Print` | Region screenshot via `hyprshot` |
 | [`ip_widget.sh`](.config/hypr/scripts/ip_widget.sh) | QuickShell IP widget right click | Save current MAC to history and randomize MAC with `macchanger` |
+| [`cursor_usage_widget.py`](.config/hypr/scripts/cursor_usage_widget.py) | QuickShell Cursor usage widget | Read plan pool % from `cursor.com/api/usage-summary` for the status bar |
 
 Full screen capture docs: [`.config/hypr/scripts/screen_capture.md`](.config/hypr/scripts/screen_capture.md)
 
@@ -324,6 +325,38 @@ The script is [`.config/hypr/scripts/ip_widget.sh`](.config/hypr/scripts/ip_widg
 
 `install.sh` installs `macchanger`.
 
+### Cursor Usage Widget
+
+The status bar shows Cursor plan usage after the IP widget. It polls [`.config/hypr/scripts/cursor_usage_widget.py`](.config/hypr/scripts/cursor_usage_widget.py) every five minutes. The script reads your Cursor IDE session from `state.vscdb` and calls `GET https://cursor.com/api/usage-summary` with a `cursor-agent` User-Agent.
+
+| Display | Meaning |
+|---------|---------|
+| Cursor icon + `7%` | Highest **used** % across Auto + Composer and API pool |
+| Blue | Used &lt; 60% |
+| Orange | Used 60–84% |
+| Red | Used ≥ 85% |
+
+| Action | Result |
+|--------|--------|
+| Hover | Tooltip with plan, account, and per-pool used / left % |
+| Left click | Open [cursor.com/dashboard/usage](https://cursor.com/dashboard/usage) |
+
+**Requirements:**
+
+- Sign in to the **Cursor IDE** on this machine (`~/.config/Cursor/User/globalStorage/state.vscdb`).
+- `python3` on PATH (stdlib only; no extra packages).
+- The widget stays hidden if auth fails or the API returns no meters.
+
+Verify from the terminal:
+
+```bash
+python3 ~/.config/hypr/scripts/cursor_usage_widget.py | python3 -m json.tool
+```
+
+**Note on `usagenometer` (`usg`):** The AUR package [usagenometer](https://github.com/horizzon3507/usagenometer) is optional for terminal meters. As of 0.1.2-beta it calls `www.cursor.com` with a custom User-Agent and may report `Cursor session was rejected` even when the IDE is signed in. This dotfiles bar uses `cursor_usage_widget.py` instead, which matches how the Cursor CLI reaches the API.
+
+Widget code: [`.config/quickshell/widgets/CursorUsageWidget.qml`](.config/quickshell/widgets/CursorUsageWidget.qml). Parser: [`.config/quickshell/lib/CursorUsageLogic.js`](.config/quickshell/lib/CursorUsageLogic.js).
+
 ### Battery Meltdown Overlay
 
 At **5% battery** while discharging, QuickShell shows a full-screen critical overlay (not the corner popup). The overlay uses a flashing red UI, a looping `meltdown.mp3` alarm, and a **60-second countdown**. When the countdown ends, the system suspends. Click to dismiss, or plug in to cancel.
@@ -342,6 +375,9 @@ Common tuning points:
 | Low-battery thresholds | [`.config/hypr/scripts/battery.sh`](.config/hypr/scripts/battery.sh) | `THRESHOLDS` |
 | IP widget MAC history size | [`.config/hypr/scripts/ip_widget.sh`](.config/hypr/scripts/ip_widget.sh) | `MAX_HISTORY` |
 | IP widget MAC history file | `~/.local/state/quickshell/mac-history` | Written by `ip_widget.sh` |
+| Cursor usage poll interval | [`.config/quickshell/widgets/CursorUsageWidget.qml`](.config/quickshell/widgets/CursorUsageWidget.qml) | `ScriptPoll` `interval` (default: 300000 ms) |
+| Cursor usage fetch script | [`.config/hypr/scripts/cursor_usage_widget.py`](.config/hypr/scripts/cursor_usage_widget.py) | stdout → JSON for QuickShell |
+| Cursor usage bar icon | [`.config/quickshell/icons/cursor.png`](.config/quickshell/icons/cursor.png) | 32×32 bar icon (`Paths.cursorIcon`) |
 | Clipboard history size (text / image) | [`.config/hypr/hyprland.lua`](.config/hypr/hyprland.lua) | `cliphist -max-items` in the `wl-paste --watch` autostart lines (default: 100 text, 10 image) |
 | Launcher list highlight color | [`.config/quickshell/Theme.qml`](.config/quickshell/Theme.qml) | `launcherHighlight` |
 
@@ -373,6 +409,7 @@ Notification history exclusions (volume, brightness, keyboard OSD) are in the sa
 - **Mute LED control** for `XF86AudioMute` and `XF86AudioMicMute` uses udev ownership rules that `install.sh` installs.
 - **Sudo askpass** needs Fish (for the non-TTY `sudo -A` wrapper) and QuickShell for the password overlay. It applies when stdin is not a terminal.
 - **Desktop notifications** are handled by QuickShell (`notify-send` / `libnotify`). Disable or mask `dunst.service` if you migrate from an older setup.
+- **Cursor usage in the bar** reads the local Cursor IDE session via `cursor_usage_widget.py`. Sign in to Cursor IDE. Run the script manually if the widget does not appear.
 - **Battery meltdown** at 5% uses a QuickShell full-screen overlay with alarm sound and auto-suspend countdown. See [`.config/hypr/scripts/battery.md`](.config/hypr/scripts/battery.md).
 - **Hyprlock** is a custom build from [galtrhan/hyprlock](https://github.com/galtrhan/hyprlock), not the upstream `hyprlock` package. The `broken_lcd` effect and `--grace` flag need this fork. Build with cmake (see repo README) and `sudo cmake --install build`.
 - For development or contributions, see [AGENTS.md](./AGENTS.md)

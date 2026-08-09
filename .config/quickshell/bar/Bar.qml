@@ -45,11 +45,18 @@ Item {
             Layout.alignment: Qt.AlignVCenter
         }
         Separator {
-            variant: "line"
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
         IpWidget {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignVCenter
+        }
+        Separator {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignVCenter
+        }
+        CursorUsageWidget {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
@@ -75,7 +82,6 @@ Item {
             Layout.alignment: Qt.AlignVCenter
         }
         Separator {
-            variant: "line"
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
