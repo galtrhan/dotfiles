@@ -69,11 +69,15 @@ Item {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
-        TempsWidget {
+        AudioWidget {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
-        AudioWidget {
+        Separator {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignVCenter
+        }
+        TempsWidget {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
@@ -86,6 +90,10 @@ Item {
             Layout.alignment: Qt.AlignVCenter
         }
         NotificationWidget {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignVCenter
+        }
+        Separator {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
