@@ -65,10 +65,10 @@ Item {
                 return;
             }
 
-            var used = CursorUsageLogic.maxUsedPercent(snapshot.meters);
-            root.displayText = used + "%";
+            root.displayText = CursorUsageLogic.buildDisplayText(snapshot.meters);
             root.tooltipBody = CursorUsageLogic.buildTooltip(snapshot);
-            root.usageClass = CursorUsageLogic.usageClass(used);
+            root.usageClass = CursorUsageLogic.usageClass(
+                CursorUsageLogic.maxUsedPercent(snapshot.meters));
         }
     }
 

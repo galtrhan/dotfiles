@@ -86,9 +86,9 @@ def extract_percent(message: str | None) -> float | None:
     return float(match.group(1))
 
 
-def meter(title: str, used_percent: float) -> dict[str, Any]:
+def meter(pool_id: str, title: str, used_percent: float) -> dict[str, Any]:
     used = max(0.0, min(100.0, used_percent))
-    return {"title": title, "percent": used / 100.0}
+    return {"id": pool_id, "title": title, "percent": used / 100.0}
 
 
 def meters_from_summary(summary: dict[str, Any]) -> list[dict[str, Any]]:
@@ -98,11 +98,11 @@ def meters_from_summary(summary: dict[str, Any]) -> list[dict[str, Any]]:
 
     auto = plan.get("autoPercentUsed")
     if auto is not None:
-        meters.append(meter("Auto + Composer", float(auto)))
+        meters.append(meter("included", "Auto + Composer", float(auto)))
 
     api = plan.get("apiPercentUsed")
     if api is not None:
-        meters.append(meter("API pool", float(api)))
+        meters.append(meter("api", "API pool", float(api)))
 
     if not meters:
         auto_msg = summary.get("autoModelSelectedDisplayMessage")
@@ -110,9 +110,9 @@ def meters_from_summary(summary: dict[str, Any]) -> list[dict[str, Any]]:
         auto_pct = extract_percent(auto_msg if isinstance(auto_msg, str) else None)
         named_pct = extract_percent(named_msg if isinstance(named_msg, str) else None)
         if auto_pct is not None:
-            meters.append(meter("Auto + Composer", auto_pct))
+            meters.append(meter("included", "Auto + Composer", auto_pct))
         if named_pct is not None:
-            meters.append(meter("API pool", named_pct))
+            meters.append(meter("api", "API pool", named_pct))
 
     return meters
 

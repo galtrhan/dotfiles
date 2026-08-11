@@ -17,6 +17,16 @@ function usedPercent(meter) {
     return Math.round(meter.percent * 100);
 }
 
+function meterPercentById(meters, poolId) {
+    if (!meters)
+        return null;
+    for (var i = 0; i < meters.length; i++) {
+        if (meters[i].id === poolId)
+            return usedPercent(meters[i]);
+    }
+    return null;
+}
+
 function maxUsedPercent(meters) {
     var max = 0;
     if (!meters)
@@ -24,6 +34,18 @@ function maxUsedPercent(meters) {
     for (var i = 0; i < meters.length; i++)
         max = Math.max(max, usedPercent(meters[i]));
     return max;
+}
+
+function buildDisplayText(meters) {
+    var included = meterPercentById(meters, "included");
+    var api = meterPercentById(meters, "api");
+    if (included === null && api === null)
+        return "";
+    if (included === null)
+        included = 0;
+    if (api === null)
+        api = 0;
+    return included + "%/" + api + "%";
 }
 
 function usageClass(usedPct) {
