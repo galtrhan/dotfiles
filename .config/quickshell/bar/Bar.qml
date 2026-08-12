@@ -31,6 +31,10 @@ Item {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
+        DevServerWidget {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignVCenter
+        }
         Separator {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter

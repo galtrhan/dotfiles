@@ -9,6 +9,7 @@ Singleton {
     readonly property string hyprScripts: configDir + "/hypr/scripts"
     readonly property string qsMenu: hyprScripts + "/qs-menu.sh"
     readonly property string ipWidget: hyprScripts + "/ip_widget.sh"
+    readonly property string devServers: hyprScripts + "/dev_servers.sh"
     readonly property string cursorUsageWidget: hyprScripts + "/cursor_usage_widget.py"
     readonly property string cursorIcon: "file://" + configDir + "/quickshell/icons/cursor.png"
     readonly property string runtimeDir: Quickshell.env("XDG_RUNTIME_DIR") || "/tmp"
