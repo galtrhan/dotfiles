@@ -27,6 +27,10 @@ Item {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
+        DockerWidget {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignVCenter
+        }
         Separator {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter

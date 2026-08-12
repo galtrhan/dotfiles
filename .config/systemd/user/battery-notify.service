@@ -1,11 +1,6 @@
 [Unit]
 Description=Battery level notification service
-After=graphical-session.target
-Wants=graphical-session.target
 
 [Service]
 Type=oneshot
 ExecStart=%h/.config/hypr/scripts/battery.sh
-
-[Install]
-WantedBy=graphical-session.target

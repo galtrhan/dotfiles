@@ -5,3 +5,6 @@ backup/
 .bashrc
 .config/systemd/user/default.target.wants/
 .local/bin/lnd
+.local/bin/bru
+.local/lib/
+__pycache__/
