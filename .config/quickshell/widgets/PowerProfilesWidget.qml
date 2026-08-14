@@ -9,13 +9,23 @@ BarLabel {
         "Balanced": "",
         "Performance": ""
     })
+    readonly property var profileNames: ({
+        "PowerSaver": "Power Saver",
+        "Balanced": "Balanced",
+        "Performance": "Performance"
+    })
+
+    readonly property string currentProfile: {
+        var name = PowerProfile.toString(PowerProfiles.profile);
+        return profileNames[name] || name;
+    }
 
     icon: {
         var name = PowerProfile.toString(PowerProfiles.profile);
         return profileIcons[name] || "";
     }
     visible: PowerProfiles.profile !== PowerProfile.PowerSaver || PowerProfiles.hasPerformanceProfile
-    tooltipText: "Click to cycle power profile"
+    tooltipText: currentProfile + " · Click to cycle"
     hoverEnabled: true
 
     MouseArea {
