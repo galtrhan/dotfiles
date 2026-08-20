@@ -99,3 +99,28 @@ while IFS= read -r line; do
 
 	echo "${label}|${sorted_ports}|${pid}"
 done < <(ps ax -o pid=,args= 2>/dev/null | awk '$2 == "npm" && $3 == "run" && $4 == "dev"')
+
+# Also detect any process listening on port 4321 (e.g. Astro dev server).
+declare -A captured_pids
+while IFS= read -r line; do
+	pid="$(awk '{print $1}' <<<"$line")"
+	captured_pids["$pid"]=1
+done < <(ps ax -o pid=,args= 2>/dev/null | awk '$2 == "npm" && $3 == "run" && $4 == "dev"')
+
+while IFS= read -r line; do
+	[[ "$line" == LISTEN* ]] || continue
+	local_addr="$(awk '{print $4}' <<<"$line")"
+	port="$(port_from_addr "$local_addr")"
+	[[ "$port" == "4321" ]] || continue
+
+	rest="${line#*users:(}"
+	while [[ "$rest" =~ pid=([0-9]+) ]]; do
+		pid="${BASH_REMATCH[1]}"
+		rest="${rest#*pid=${pid}}"
+		[[ -z "${captured_pids[$pid]:-}" ]] || continue
+
+		cwd=$(readlink -f "/proc/$pid/cwd" 2>/dev/null || echo "?")
+		label=$(short_path "$cwd")
+		echo "${label}|${port}|${pid}"
+	done
+done < <(ss -tlnp 2>/dev/null || true)
