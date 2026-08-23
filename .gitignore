@@ -8,3 +8,4 @@ backup/
 .local/bin/bru
 .local/lib/
 __pycache__/
+HW.md
