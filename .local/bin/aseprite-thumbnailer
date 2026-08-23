@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ $# -lt 2 || $# -gt 3 ]]; then
+    exit 2
+fi
+
+input_uri=$1
+output=$2
+size=${3:-}
+
+# Thumbnailers receive file URIs. Decode the URI without changing ordinary paths.
+decode_file_uri() {
+    local value=$1 hex char
+
+    if [[ $value == file://* ]]; then
+        value=${value#file://}
+        while [[ $value =~ (.*)%([0-9A-Fa-f]{2})(.*) ]]; do
+            hex=${BASH_REMATCH[2]}
+            printf -v char '%b' "\\x$hex"
+            value=${BASH_REMATCH[1]}$char${BASH_REMATCH[3]}
+        done
+    fi
+
+    printf '%s' "$value"
+}
+
+input=$(decode_file_uri "$input_uri")
+aseprite_bin=${ASEPRITE_BIN:-aseprite}
+
+[[ -f $input ]] || exit 1
+command -v "$aseprite_bin" >/dev/null 2>&1 || exit 1
+
+mkdir -p "$(dirname "$output")"
+temp_output=$(mktemp "${output}.tmp.XXXXXX.png")
+trap 'rm -f "$temp_output"' EXIT
+
+"$aseprite_bin" -b "$input" --save-as "$temp_output" >/dev/null
+
+if [[ $size =~ ^[1-9][0-9]*$ ]]; then
+    if command -v magick >/dev/null 2>&1; then
+        magick "$temp_output" -filter point -resize "${size}x${size}>" "$output"
+    elif command -v convert >/dev/null 2>&1; then
+        convert "$temp_output" -filter point -resize "${size}x${size}>" "$output"
+    else
+        mv "$temp_output" "$output"
+    fi
+else
+    mv "$temp_output" "$output"
+fi
+
+trap - EXIT
