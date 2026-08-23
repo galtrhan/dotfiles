@@ -7,3 +7,10 @@ AGENTS.md
 
 .config/kitty
 .config/kak
+
+# npm-managed, never stow (lives in real ~/.local/lib)
+/\.local/lib
+
+# accidental junk dirs; never link into $HOME
+spaces
+with

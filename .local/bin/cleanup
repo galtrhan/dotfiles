@@ -1,79 +1,244 @@
-#!/bin/bash
-# cleanup - reclaim disk space from build & package caches
-# Usage: cleanup [-y]
+#!/usr/bin/env bash
+# cleanup - reclaim disk space from package & build caches
+# Usage: cleanup [-y] [-n]
+#   -y  yes to everything, skip the confirm prompt
+#   -n  dry run: print what would happen, change nothing
+
+set -u
 
 YES=false
-case "$1" in
-  -y|--yes) YES=true ;;
-esac
-
-confirm() {
-  [ "$YES" = true ] && return 0
-  if command -v gum >/dev/null 2>&1; then
-    gum confirm --default=false "$1" && return 0
-    return 1
-  fi
-  read -r -p "$1 [y/N] " ans
-  case "$ans" in y|Y|yes|YES) return 0 ;; esac
-  return 1
-}
+DRY=false
+for arg in "$@"; do
+	case "$arg" in
+	-y | --yes) YES=true ;;
+	-n | --dry-run) DRY=true ;;
+	-h | --help)
+		sed -n '2,6p' "$0"
+		exit 0
+		;;
+	*)
+		echo "cleanup: unknown flag: $arg (see --help)" >&2
+		exit 1
+		;;
+	esac
+done
 
 size() { du -sh "$1" 2>/dev/null | cut -f1; }
 
-pacman_dir=/var/cache/pacman/pkg
-gradle_dir="$HOME/.gradle"
-android_dir="$HOME/.android"
-yay_dir="$HOME/.cache/yay"
-pub_cache="$HOME/.pub-cache"
+free_mb() { df -B1M --output=avail / 2>/dev/null | tail -n1; }
+
+before=$(free_mb)
 
 echo "== Space check =="
-echo "  pacman cache:  $(size "$pacman_dir")"
-echo "  gradle:        $(size "$gradle_dir")"
-echo "  android:       $(size "$android_dir")"
-echo "  yay:           $(size "$yay_dir")"
-echo "  pub-cache:     $(size "$pub_cache")"
-[ -d "$android_dir/avd" ] && echo "  AVDs (kept):   $(size "$android_dir/avd")"
-[ -f pubspec.yaml ] && echo "  flutter:       build $(size build) + .dart_tool $(size .dart_tool)"
+for p in /var/cache/pacman/pkg "$HOME/.cache/yay" "$HOME/.gradle" \
+	"$HOME/.npm" "$HOME/.cargo/registry" "$HOME/.local/share/Trash" \
+	"$HOME/.cache/zen" "$HOME/.cache/ms-playwright"; do
+	[ -e "$p" ] && printf '  %-40s %s\n' "$p" "$(size "$p")"
+done
+printf '  %-40s %s free\n' "/ (available)" "$before MiB"
 echo
 
-if [ -d "$pacman_dir" ]; then
-  if confirm "Purge old pacman cache, keep 3 newest (was $(size "$pacman_dir"))?"; then
-    sudo paccache -r || echo "  paccache failed"
-  fi
+if ! $YES && ! $DRY; then
+	if command -v gum >/dev/null 2>&1; then
+		gum confirm --default=false "Run full cleanup now?" || exit 0
+	else
+		read -r -p "Run full cleanup now? [y/N] " ans
+		case "$ans" in
+		y | Y | yes | YES) ;;
+		*) exit 0 ;;
+		esac
+	fi
+fi
+$DRY && echo "== DRY RUN: nothing will be changed ==" && echo
+
+rmrf() {
+	local p
+	for p in "$@"; do
+		[ -e "$p" ] || continue
+		echo "    rm -rf $p ($(size "$p"))"
+		$DRY || rm -rf "$p"
+	done
+}
+
+run() {
+	echo "    \$ $*"
+	$DRY && return 0
+	"$@" || echo "      (failed, continuing)"
+}
+
+skipped=()
+
+# ---------------------------------------------------------------- sudo steps
+echo "== System (sudo) =="
+if $DRY; then
+	echo "    sudo paccache -rk1"
+	echo "    sudo paccache -ruk0"
+	echo "    sudo journalctl --vacuum-time=2weeks"
+elif sudo -v; then
+	run sudo paccache -rk1
+	run sudo paccache -ruk0
+	run sudo journalctl --vacuum-time=2weeks
+else
+	echo "    sudo unavailable: pacman cache and journal skipped"
 fi
 
-if [ -d "$yay_dir" ]; then
-  if confirm "Clear yay cache (was $(size "$yay_dir"))?"; then
-    yay -Sc --noconfirm
-  fi
+# ---------------------------------------------------------- package managers
+echo "== Package managers =="
+rmrf "$HOME/.cache/yay"/*
+command -v flatpak >/dev/null 2>&1 && run flatpak uninstall --unused -y
+
+# --------------------------------------------------------------- dev caches
+echo "== Dev caches =="
+command -v npm >/dev/null 2>&1 && run npm cache clean --force
+rmrf "$HOME/.cargo/registry" "$HOME/.cargo/git"
+
+if command -v uv >/dev/null 2>&1; then
+	run uv cache clean
+else
+	rmrf "$HOME/.cache/uv"
 fi
 
-if [ -d "$gradle_dir" ]; then
-  if confirm "Purge ~/.gradle caches/wrappers/daemons (was $(size "$gradle_dir"))?"; then
-    rm -rf "$gradle_dir"/caches "$gradle_dir"/wrapper/dists "$gradle_dir"/daemon "$gradle_dir"/configuration-cache
-    echo "  gradle cleaned"
-  fi
+if command -v pip >/dev/null 2>&1; then
+	run pip cache purge
+else
+	echo "    \$ python -m pip cache purge"
+	if ! $DRY; then
+		if python -m pip cache purge >/dev/null 2>&1; then
+			echo "      done"
+		else
+			echo "      (python has no pip module, skipping)"
+		fi
+	fi
 fi
 
-if [ -d "$android_dir" ]; then
-  if confirm "Clean ~/.android caches, keep AVDs (was $(size "$android_dir"))?"; then
-    rm -rf "$android_dir"/cache "$android_dir"/build-cache "$android_dir"/tmp
-    echo "  android cleaned"
-  fi
+if command -v pnpm >/dev/null 2>&1; then
+	store=$(pnpm store path 2>/dev/null | tail -n1)
+	[ -n "$store" ] && rmrf "$store"
+fi
+rmrf "$HOME/.cache/pnpm"
+
+command -v go >/dev/null 2>&1 && run go clean -cache -modcache
+rmrf "$HOME/.cache/zig" "$HOME/.cache/winetricks"
+[ -d "$HOME/.android" ] &&
+	rmrf "$HOME/.android/cache" "$HOME/.android/build-cache" "$HOME/.android/tmp"
+
+# ------------------------------------------------------------ gradle prune
+# Delete wrapper distributions and versioned caches that no project pins.
+# Never touches modules-2 (shared dependency cache) or AVD data.
+gradle_prune() {
+	local gd="$HOME/.gradle"
+	[ -d "$gd" ] || return 0
+
+	local used="" f v d
+	while IFS= read -r f; do
+		v=$(sed -n 's/.*gradle-\([0-9][0-9.]*\)-\(all\|bin\)\.zip.*/\1/p' "$f")
+		if [ -n "$v" ]; then
+			case " $used " in
+			*" $v "*) ;;
+			*) used="$used $v" ;;
+			esac
+		fi
+	done < <(find "$HOME/projects" "$HOME/gamedev" -name gradle-wrapper.properties 2>/dev/null)
+
+	if [ -z "${used// /}" ]; then
+		v=$(ls "$gd/wrapper/dists" 2>/dev/null |
+			sed -n 's/^gradle-\([0-9.]*\)-.*/\1/p' | sort -V | tail -n1)
+		[ -n "$v" ] && used=" $v "
+		[ -z "${used// /}" ] && return 0
+		echo "    no project wrappers found, keeping newest: $v"
+	fi
+	local pinned=${used# }
+	echo "    versions pinned by projects: ${pinned// /, }"
+
+	for d in "$gd"/wrapper/dists/*; do
+		[ -d "$d" ] || continue
+		v=${d##*/}
+		v=${v#gradle-}
+		v=${v%%-*}
+		[[ "$v" =~ ^[0-9][0-9.]*$ ]] || continue
+		case " $used " in
+		*" $v "*) ;;
+		*) rmrf "$d" ;;
+		esac
+	done
+
+	for d in "$gd"/caches/*; do
+		[ -d "$d" ] || continue
+		v=${d##*/}
+		[[ "$v" =~ ^[0-9][0-9.]*$ ]] || continue
+		case " $used " in
+		*" $v "*) ;;
+		*) rmrf "$d" ;;
+		esac
+	done
+}
+
+echo "== Gradle smart prune =="
+gradle_prune
+
+# ------------------------------------------------------------------ extras
+echo "== Extras =="
+if command -v gio >/dev/null 2>&1 && [ -d "$HOME/.local/share/Trash/files" ]; then
+	run gio trash --empty
+else
+	rmrf "$HOME/.local/share/Trash/files"/* "$HOME/.local/share/Trash/info"/*
+fi
+rmrf "$HOME/.cache/zen" "$HOME/.cache/ms-playwright"
+
+if command -v docker >/dev/null 2>&1; then
+	export DOCKER_HOST="${DOCKER_HOST:-unix://$XDG_RUNTIME_DIR/docker.sock}"
+	run docker system prune -af
 fi
 
-if [ -f pubspec.yaml ]; then
-  if confirm "Clean this Flutter project's build/ and .dart_tool/?"; then
-    rm -rf build .dart_tool
-    echo "  flutter cleaned - run 'flutter pub get' to regenerate"
-  fi
+# ------------------------------------------------------------ project sweep
+echo "== Project sweep =="
+sweep_dir() {
+	local d=$1 base=$2 name did spec sdir
+	name=${d##*/}
+	did=false
+
+	if [ -f "$d/Makefile" ] && grep -qE '^clean[[:space:]]*:' "$d/Makefile" 2>/dev/null; then
+		echo "    make -C $base/$name clean"
+		$DRY || (cd "$d" && make clean >/dev/null 2>&1) || echo "      (make clean failed)"
+		did=true
+	fi
+
+	if command -v flutter >/dev/null 2>&1; then
+		for spec in "$d/pubspec.yaml" "$d"/*/pubspec.yaml; do
+			[ -f "$spec" ] || continue
+			sdir=$(dirname "$spec")
+			echo "    flutter clean in ${sdir#$HOME/}"
+			$DRY || (cd "$sdir" && flutter clean >/dev/null 2>&1) || echo "      (flutter clean failed)"
+			did=true
+		done
+	fi
+
+	$did || skipped+=("$base/$name")
+}
+
+for base in "$HOME/projects" "$HOME/gamedev"; do
+	[ -d "$base" ] || continue
+	for d in "$base"/*/; do
+		[ -d "$d" ] && sweep_dir "${d%/}" "$base"
+	done
+done
+
+# ----------------------------------------------------------------- summary
+after=$(free_mb)
+
+echo
+echo "== Summary =="
+if $DRY; then
+	echo "  dry run: no changes made"
+elif [ -n "$before" ] && [ -n "$after" ]; then
+	freed=$((before - after))
+	((freed < 0)) && freed=0
+	printf '  freed ~%d MiB (%d -> %d MiB free on /)\n' "$freed" "$before" "$after"
+else
+	echo "  could not measure free space"
 fi
 
-if [ -d "$pub_cache" ]; then
-  if confirm "Purge ~/.pub-cache (was $(size "$pub_cache"), re-downloads on next pub get)?"; then
-    rm -rf "$pub_cache"
-    echo "  pub-cache cleaned"
-  fi
+if [ ${#skipped[@]} -gt 0 ]; then
+	echo "  skipped (${#skipped[@]} dirs, no Makefile clean target / pubspec.yaml):"
+	printf '    %s\n' "${skipped[@]}"
 fi
-
-echo "Done."
