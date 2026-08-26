@@ -22,6 +22,7 @@ The repository uses GNU stow to manage symlinks. The directory structure mirrors
 │   ├── tmux/          # Tmux configuration + plugins (tpm, tmux-resurrect, tmux-gruvbox)
 │   ├── ghostty/       # Ghostty terminal configuration
 │   └── systemd/       # Systemd user units
+├── .dosbox/           # DOSBox config (symlinked to ~/.dosbox/)
 ├── install.sh         # Installation script (sets up packages and applies stow)
 └── README.md
 ```
@@ -40,6 +41,7 @@ To activate dotfiles, run `stow .` from the repo root. This creates symlinks in 
   - `tmux-resurrect`: Session persistence
   - `tmux-gruvbox`: Color theme
 - **Ghostty**: Terminal emulator config
+- **DOSBox**: DOS emulator. Config lives at `~/.dosbox/` (not `~/.config/`), so the repo stores it at `.dosbox/` at the root. Stow symlinks it into `~/`.
 
 ### Custom Scripts
 

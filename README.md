@@ -65,6 +65,7 @@ systemctl --user restart docker.service
 
 ### Editor & Tools
 - **Neovim** - Editor configuration
+- **DOSBox** - DOS emulator config (at `~/.dosbox/`, not `~/.config/`)
 - **Systemd** - User service units (wallpaper rotation, battery notifications)
 
 ### Screen Recording
@@ -395,6 +396,7 @@ Notification history exclusions (volume, brightness, keyboard OSD) are in the sa
 │   ├── tmux/          # Tmux + plugins
 │   ├── ghostty/       # Terminal emulator config
 │   └── systemd/       # Systemd user units
+├── .dosbox/           # DOSBox config (symlinked to ~/.dosbox/)
 ├── install.sh         # Installation script (packages + stow)
 └── README.md
 ```

@@ -39,6 +39,7 @@ pacman_packages=(
 	gparted
 	gedit
 	imv
+	dosbox
 )
 
 yay_packages=(

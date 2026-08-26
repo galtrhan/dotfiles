@@ -9,3 +9,4 @@ backup/
 .local/lib/
 __pycache__/
 HW.md
+.dosbox/capture
