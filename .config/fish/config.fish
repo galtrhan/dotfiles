@@ -25,3 +25,7 @@ function sudo --wraps sudo
 end
 
 alias agent='cursor-agent'
+alias vi='nvim'
+
+set -gx EDITOR nvim
+set -gx VISUAL nvim
