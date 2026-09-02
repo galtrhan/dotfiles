@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+if command -v systemd-run >/dev/null 2>&1; then
+  exec systemd-run --user --scope -p MemoryMax=8G -p MemorySwapMax=2G /usr/share/cursor/cursor "$@"
+fi
+exec /usr/share/cursor/cursor "$@"

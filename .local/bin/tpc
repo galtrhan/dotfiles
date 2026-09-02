@@ -1,0 +1,5 @@
+#!/bin/sh
+TPC_DIR="$HOME/.local/share/typephp/tpc"
+export LD_LIBRARY_PATH="$TPC_DIR/vendor/swoole/phpx/lib:$HOME/.local/share/typephp/php/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
+cd "$TPC_DIR" || exit 1
+exec ./tpc "$@"
