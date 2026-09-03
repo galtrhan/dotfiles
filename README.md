@@ -333,9 +333,7 @@ The status bar shows Cursor plan usage after the IP widget. It polls [`.config/h
 | Display | Meaning |
 |---------|---------|
 | Cursor icon + `6% / 12%` | Included (Auto + Composer) and API pool **used** % |
-| Blue | Used &lt; 60% |
-| Orange | Used 60–84% |
-| Red | Used ≥ 85% |
+| Blue / orange / red | Each % colors on its own used value (&lt;60 / 60–84 / ≥85) |
 
 | Action | Result |
 |--------|--------|

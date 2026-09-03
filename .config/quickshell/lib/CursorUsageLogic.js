@@ -27,27 +27,6 @@ function meterPercentById(meters, poolId) {
     return null;
 }
 
-function maxUsedPercent(meters) {
-    var max = 0;
-    if (!meters)
-        return 0;
-    for (var i = 0; i < meters.length; i++)
-        max = Math.max(max, usedPercent(meters[i]));
-    return max;
-}
-
-function buildDisplayText(meters) {
-    var included = meterPercentById(meters, "included");
-    var api = meterPercentById(meters, "api");
-    if (included === null && api === null)
-        return "";
-    if (included === null)
-        included = 0;
-    if (api === null)
-        api = 0;
-    return included + "%/" + api + "%";
-}
-
 function usageClass(usedPct) {
     if (usedPct >= 85)
         return "critical";
