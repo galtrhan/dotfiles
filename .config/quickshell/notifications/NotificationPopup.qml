@@ -1,4 +1,5 @@
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Io
 import Quickshell.Wayland
 import QtQuick
@@ -7,6 +8,66 @@ import ".."
 
 Scope {
     id: root
+
+    property int _hyprlandWindowsRev: 0
+
+    function isZenOnActiveWorkspace(): bool {
+        root._hyprlandWindowsRev;
+
+        const focused = Hyprland.focusedWorkspace;
+        if (!focused)
+            return false;
+
+        const values = Hyprland.toplevels?.values;
+        if (!values)
+            return false;
+
+        const focusedId = focused.id;
+
+        for (let i = 0; i < values.length; i++) {
+            const toplevel = values[i];
+            const ipc = toplevel?.lastIpcObject;
+            if (!ipc || ipc.class !== "zen")
+                continue;
+            if (ipc.hidden === true || ipc.mapped === false)
+                continue;
+
+            const wsId = toplevel.workspace?.id ?? ipc.workspace?.id;
+            if (wsId === focusedId)
+                return true;
+        }
+        return false;
+    }
+
+    Connections {
+        target: Hyprland
+
+        function onFocusedWorkspaceChanged() {
+            root._hyprlandWindowsRev += 1;
+        }
+
+        function onRawEvent(event) {
+            switch (event.name) {
+            case "openwindow":
+            case "closewindow":
+            case "activewindow":
+            case "movewindow":
+            case "workspace":
+                root._hyprlandWindowsRev += 1;
+                break;
+            }
+        }
+    }
+
+    Timer {
+        running: true
+        repeat: false
+        interval: 0
+        onTriggered: {
+            Hyprland.refreshToplevels();
+            root._hyprlandWindowsRev += 1;
+        }
+    }
 
     IpcHandler {
         target: "notifications"
@@ -45,14 +106,19 @@ Scope {
 
             exclusionMode: ExclusionMode.Ignore
 
+            readonly property bool topCenter: root.isZenOnActiveWorkspace()
+
             anchors {
                 top: true
-                right: true
+                right: !topCenter
             }
 
             margins {
                 top: Theme.barHeight + Theme.margin * 2 + 15
-                right: 15
+                right: topCenter ? 0 : 15
+                left: topCenter
+                      ? Math.max(0, Math.round((modelData.width - implicitWidth) / 2))
+                      : 0
             }
 
             implicitWidth: Theme.notifWidth + 20
