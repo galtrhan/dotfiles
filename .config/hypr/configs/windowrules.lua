@@ -29,3 +29,9 @@ hl.window_rule({
     match = { class = "dev.zed.Zed" },
     monitor = "1",
 })
+
+hl.window_rule({
+    name = "Signal",
+    match = { class = "signal" },
+    workspace = "special:signal",
+})

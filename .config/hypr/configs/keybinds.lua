@@ -42,6 +42,7 @@ for i = 1, 10 do
 end
 
 hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
+hl.bind(mainMod .. " + K", hl.dsp.workspace.toggle_special("signal"))
 hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
 hl.bind(mainMod .. " + BACKSLASH", hl.dsp.workspace.toggle_special("terminal"))
 hl.bind(mainMod .. " + SHIFT + BACKSLASH", hl.dsp.window.move({ workspace = "special:terminal" }))

@@ -211,6 +211,7 @@ stow -R .
 | `Super+Shift+[0-9]` | Move window to workspace |
 | `Super+[0-9]` | Switch to workspace |
 | `Super+S` | Toggle scratchpad (magic workspace) |
+| `Super+K` | Toggle scratchpad (signal workspace) |
 | `Super+\` | Toggle terminal scratchpad |
 
 ### Wallpaper & Multimedia
