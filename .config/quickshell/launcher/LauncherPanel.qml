@@ -25,8 +25,12 @@ Scope {
                 root.ipcHandler.passwordEntered("");
         } else if (LauncherService.menuWaiting) {
             LauncherService.menuCancelled();
-            if (root.ipcHandler)
+            if (root.ipcHandler) {
                 root.ipcHandler.cancelled();
+                // Unblock `qs ipc wait menu selected` so callers do not hang
+                // until their timeout when the menu is dismissed.
+                root.ipcHandler.selected("");
+            }
         } else {
             LauncherService.menuCancelled();
         }

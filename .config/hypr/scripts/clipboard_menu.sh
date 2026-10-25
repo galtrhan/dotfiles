@@ -18,7 +18,13 @@ for line in "${LINES[@]}"; do
     PREVIEWS+=("${line#*$'\t'}")
 done
 
-SELECTED=$("$SCRIPT_DIR/qs-menu.sh" "Clipboard" "${PREVIEWS[@]}")
+OPTIONS_FILE=$(mktemp --suffix=-clipboard-menu)
+trap 'rm -f "${OPTIONS_FILE}"' EXIT
+printf '%s\n' "${PREVIEWS[@]}" >"${OPTIONS_FILE}"
+
+# Options go through a file: `qs ipc call` corrupts arguments above ~22 KB,
+# which a full cliphist list (500 entries) easily reaches.
+SELECTED=$("$SCRIPT_DIR/qs-menu.sh" --file "${OPTIONS_FILE}" "Clipboard")
 if [[ -z "${SELECTED}" ]]; then
     exit 1
 fi
