@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Layouts
 import ".."
 import "../components"
+import "../lib/BatteryLogic.js" as BatteryLogic
 import "."
 
 RowLayout {
@@ -10,6 +11,8 @@ RowLayout {
     spacing: Theme.spacing
     Layout.fillHeight: true
     property bool expanded: false
+    // Sysfs pack stats: { BAT0: { cycles, fullWh, designWh, health } }
+    property var packStats: ({})
 
     // MD outline batteries — FA solid batteries read too heavy in the bar
     readonly property var batteryIcons: ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
@@ -47,6 +50,41 @@ RowLayout {
         return null;
     }
 
+    // Snapshot UPower fields in QML so the tooltip binding tracks live updates.
+    function tooltipFor(device) {
+        if (!device || !device.ready)
+            return "";
+        return BatteryLogic.buildTooltip({
+            ready: device.ready,
+            percentage: device.percentage,
+            energy: device.energy,
+            energyCapacity: device.energyCapacity,
+            changeRate: device.changeRate,
+            timeToEmpty: device.timeToEmpty,
+            timeToFull: device.timeToFull,
+            state: device.state,
+            healthPercentage: device.healthPercentage,
+            model: device.model,
+            nativePath: device.nativePath
+        }, root.packStats);
+    }
+
+    ScriptPoll {
+        // One line per pack: "BAT0 <cycles> <energy_full> <energy_full_design>"
+        command: [
+            "sh", "-c",
+            "for b in /sys/class/power_supply/BAT*; do"
+            + " [ -r \"$b/cycle_count\" ] && [ -r \"$b/energy_full\" ] && [ -r \"$b/energy_full_design\" ] || continue;"
+            + " printf '%s %s %s %s\\n' \"$(basename \"$b\")\" \"$(cat \"$b/cycle_count\")\""
+            + " \"$(cat \"$b/energy_full\")\" \"$(cat \"$b/energy_full_design\")\";"
+            + " done"
+        ]
+        interval: 30000
+        onOutput: function (text) {
+            root.packStats = BatteryLogic.parsePackStats(text);
+        }
+    }
+
     BarLabel {
         Layout.alignment: Qt.AlignVCenter
         visible: UPower.displayDevice.ready
@@ -54,7 +92,7 @@ RowLayout {
         text: root.percent(UPower.displayDevice) + "%"
         labelColor: root.batteryColor(UPower.displayDevice)
         hoverEnabled: true
-        tooltipText: "Click to expand battery details"
+        tooltipText: root.tooltipFor(UPower.displayDevice)
 
         MouseArea {
             anchors.fill: parent
@@ -101,6 +139,8 @@ RowLayout {
                 icon: device ? root.batteryGlyph(device) : ""
                 text: device ? (root.percent(device) + "%") : ""
                 labelColor: device ? root.batteryColor(device) : Theme.fgBright
+                hoverEnabled: device !== null
+                tooltipText: device ? root.tooltipFor(device) : ""
             }
         }
     }
