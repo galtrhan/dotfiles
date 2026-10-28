@@ -55,6 +55,10 @@ Item {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
+        GpuWidget {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignVCenter
+        }
 
         Item {
             Layout.fillWidth: true
