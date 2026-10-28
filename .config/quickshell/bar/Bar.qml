@@ -43,6 +43,14 @@ Item {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
+        Separator {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignVCenter
+        }
+        RamWidget {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignVCenter
+        }
 
         Item {
             Layout.fillWidth: true
