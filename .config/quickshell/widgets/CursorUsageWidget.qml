@@ -9,6 +9,7 @@ Item {
 
     property int includedPct: -1
     property int apiPct: -1
+    property int daysLeft: -1
     property string includedClass: ""
     property string apiClass: ""
     property string tooltipBody: ""
@@ -94,6 +95,19 @@ Item {
                 }
             }
         }
+
+        Text {
+            text: (root.daysLeft >= 0 && root.daysLeft <= 7) ? (" (" + root.daysLeft + "d)") : ""
+            font.family: Theme.fontFamily
+            font.pixelSize: Theme.fontSize
+            color: hover.hovered ? Theme.hoverColor : Theme.fgBright
+
+            Behavior on color {
+                ColorAnimation {
+                    duration: Theme.hoverTransitionDuration
+                }
+            }
+        }
     }
 
     HoverHandler {
@@ -115,6 +129,7 @@ Item {
             if (!snapshot || snapshot.status !== "ok" || !snapshot.meters || snapshot.meters.length === 0) {
                 root.includedPct = -1;
                 root.apiPct = -1;
+                root.daysLeft = -1;
                 root.includedClass = "";
                 root.apiClass = "";
                 root.tooltipBody = "";
@@ -126,6 +141,7 @@ Item {
             if (included === null && api === null) {
                 root.includedPct = -1;
                 root.apiPct = -1;
+                root.daysLeft = -1;
                 root.includedClass = "";
                 root.apiClass = "";
                 root.tooltipBody = "";
@@ -136,8 +152,10 @@ Item {
             if (api === null)
                 api = 0;
 
+            var cycle = CursorUsageLogic.renewal(snapshot.renewsAt);
             root.includedPct = included;
             root.apiPct = api;
+            root.daysLeft = cycle ? cycle.days : -1;
             root.includedClass = CursorUsageLogic.usageClass(included);
             root.apiClass = CursorUsageLogic.usageClass(api);
             root.tooltipBody = CursorUsageLogic.buildTooltip(snapshot);

@@ -50,7 +50,18 @@ def cursor_agent_ua() -> str:
 
 
 def fail(status: str, error: str) -> None:
-    print(json.dumps({"status": status, "error": error, "account": None, "plan": None, "meters": []}))
+    print(
+        json.dumps(
+            {
+                "status": status,
+                "error": error,
+                "account": None,
+                "plan": None,
+                "renewsAt": None,
+                "meters": [],
+            }
+        )
+    )
 
 
 def jwt_claims(token: str) -> dict[str, Any]:
@@ -89,6 +100,13 @@ def extract_percent(message: str | None) -> float | None:
 def meter(pool_id: str, title: str, used_percent: float) -> dict[str, Any]:
     used = max(0.0, min(100.0, used_percent))
     return {"id": pool_id, "title": title, "percent": used / 100.0}
+
+
+def renews_at(summary: dict[str, Any]) -> str | None:
+    end = summary.get("billingCycleEnd")
+    if isinstance(end, str) and end.strip():
+        return end.strip()
+    return None
 
 
 def meters_from_summary(summary: dict[str, Any]) -> list[dict[str, Any]]:
@@ -199,6 +217,7 @@ def main() -> None:
                 "error": None,
                 "account": email,
                 "plan": plan,
+                "renewsAt": renews_at(summary),
                 "meters": meters,
             }
         )

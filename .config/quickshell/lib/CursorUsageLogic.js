@@ -35,6 +35,50 @@ function usageClass(usedPct) {
     return "cool";
 }
 
+var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function parseRenewalDate(iso) {
+    if (!iso || typeof iso !== "string")
+        return null;
+    var dateOnly = iso.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (dateOnly)
+        return new Date(+dateOnly[1], +dateOnly[2] - 1, +dateOnly[3]);
+    var end = new Date(iso);
+    if (isNaN(end.getTime()))
+        return null;
+    return end;
+}
+
+function renewal(iso) {
+    var end = parseRenewalDate(iso);
+    if (!end)
+        return null;
+    var today = new Date();
+    var endDay = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
+    var todayDay = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    return {
+        days: Math.round((endDay - todayDay) / 86400000),
+        dateLabel: end.getDate() + " " + monthNames[end.getMonth()] + " " + end.getFullYear()
+    };
+}
+
+function renewalLine(iso) {
+    var info = renewal(iso);
+    if (!info)
+        return "";
+    var when = "";
+    if (info.days > 1)
+        when = info.days + " days left";
+    else if (info.days === 1)
+        when = "1 day left";
+    else if (info.days === 0)
+        when = "today";
+    var line = "Renews " + info.dateLabel;
+    if (when)
+        line += " (" + when + ")";
+    return line;
+}
+
 function buildTooltip(snapshot) {
     if (!snapshot)
         return "";
@@ -56,6 +100,10 @@ function buildTooltip(snapshot) {
         var left = 100 - used;
         lines.push(m.title + ": " + used + "% used, " + left + "% left");
     }
+
+    var renews = renewalLine(snapshot.renewsAt);
+    if (renews)
+        lines.push(renews);
 
     return lines.join("\n");
 }

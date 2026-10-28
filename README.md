@@ -334,11 +334,12 @@ The status bar shows Cursor plan usage after the IP widget. It polls [`.config/h
 | Display | Meaning |
 |---------|---------|
 | Cursor icon + `6% / 12%` | Included (Auto + Composer) and API pool **used** % |
+| `6% / 12% (5d)` | Days until renewal. Shown after the percentages when 7 or fewer days remain. Default text color |
 | Blue / orange / red | Each % colors on its own used value (&lt;60 / 60–84 / ≥85) |
 
 | Action | Result |
 |--------|--------|
-| Hover | Tooltip with plan, account, and per-pool used / left % |
+| Hover | Tooltip with plan, account, per-pool used / left %, renewal date, and days left |
 | Left click | Open [cursor.com/dashboard/usage](https://cursor.com/dashboard/usage) |
 
 **Requirements:**
