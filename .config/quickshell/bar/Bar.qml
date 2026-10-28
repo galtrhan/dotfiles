@@ -51,6 +51,10 @@ Item {
             Layout.fillHeight: true
             Layout.alignment: Qt.AlignVCenter
         }
+        CpuWidget {
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignVCenter
+        }
 
         Item {
             Layout.fillWidth: true
