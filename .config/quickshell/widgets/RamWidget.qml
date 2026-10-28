@@ -1,21 +1,24 @@
 import QtQuick
+import QtQuick.Layouts
 import ".."
 import "../components"
 import "../lib/RamLogic.js" as RamLogic
 
-BarLabel {
+RowLayout {
     id: root
 
-    property int fillPct: 0
-    property string displayText: ""
-    property string tooltipBody: ""
+    spacing: Theme.spacing
+    Layout.fillHeight: true
 
-    icon: ""
-    text: displayText
-    labelColor: usageColor(fillPct)
-    visible: displayText !== ""
-    tooltipText: tooltipBody
-    hoverEnabled: true
+    property int ramPct: 0
+    property int swapPct: 0
+    property int tmpPct: 0
+    property bool showSwap: false
+    property bool showTmp: false
+    property string tooltipBody: ""
+    property bool hasData: false
+
+    visible: hasData
 
     function usageColor(pct) {
         var t = Math.min(Math.max(pct / 100, 0), 1);
@@ -29,20 +32,54 @@ BarLabel {
         );
     }
 
+    BarLabel {
+        Layout.alignment: Qt.AlignVCenter
+        icon: ""
+        text: root.ramPct + "%"
+        labelColor: root.usageColor(root.ramPct)
+        tooltipText: root.tooltipBody
+        hoverEnabled: true
+    }
+
+    BarLabel {
+        Layout.alignment: Qt.AlignVCenter
+        visible: root.showSwap
+        icon: ""
+        text: root.swapPct + "%"
+        labelColor: root.usageColor(root.swapPct)
+        tooltipText: root.tooltipBody
+        hoverEnabled: true
+    }
+
+    BarLabel {
+        Layout.alignment: Qt.AlignVCenter
+        visible: root.showTmp
+        icon: ""
+        text: root.tmpPct + "%"
+        labelColor: root.usageColor(root.tmpPct)
+        tooltipText: root.tooltipBody
+        hoverEnabled: true
+    }
+
     ScriptPoll {
         command: ["sh", "-c", "cat /proc/meminfo; echo ---; df -B1 /tmp"]
         interval: 5000
         onOutput: function (text) {
             var snap = RamLogic.snapshot(text);
             if (!snap) {
-                root.displayText = "";
+                root.hasData = false;
                 root.tooltipBody = "";
-                root.fillPct = 0;
+                root.showSwap = false;
+                root.showTmp = false;
                 return;
             }
-            root.displayText = snap.text;
+            root.ramPct = snap.ramPct;
+            root.swapPct = snap.swapPct;
+            root.tmpPct = snap.tmpPct;
+            root.showSwap = snap.showSwap;
+            root.showTmp = snap.showTmp;
             root.tooltipBody = snap.tooltip;
-            root.fillPct = snap.pct;
+            root.hasData = true;
         }
     }
 }

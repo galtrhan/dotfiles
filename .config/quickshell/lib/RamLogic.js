@@ -1,5 +1,7 @@
 .pragma library
 
+var warnPct = 70;
+
 function parsePoll(text) {
     var raw = text || "";
     var sep = raw.indexOf("---");
@@ -68,23 +70,32 @@ function formatKib(kib) {
     return value.toFixed(1) + units[unit];
 }
 
-function buildTooltip(data) {
-    var tmpPct = data.tmpTotal
-        ? Math.round((data.tmpUsed / data.tmpTotal) * 100) + "%"
-        : "?";
-    var swapUsed = Math.max(0, data.swapTotal - data.swapFree);
-    return "/tmp: " + tmpPct + "\nSwap: " + formatKib(swapUsed) + " / " + formatKib(data.swapTotal);
+function usedPct(used, total) {
+    if (!total)
+        return 0;
+    return Math.round((Math.max(0, used) / total) * 100);
+}
+
+function buildTooltip(data, tmpPct, swapUsed) {
+    var tmpLabel = data.tmpTotal ? tmpPct + "%" : "?";
+    return "/tmp: " + tmpLabel + "\nSwap: " + formatKib(swapUsed) + " / " + formatKib(data.swapTotal);
 }
 
 function snapshot(text) {
     var data = parsePoll(text);
     if (!data)
         return null;
-    var used = Math.max(0, data.memTotal - data.memAvailable);
-    var pct = Math.round((used / data.memTotal) * 100);
+    var ramUsed = data.memTotal - data.memAvailable;
+    var swapUsed = data.swapTotal - data.swapFree;
+    var ramPct = usedPct(ramUsed, data.memTotal);
+    var swapPct = usedPct(swapUsed, data.swapTotal);
+    var tmpPct = usedPct(data.tmpUsed, data.tmpTotal);
     return {
-        pct: pct,
-        text: pct + "%",
-        tooltip: buildTooltip(data)
+        ramPct: ramPct,
+        swapPct: swapPct,
+        tmpPct: tmpPct,
+        showSwap: swapPct >= warnPct,
+        showTmp: tmpPct >= warnPct,
+        tooltip: buildTooltip(data, tmpPct, Math.max(0, swapUsed))
     };
 }
