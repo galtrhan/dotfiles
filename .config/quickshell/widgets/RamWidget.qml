@@ -1,14 +1,12 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell.Io
 import ".."
 import "../components"
 import "../lib/RamLogic.js" as RamLogic
 
-RowLayout {
+Item {
     id: root
-
-    spacing: Theme.spacing
-    Layout.fillHeight: true
 
     property int fillPct: 0
     property int tmpPct: 0
@@ -16,27 +14,76 @@ RowLayout {
     property bool showMem: false
     property bool showTmp: false
     property string tooltipBody: ""
+    property bool menuOpen: false
+    property var menuItems: []
 
     visible: showMem || showTmp
+    implicitWidth: layout.implicitWidth
+    implicitHeight: Theme.barHeight
+    width: implicitWidth
+    height: implicitHeight
 
-    BarLabel {
-        Layout.alignment: Qt.AlignVCenter
-        visible: root.showMem
-        icon: ""
-        text: root.memText
-        labelColor: Theme.usageColor(root.fillPct)
-        tooltipText: root.tooltipBody
-        hoverEnabled: true
+    onVisibleChanged: if (!visible)
+        menuOpen = false
+
+    function openMenu() {
+        if (root.menuOpen) {
+            root.menuOpen = false;
+            return;
+        }
+        if (topProc.running)
+            return;
+        topProc.running = true;
     }
 
-    BarLabel {
-        Layout.alignment: Qt.AlignVCenter
-        visible: root.showTmp
-        icon: ""
-        text: root.tmpPct + "%"
-        labelColor: Theme.usageColor(root.tmpPct)
-        tooltipText: root.tooltipBody
-        hoverEnabled: true
+    RowLayout {
+        id: layout
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: Theme.spacing
+
+        BarLabel {
+            id: memLabel
+            Layout.alignment: Qt.AlignVCenter
+            visible: root.showMem
+            icon: ""
+            text: root.memText
+            labelColor: Theme.usageColor(root.fillPct)
+            tooltipText: root.menuOpen ? "" : root.tooltipBody
+            hoverEnabled: true
+        }
+
+        BarLabel {
+            Layout.alignment: Qt.AlignVCenter
+            visible: root.showTmp
+            icon: ""
+            text: root.tmpPct + "%"
+            labelColor: Theme.usageColor(root.tmpPct)
+            tooltipText: root.menuOpen ? "" : root.tooltipBody
+            hoverEnabled: true
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: Qt.PointingHandCursor
+        acceptedButtons: Qt.LeftButton
+        onClicked: root.openMenu()
+    }
+
+    BarMenu {
+        anchorItem: memLabel.visible ? memLabel : root
+        open: root.menuOpen
+        items: root.menuItems
+        showKillButton: true
+        onItemKillRequested: function (pids) {
+            var args = ["kill", "--"];
+            for (var i = 0; i < pids.length; i++)
+                args.push(String(pids[i]));
+            killProc.command = args;
+            killProc.running = true;
+            root.menuOpen = false;
+        }
+        onDismissed: root.menuOpen = false
     }
 
     ScriptPoll {
@@ -59,5 +106,22 @@ RowLayout {
             root.showTmp = snap.showTmp;
             root.tooltipBody = snap.tooltip;
         }
+    }
+
+    Process {
+        id: topProc
+        command: [Paths.ramTop]
+        running: false
+        stdout: StdioCollector {
+            onStreamFinished: {
+                root.menuItems = RamLogic.parseTopConsumers(this.text);
+                root.menuOpen = root.menuItems.length > 0;
+            }
+        }
+    }
+
+    Process {
+        id: killProc
+        running: false
     }
 }

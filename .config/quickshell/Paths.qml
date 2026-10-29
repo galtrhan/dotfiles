@@ -12,6 +12,7 @@ Singleton {
     readonly property string devServers: hyprScripts + "/dev_servers.sh"
     readonly property string cursorUsageWidget: hyprScripts + "/cursor_usage_widget.py"
     readonly property string gpuPoll: hyprScripts + "/gpu_poll.sh"
+    readonly property string ramTop: hyprScripts + "/ram_top.py"
     readonly property string cursorIcon: "file://" + configDir + "/quickshell/icons/cursor.png"
     readonly property string runtimeDir: Quickshell.env("XDG_RUNTIME_DIR") || "/tmp"
     readonly property string screenCapturePid: runtimeDir + "/screen_capture.pid"

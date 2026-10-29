@@ -79,7 +79,9 @@ function usedPct(used, total) {
 
 function buildTooltip(data, tmpPct, swapUsed) {
     var tmpLabel = data.tmpTotal ? tmpPct + "%" : "?";
-    return "/tmp: " + tmpLabel + "\nSwap: " + formatKib(swapUsed) + " / " + formatKib(data.swapTotal);
+    return "/tmp: " + tmpLabel
+        + "\nSwap: " + formatKib(swapUsed) + " / " + formatKib(data.swapTotal)
+        + "\nLeft click: top RAM";
 }
 
 function snapshot(text) {
@@ -108,4 +110,33 @@ function snapshot(text) {
         fillPct: Math.max(showRam ? ramPct : 0, showSwap ? swapPct : 0),
         tooltip: (showMem || showTmp) ? buildTooltip(data, tmpPct, Math.max(0, swapUsed)) : ""
     };
+}
+
+function parseTopConsumers(text) {
+    var items = [];
+    var lines = (text || "").trim().split("\n");
+    for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line)
+            continue;
+        var parts = line.split("|");
+        if (parts.length < 3)
+            continue;
+        var name = parts[0];
+        var rssKib = parseInt(parts[1], 10);
+        if (!name || isNaN(rssKib))
+            continue;
+        var pids = parts[2].split(",").map(function (p) {
+            return parseInt(p, 10);
+        }).filter(function (p) {
+            return !isNaN(p) && p > 0;
+        });
+        if (pids.length === 0)
+            continue;
+        items.push({
+            label: name + "  " + formatKib(rssKib),
+            pids: pids
+        });
+    }
+    return items;
 }
