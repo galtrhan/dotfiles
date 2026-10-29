@@ -104,11 +104,14 @@ Scope {
 
                         readonly property var pids: root.itemPids(row.modelData)
                         readonly property bool killable: root.showKillButton && row.pids.length > 0
+                        readonly property string rightText: row.modelData.right || ""
+                        readonly property bool hasRight: row.rightText.length > 0
 
                         implicitWidth: rowText.implicitWidth
+                                       + (row.hasRight ? rightLabel.implicitWidth + Theme.barPadding : 0)
                                        + (row.killable ? root.killGlyphWidth + Theme.barPadding : 0)
                                        + Theme.barPadding * 2
-                        implicitHeight: Math.max(rowText.implicitHeight, killText.implicitHeight)
+                        implicitHeight: Math.max(rowText.implicitHeight, rightLabel.implicitHeight, killText.implicitHeight)
                                         + Theme.barPadding
                         width: Math.max(implicitWidth, column.width)
                         height: implicitHeight
@@ -125,11 +128,27 @@ Scope {
                             id: rowText
                             anchors.left: parent.left
                             anchors.leftMargin: Theme.barPadding
+                            anchors.right: row.hasRight ? rightLabel.left : undefined
+                            anchors.rightMargin: row.hasRight ? Theme.barPadding : 0
                             anchors.verticalCenter: parent.verticalCenter
+                            elide: row.hasRight ? Text.ElideRight : Text.ElideNone
                             text: row.modelData.label
                             color: row.hovered ? Theme.launcherTextActive : Theme.launcherTextDefault
                             font.family: Theme.fontFamily
                             font.pixelSize: Theme.fontSize
+                        }
+
+                        Text {
+                            id: rightLabel
+                            anchors.right: row.killable ? killText.left : parent.right
+                            anchors.rightMargin: Theme.barPadding
+                            anchors.verticalCenter: parent.verticalCenter
+                            visible: row.hasRight
+                            text: row.rightText
+                            color: row.hovered ? Theme.launcherTextActive : Theme.launcherTextInactive
+                            font.family: Theme.fontFamily
+                            font.pixelSize: Theme.fontSize
+                            horizontalAlignment: Text.AlignRight
                         }
 
                         Text {

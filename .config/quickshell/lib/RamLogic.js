@@ -134,7 +134,8 @@ function parseTopConsumers(text) {
         if (pids.length === 0)
             continue;
         items.push({
-            label: name + "  " + formatKib(rssKib),
+            label: name,
+            right: formatKib(rssKib),
             pids: pids
         });
     }
