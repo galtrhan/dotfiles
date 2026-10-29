@@ -30,3 +30,7 @@ alias vi='nvim'
 set -gx EDITOR nvim
 set -gx VISUAL nvim
 set -gx MD2PDF_CHROME "$HOME/.local/bin/chromium"
+
+# Pi
+fish_add_path "$HOME/.local/bin"
+set -gx CARGO_BUILD_JOBS 4
