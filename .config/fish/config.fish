@@ -3,14 +3,14 @@
 set -x DOCKER_HOST unix://$XDG_RUNTIME_DIR/docker.sock
 
 # uv
-fish_add_path "/home/galtrhan/.local/bin"
-fish_add_path "/home/galtrhan/.local/share/fvm/default/bin"
+fish_add_path "$HOME/.local/bin"
+fish_add_path "$HOME/.local/share/fvm/default/bin"
 set -gx GOPATH "$HOME/.local/share/go"
 fish_add_path "$GOPATH/bin"
 set -x ANDROID_SDK_ROOT /opt/android-sdk
 
 # usagi
-fish_add_path /home/galtrhan/.usagi/bin
+fish_add_path "$HOME/.usagi/bin"
 
 set -x NODE_COMPILE_CACHE /tmp/node-compile-cache
 # Keep temporary profiles created by Node tools (including Lighthouse) out of $HOME.
