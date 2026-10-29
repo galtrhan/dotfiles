@@ -1,5 +1,7 @@
 .pragma library
 
+var showPct = 25;
+
 function parsePoll(text) {
     var raw = (text || "").trim();
     if (!raw || raw.indexOf("none") === 0)
@@ -107,12 +109,13 @@ function diff(prev, sample) {
     if (pct < 0)
         return null;
 
+    var show = pct >= showPct;
     var memPct = vramPct(sample);
     return {
         pct: pct,
-        text: pct + "%",
+        text: show ? pct + "%" : "",
         vramPct: memPct,
-        showVram: memPct >= 0,
-        tooltip: buildTooltip(sample, pct)
+        showVram: show && memPct >= 0,
+        tooltip: show ? buildTooltip(sample, pct) : ""
     };
 }

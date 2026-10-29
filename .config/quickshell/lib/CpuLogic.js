@@ -1,5 +1,7 @@
 .pragma library
 
+var showPct = 25;
+
 function parseTimes(fields) {
     if (!fields || fields.length < 5)
         return null;
@@ -108,9 +110,10 @@ function diff(prev, next) {
     var pct = usagePct(prev.total, next.total);
     if (pct < 0)
         return null;
+    var show = pct >= showPct;
     return {
         pct: pct,
-        text: pct + "%",
-        tooltip: buildTooltip(prev, next, pct)
+        text: show ? pct + "%" : "",
+        tooltip: show ? buildTooltip(prev, next, pct) : ""
     };
 }

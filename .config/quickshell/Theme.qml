@@ -36,6 +36,18 @@ Singleton {
     readonly property color batteryWarning: "orange"
     readonly property color batteryCritical: "#f53c3c"
 
+    function usageColor(pct) {
+        var t = Math.min(Math.max(pct / 100, 0), 1);
+        var low = Qt.color(batteryGood);
+        var high = Qt.color(batteryCritical);
+        return Qt.rgba(
+            low.r + (high.r - low.r) * t,
+            low.g + (high.g - low.g) * t,
+            low.b + (high.b - low.b) * t,
+            1
+        );
+    }
+
     readonly property color micMuted: "#ff5555"
     readonly property color recording: "#ff4444"
     readonly property color ipColor: "teal"

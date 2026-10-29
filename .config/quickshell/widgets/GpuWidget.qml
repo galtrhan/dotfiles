@@ -12,30 +12,18 @@ RowLayout {
 
     property var prevSample: null
     property int gpuPct: 0
+    property string gpuText: ""
     property int vramPct: 0
     property bool showVram: false
     property string tooltipBody: ""
-    property bool hasData: false
 
-    visible: hasData
-
-    function usageColor(pct) {
-        var t = Math.min(Math.max(pct / 100, 0), 1);
-        var low = Qt.color(Theme.batteryGood);
-        var high = Qt.color(Theme.batteryCritical);
-        return Qt.rgba(
-            low.r + (high.r - low.r) * t,
-            low.g + (high.g - low.g) * t,
-            low.b + (high.b - low.b) * t,
-            1
-        );
-    }
+    visible: gpuText !== ""
 
     BarLabel {
         Layout.alignment: Qt.AlignVCenter
         icon: "󰢮"
-        text: root.gpuPct + "%"
-        labelColor: root.usageColor(root.gpuPct)
+        text: root.gpuText
+        labelColor: Theme.usageColor(root.gpuPct)
         tooltipText: root.tooltipBody
         hoverEnabled: true
     }
@@ -45,7 +33,7 @@ RowLayout {
         visible: root.showVram
         icon: "󰍛"
         text: root.vramPct + "%"
-        labelColor: root.usageColor(root.vramPct)
+        labelColor: Theme.usageColor(root.vramPct)
         tooltipText: root.tooltipBody
         hoverEnabled: true
     }
@@ -56,9 +44,10 @@ RowLayout {
         onOutput: function (text) {
             var sample = GpuLogic.parsePoll(text);
             if (!sample) {
-                root.hasData = false;
+                root.gpuText = "";
                 root.tooltipBody = "";
                 root.showVram = false;
+                root.gpuPct = 0;
                 root.prevSample = null;
                 return;
             }
@@ -66,11 +55,15 @@ RowLayout {
             root.prevSample = sample;
             if (!snap)
                 return;
+            root.gpuText = snap.text;
+            root.tooltipBody = snap.tooltip;
+            root.showVram = snap.showVram;
+            if (!snap.text) {
+                root.gpuPct = 0;
+                return;
+            }
             root.gpuPct = snap.pct;
             root.vramPct = snap.vramPct;
-            root.showVram = snap.showVram;
-            root.tooltipBody = snap.tooltip;
-            root.hasData = true;
         }
     }
 }

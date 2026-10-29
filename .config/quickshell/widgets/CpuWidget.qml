@@ -13,22 +13,10 @@ BarLabel {
 
     icon: "󰻠"
     text: displayText
-    labelColor: usageColor(fillPct)
+    labelColor: Theme.usageColor(fillPct)
     visible: displayText !== ""
     tooltipText: tooltipBody
     hoverEnabled: true
-
-    function usageColor(pct) {
-        var t = Math.min(Math.max(pct / 100, 0), 1);
-        var low = Qt.color(Theme.batteryGood);
-        var high = Qt.color(Theme.batteryCritical);
-        return Qt.rgba(
-            low.r + (high.r - low.r) * t,
-            low.g + (high.g - low.g) * t,
-            low.b + (high.b - low.b) * t,
-            1
-        );
-    }
 
     ScriptPoll {
         command: [
@@ -52,7 +40,7 @@ BarLabel {
                 if (snap) {
                     root.displayText = snap.text;
                     root.tooltipBody = snap.tooltip;
-                    root.fillPct = snap.pct;
+                    root.fillPct = snap.text ? snap.pct : 0;
                 }
             }
             root.prevSample = sample;

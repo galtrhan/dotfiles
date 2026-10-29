@@ -1,6 +1,7 @@
 .pragma library
 
-var warnPct = 70;
+var memWarnPct = 35;
+var tmpWarnPct = 70;
 
 function parsePoll(text) {
     var raw = text || "";
@@ -90,12 +91,21 @@ function snapshot(text) {
     var ramPct = usedPct(ramUsed, data.memTotal);
     var swapPct = usedPct(swapUsed, data.swapTotal);
     var tmpPct = usedPct(data.tmpUsed, data.tmpTotal);
+    var showRam = ramPct >= memWarnPct;
+    var showSwap = swapPct >= memWarnPct;
+    var showTmp = tmpPct >= tmpWarnPct;
+    var showMem = showRam || showSwap;
+    var parts = [];
+    if (showRam)
+        parts.push(ramPct + "%");
+    if (showSwap)
+        parts.push(swapPct + "%");
     return {
-        ramPct: ramPct,
-        swapPct: swapPct,
         tmpPct: tmpPct,
-        showSwap: swapPct >= warnPct,
-        showTmp: tmpPct >= warnPct,
-        tooltip: buildTooltip(data, tmpPct, Math.max(0, swapUsed))
+        showMem: showMem,
+        showTmp: showTmp,
+        text: parts.join("/"),
+        fillPct: Math.max(showRam ? ramPct : 0, showSwap ? swapPct : 0),
+        tooltip: (showMem || showTmp) ? buildTooltip(data, tmpPct, Math.max(0, swapUsed)) : ""
     };
 }
