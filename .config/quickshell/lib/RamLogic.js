@@ -77,9 +77,10 @@ function usedPct(used, total) {
     return Math.round((Math.max(0, used) / total) * 100);
 }
 
-function buildTooltip(data, tmpPct, swapUsed) {
+function buildTooltip(data, tmpPct, ramUsed, swapUsed) {
     var tmpLabel = data.tmpTotal ? tmpPct + "%" : "?";
     return "/tmp: " + tmpLabel
+        + "\nRAM: " + formatKib(ramUsed) + " / " + formatKib(data.memTotal)
         + "\nSwap: " + formatKib(swapUsed) + " / " + formatKib(data.swapTotal)
         + "\nLeft click: top RAM";
 }
@@ -108,7 +109,7 @@ function snapshot(text) {
         showTmp: showTmp,
         text: parts.join("/"),
         fillPct: Math.max(showRam ? ramPct : 0, showSwap ? swapPct : 0),
-        tooltip: (showMem || showTmp) ? buildTooltip(data, tmpPct, Math.max(0, swapUsed)) : ""
+        tooltip: (showMem || showTmp) ? buildTooltip(data, tmpPct, Math.max(0, ramUsed), Math.max(0, swapUsed)) : ""
     };
 }
 
