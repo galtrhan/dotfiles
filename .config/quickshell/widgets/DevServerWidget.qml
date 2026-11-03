@@ -30,7 +30,7 @@ Item {
             lines.push(server.label + portText);
         }
         lines.push("Left click: menu");
-        lines.push("Open: browser · Right: kill");
+        lines.push("Open: browser · Kill: button or right-click");
         return lines.join("\n");
     }
 
@@ -71,8 +71,14 @@ Item {
         anchorItem: label
         open: root.menuOpen
         items: root.buildMenuItems()
+        showKillButton: true
         onItemClicked: function (url) {
             DevServerService.openUrl(url);
+            root.menuOpen = false;
+        }
+        onItemKillRequested: function (pids) {
+            for (var i = 0; i < pids.length; i++)
+                DevServerService.killServer(pids[i]);
             root.menuOpen = false;
         }
         onItemRightClicked: function (pid) {
