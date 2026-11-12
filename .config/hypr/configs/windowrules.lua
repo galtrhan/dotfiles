@@ -18,10 +18,10 @@ hl.window_rule({
 
 hl.window_rule({
     name = "Enpass",
-    match = { class = "Enpass" },
+    match = { class = "enpass" },
     float = true,
     center = true,
-    size = { 768, 480 },
+    size = { 1200, 800 },
 })
 
 hl.window_rule({
