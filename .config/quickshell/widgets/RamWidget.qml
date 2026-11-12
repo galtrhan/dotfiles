@@ -110,11 +110,11 @@ Item {
 
     Process {
         id: topProc
-        command: [Paths.ramTop]
+        command: ["ps", "-ww", "-eo", "pid=,ppid=,rss=,args=", "--sort=-rss"]
         running: false
         stdout: StdioCollector {
             onStreamFinished: {
-                root.menuItems = RamLogic.parseTopConsumers(this.text);
+                root.menuItems = RamLogic.buildTopConsumers(this.text);
                 root.menuOpen = root.menuItems.length > 0;
             }
         }

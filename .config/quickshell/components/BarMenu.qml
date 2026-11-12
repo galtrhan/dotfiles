@@ -19,6 +19,12 @@ Scope {
 
     readonly property var anchorScreen: anchorItem.QsWindow.window.screen
     readonly property int killGlyphWidth: 18
+    readonly property int tipGap: 4
+    // Fixed slot so tip show/swap never reflows menu X.
+    readonly property int tipSlotWidth: 360
+    property string hoverTooltip: ""
+    property real tipY: 0
+    property bool tipsAvailable: false
 
     function itemPids(data) {
         if (data.pids && data.pids.length > 0)
@@ -26,6 +32,20 @@ Scope {
         if (data.pid)
             return [data.pid];
         return [];
+    }
+
+    onOpenChanged: if (!open)
+        hoverTooltip = ""
+    onItemsChanged: {
+        hoverTooltip = ""
+        tipsAvailable = false
+        var list = root.items || []
+        for (var i = 0; i < list.length; i++) {
+            if (list[i] && list[i].tooltip) {
+                tipsAvailable = true
+                break
+            }
+        }
     }
 
     Variants {
@@ -72,7 +92,7 @@ Scope {
             onAnchoring: {
                 var pos = anchorItem.QsWindow.contentItem.mapFromItem(
                     anchorItem,
-                    anchorItem.width / 2 - menuPopup.implicitWidth / 2,
+                    anchorItem.width / 2 - frame.implicitWidth / 2,
                     anchorItem.height + 4
                 );
                 anchor.rect.x = pos.x;
@@ -81,124 +101,169 @@ Scope {
         }
 
         implicitWidth: frame.implicitWidth
-        implicitHeight: frame.implicitHeight
+                       + (root.tipsAvailable ? root.tipGap + root.tipSlotWidth : 0)
+        // Height may grow for a tall tip on a low row; width/X stay fixed via tipSlotWidth.
+        implicitHeight: Math.max(frame.implicitHeight,
+                                 tipFrame.visible ? root.tipY + tipFrame.implicitHeight : 0)
 
-        WrapperRectangle {
-            id: frame
-            color: Theme.tooltipBg
-            border.color: Theme.tooltipBorder
-            margin: 6
-            radius: 4
+        Item {
+            id: menuRoot
+            width: menuPopup.implicitWidth
+            height: menuPopup.implicitHeight
 
-            Column {
-                id: column
-                spacing: 2
+            WrapperRectangle {
+                id: frame
+                color: Theme.tooltipBg
+                border.color: Theme.tooltipBorder
+                margin: 6
+                radius: 4
 
-                Repeater {
-                    model: root.items
+                HoverHandler {
+                    onHoveredChanged: {
+                        if (!hovered)
+                            root.hoverTooltip = ""
+                    }
+                }
 
-                    delegate: Item {
-                        id: row
-                        required property var modelData
-                        required property int index
+                Column {
+                    id: column
+                    spacing: 2
 
-                        readonly property var pids: root.itemPids(row.modelData)
-                        readonly property bool killable: root.showKillButton && row.pids.length > 0
-                        readonly property string rightText: row.modelData.right || ""
-                        readonly property bool hasRight: row.rightText.length > 0
+                    Repeater {
+                        model: root.items
 
-                        implicitWidth: rowText.implicitWidth
-                                       + (row.hasRight ? rightLabel.implicitWidth + Theme.barPadding : 0)
-                                       + (row.killable ? root.killGlyphWidth + Theme.barPadding : 0)
-                                       + Theme.barPadding * 2
-                        implicitHeight: Math.max(rowText.implicitHeight, rightLabel.implicitHeight, killText.implicitHeight)
-                                        + Theme.barPadding
-                        width: Math.max(implicitWidth, column.width)
-                        height: implicitHeight
+                        delegate: Item {
+                            id: row
+                            required property var modelData
+                            required property int index
 
-                        property bool hovered: false
+                            readonly property var pids: root.itemPids(row.modelData)
+                            readonly property bool killable: root.showKillButton && row.pids.length > 0
+                            readonly property string rightText: row.modelData.right || ""
+                            readonly property bool hasRight: row.rightText.length > 0
+                            readonly property string tipText: row.modelData.tooltip || ""
 
-                        Rectangle {
-                            anchors.fill: parent
-                            color: row.hovered ? Theme.launcherHighlight : "transparent"
-                            radius: 2
-                        }
+                            implicitWidth: rowText.implicitWidth
+                                           + (row.hasRight ? rightLabel.implicitWidth + Theme.barPadding : 0)
+                                           + (row.killable ? root.killGlyphWidth + Theme.barPadding : 0)
+                                           + Theme.barPadding * 2
+                            implicitHeight: Math.max(rowText.implicitHeight, rightLabel.implicitHeight, killText.implicitHeight)
+                                            + Theme.barPadding
+                            width: Math.max(implicitWidth, column.width)
+                            height: implicitHeight
 
-                        Text {
-                            id: rowText
-                            anchors.left: parent.left
-                            anchors.leftMargin: Theme.barPadding
-                            anchors.right: row.hasRight ? rightLabel.left : undefined
-                            anchors.rightMargin: row.hasRight ? Theme.barPadding : 0
-                            anchors.verticalCenter: parent.verticalCenter
-                            elide: row.hasRight ? Text.ElideRight : Text.ElideNone
-                            text: row.modelData.label
-                            color: row.hovered ? Theme.launcherTextActive : Theme.launcherTextDefault
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSize
-                        }
+                            property bool hovered: false
 
-                        Text {
-                            id: rightLabel
-                            anchors.right: row.killable ? killText.left : parent.right
-                            anchors.rightMargin: Theme.barPadding
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: row.hasRight
-                            text: row.rightText
-                            color: row.hovered ? Theme.launcherTextActive : Theme.launcherTextInactive
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSize
-                            horizontalAlignment: Text.AlignRight
-                        }
-
-                        Text {
-                            id: killText
-                            anchors.right: parent.right
-                            anchors.rightMargin: Theme.barPadding
-                            anchors.verticalCenter: parent.verticalCenter
-                            visible: row.killable
-                            text: ""
-                            color: killHover.hovered ? Theme.batteryCritical : Theme.launcherTextInactive
-                            font.family: Theme.fontFamily
-                            font.pixelSize: Theme.fontSize
-
-                            Behavior on color {
-                                ColorAnimation {
-                                    duration: Theme.hoverTransitionDuration
-                                }
+                            Rectangle {
+                                anchors.fill: parent
+                                color: row.hovered ? Theme.launcherHighlight : "transparent"
+                                radius: 2
                             }
 
-                            HoverHandler {
-                                id: killHover
+                            Text {
+                                id: rowText
+                                anchors.left: parent.left
+                                anchors.leftMargin: Theme.barPadding
+                                anchors.right: row.hasRight ? rightLabel.left : undefined
+                                anchors.rightMargin: row.hasRight ? Theme.barPadding : 0
+                                anchors.verticalCenter: parent.verticalCenter
+                                elide: row.hasRight ? Text.ElideRight : Text.ElideNone
+                                text: row.modelData.label
+                                color: row.hovered ? Theme.launcherTextActive : Theme.launcherTextDefault
+                                font.family: Theme.fontFamily
+                                font.pixelSize: Theme.fontSize
+                            }
+
+                            Text {
+                                id: rightLabel
+                                anchors.right: row.killable ? killText.left : parent.right
+                                anchors.rightMargin: Theme.barPadding
+                                anchors.verticalCenter: parent.verticalCenter
+                                visible: row.hasRight
+                                text: row.rightText
+                                color: row.hovered ? Theme.launcherTextActive : Theme.launcherTextInactive
+                                font.family: Theme.fontFamily
+                                font.pixelSize: Theme.fontSize
+                                horizontalAlignment: Text.AlignRight
+                            }
+
+                            Text {
+                                id: killText
+                                anchors.right: parent.right
+                                anchors.rightMargin: Theme.barPadding
+                                anchors.verticalCenter: parent.verticalCenter
+                                visible: row.killable
+                                text: ""
+                                color: killHover.hovered ? Theme.batteryCritical : Theme.launcherTextInactive
+                                font.family: Theme.fontFamily
+                                font.pixelSize: Theme.fontSize
+
+                                Behavior on color {
+                                    ColorAnimation {
+                                        duration: Theme.hoverTransitionDuration
+                                    }
+                                }
+
+                                HoverHandler {
+                                    id: killHover
+                                }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    anchors.margins: -4
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: root.itemKillRequested(row.pids)
+                                }
                             }
 
                             MouseArea {
                                 anchors.fill: parent
-                                anchors.margins: -4
+                                anchors.rightMargin: row.killable ? root.killGlyphWidth + Theme.barPadding : 0
+                                hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                                onClicked: root.itemKillRequested(row.pids)
-                            }
-                        }
-
-                        MouseArea {
-                            anchors.fill: parent
-                            anchors.rightMargin: row.killable ? root.killGlyphWidth + Theme.barPadding : 0
-                            hoverEnabled: true
-                            cursorShape: Qt.PointingHandCursor
-                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-                            onClicked: function (mouse) {
-                                if (mouse.button === Qt.RightButton) {
-                                    if (row.pids.length > 0)
-                                        root.itemRightClicked(row.pids[0]);
-                                    return;
+                                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                                onClicked: function (mouse) {
+                                    if (mouse.button === Qt.RightButton) {
+                                        if (row.pids.length > 0)
+                                            root.itemRightClicked(row.pids[0]);
+                                        return;
+                                    }
+                                    if (row.modelData.url)
+                                        root.itemClicked(row.modelData.url);
                                 }
-                                if (row.modelData.url)
-                                    root.itemClicked(row.modelData.url);
+                                onEntered: {
+                                    row.hovered = true
+                                    root.hoverTooltip = row.tipText
+                                    if (row.tipText)
+                                        root.tipY = row.mapToItem(frame, 0, 0).y
+                                }
+                                onExited: row.hovered = false
                             }
-                            onEntered: row.hovered = true
-                            onExited: row.hovered = false
                         }
                     }
+                }
+            }
+
+            WrapperRectangle {
+                id: tipFrame
+                visible: root.hoverTooltip !== ""
+                x: frame.implicitWidth + root.tipGap
+                y: root.tipY
+                width: Math.min(implicitWidth, root.tipSlotWidth)
+                z: 10
+                color: Theme.tooltipBg
+                border.color: Theme.tooltipBorder
+                margin: 6
+                radius: 4
+                clip: true
+
+                Text {
+                    width: tipFrame.width - 12
+                    wrapMode: Text.WrapAnywhere
+                    text: root.hoverTooltip
+                    color: Theme.tooltipFg
+                    font.family: Theme.fontFamily
+                    font.pixelSize: Theme.fontSize
                 }
             }
         }
