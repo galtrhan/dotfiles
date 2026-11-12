@@ -13,6 +13,7 @@ backup/
 !.local/bin/dethrace
 !.local/bin/dockerd-rootless-setuptool.sh
 !.local/bin/dockerd-rootless.sh
+!.local/bin/godot-on-magic
 !.local/bin/gparted
 !.local/bin/grafana-assistant
 !.local/bin/pasta

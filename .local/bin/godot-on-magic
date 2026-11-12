@@ -1,0 +1,104 @@
+#!/usr/bin/env bash
+# Run Godot and park its windows on Hyprland special:magic (Super+S).
+# Uses a temporary no_focus window rule so focus never switches. Falls back
+# to plain godot off Hyprland.
+# Usage: godot-on-magic [godot args...]
+set -euo pipefail
+
+GODOT_BIN="${GODOT_BIN:-godot}"
+MAGIC_WS="${GODOT_MAGIC_WORKSPACE:-special:magic}"
+RULE_NAME="godot-on-magic-temp"
+
+if [[ -z "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]] || ! command -v hyprctl >/dev/null 2>&1; then
+	exec "$GODOT_BIN" "$@"
+fi
+
+# Hyprland 0.56+ parses `hyprctl dispatch` as Lua, so legacy
+# movetoworkspacesilent special:magic,... dies on the colon. A temporary
+# window rule places Godot on magic without taking focus; we only hide the
+# special overlay if the rule briefly opens it.
+rule_enable() {
+	hyprctl eval "
+local r = hl.window_rule({
+	name = '${RULE_NAME}',
+	match = { class = 'Godot' },
+	workspace = '${MAGIC_WS}',
+	no_focus = true,
+})
+r:set_enabled(true)
+" >/dev/null || true
+}
+
+rule_disable() {
+	hyprctl eval "
+local r = hl.window_rule({
+	name = '${RULE_NAME}',
+	match = { class = 'Godot' },
+	workspace = '${MAGIC_WS}',
+	no_focus = true,
+})
+r:set_enabled(false)
+" >/dev/null || true
+}
+
+hide_magic_if_open() {
+	hyprctl eval "
+local s = hl.get_active_special_workspace()
+if s then
+	local name = s.name:gsub('^special:', '')
+	local want = ('${MAGIC_WS}'):gsub('^special:', '')
+	if name == want then
+		hl.dispatch(hl.dsp.workspace.toggle_special(name))
+	end
+end
+" >/dev/null || true
+}
+
+count_pid_windows() {
+	local p=$1
+	hyprctl -j clients 2>/dev/null | jq -r --argjson p "$p" '[.[] | select(.pid == $p)] | length'
+}
+
+cleanup() {
+	rule_disable
+	hide_magic_if_open
+}
+trap cleanup EXIT
+
+rule_enable
+
+"$GODOT_BIN" "$@" &
+pid=$!
+
+seen=0
+for _ in $(seq 1 120); do
+	if ! kill -0 "$pid" 2>/dev/null; then
+		wait "$pid"
+		exit $?
+	fi
+	hide_magic_if_open
+	addrs=$(count_pid_windows "$pid")
+	if [[ "${addrs:-0}" -gt 0 ]]; then
+		seen=1
+		hide_magic_if_open
+		# Godot can map splash/subwindows a beat late while the rule is live.
+		sleep 0.1
+		hide_magic_if_open
+		break
+	fi
+	sleep 0.05
+done
+
+if [[ "$seen" -eq 1 ]]; then
+	for _ in $(seq 1 20); do
+		kill -0 "$pid" 2>/dev/null || break
+		hide_magic_if_open
+		sleep 0.05
+	done
+fi
+
+rule_disable
+trap - EXIT
+
+wait "$pid"
+exit $?
