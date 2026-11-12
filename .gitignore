@@ -4,8 +4,20 @@ backup/
 .bash_profile
 .bashrc
 .config/systemd/user/default.target.wants/
-.local/bin/lnd
-.local/bin/bru
+# Keep only repo-owned wrappers under .local/bin; ignore installs and rebuilds.
+.local/bin/*
+!.local/bin/aseprite-thumbnailer
+!.local/bin/chromium
+!.local/bin/cleanup
+!.local/bin/cursor
+!.local/bin/dethrace
+!.local/bin/dockerd-rootless-setuptool.sh
+!.local/bin/dockerd-rootless.sh
+!.local/bin/gparted
+!.local/bin/grafana-assistant
+!.local/bin/pasta
+!.local/bin/pre-commit
+!.local/bin/tpc
 .local/lib/
 __pycache__/
 HW.md

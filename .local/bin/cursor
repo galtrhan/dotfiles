@@ -1,5 +1,27 @@
 #!/usr/bin/env bash
+# Cursor's sandbox cache holds the Gradle dependency cache, which was eating
+# 3.6G of RAM-backed /tmp. Keep that churn on disk instead.
+cursor_tmp="${XDG_CACHE_HOME:-$HOME/.cache}/cursor-tmp"
+mkdir -p "$cursor_tmp"
+chattr +C "$cursor_tmp" 2>/dev/null   # nodatacow: no CoW churn on caches
+export TMPDIR="$cursor_tmp"
+
+# Run without exec so we can reap detached private-worker daemons after the
+# last Cursor GUI exits. A second-window launch exits early while the main
+# process still lives; the pgrep guard keeps those workers running then.
 if command -v systemd-run >/dev/null 2>&1; then
-  exec systemd-run --user --scope -p MemoryMax=8G -p MemorySwapMax=2G /usr/share/cursor/cursor "$@"
+  systemd-run --user --scope -p MemoryMax=8G -p MemorySwapMax=2G \
+    /usr/share/cursor/cursor "$@"
+  status=$?
+else
+  /usr/share/cursor/cursor "$@"
+  status=$?
 fi
-exec /usr/share/cursor/cursor "$@"
+
+if ! pgrep -f '/usr/share/cursor/resources/app/cursor\.mjs' >/dev/null 2>&1; then
+  # Workers handle SIGTERM cleanly (bridge shutdown + daemon lock release).
+  pkill -TERM -f 'anysphere\.cursor-agent-worker/.*/cursor-agent .*worker start' \
+    2>/dev/null || true
+fi
+
+exit "$status"
