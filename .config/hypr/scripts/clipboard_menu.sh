@@ -1,6 +1,7 @@
 #!/bin/bash
 # Clipboard history picker via QuickShell launcher.
 # Shows cliphist previews without entry IDs; copies the selected item.
+# Duplicate previews are hidden (newest kept).
 
 set -euo pipefail
 
@@ -12,10 +13,18 @@ if [[ ${#LINES[@]} -eq 0 ]]; then
     exit 1
 fi
 
+declare -A SEEN=()
 PREVIEWS=()
+UNIQUE_LINES=()
 for line in "${LINES[@]}"; do
     # cliphist list: "ID<tab>preview"
-    PREVIEWS+=("${line#*$'\t'}")
+    preview="${line#*$'\t'}"
+    if [[ -n "${SEEN[$preview]+x}" ]]; then
+        continue
+    fi
+    SEEN[$preview]=1
+    PREVIEWS+=("${preview}")
+    UNIQUE_LINES+=("${line}")
 done
 
 OPTIONS_FILE=$(mktemp --suffix=-clipboard-menu)
@@ -29,7 +38,7 @@ if [[ -z "${SELECTED}" ]]; then
     exit 1
 fi
 
-for line in "${LINES[@]}"; do
+for line in "${UNIQUE_LINES[@]}"; do
     preview="${line#*$'\t'}"
     if [[ "${preview}" == "${SELECTED}" ]]; then
         printf '%s' "${line}" | cliphist decode | wl-copy
