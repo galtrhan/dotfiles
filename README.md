@@ -282,7 +282,7 @@ Full wallpaper system docs: [`.config/hypr/scripts/wallpaper.md`](.config/hypr/s
 |--------|---------|-------------|
 | [`screen_capture_menu.sh`](.config/hypr/scripts/screen_capture_menu.sh) | `Super+Print` | QuickShell picker for audio source, then start or stop recording |
 | [`screen_capture.sh`](.config/hypr/scripts/screen_capture.sh) | Called by menu | Region recording via `wf-recorder` and `slurp`, clipboard copy, notifications |
-| [`screenshot.sh`](.config/hypr/scripts/screenshot.sh) / [`screenshot.py`](.config/hypr/scripts/screenshot.py) | `Print` | Region screenshot via `hyprshot` |
+| `hyprshot -m region` | `Print` | Region screenshot (no wrapper script) |
 | [`ip_widget.sh`](.config/hypr/scripts/ip_widget.sh) | QuickShell IP widget right click | Save current MAC to history and randomize MAC with `macchanger` |
 | [`cursor_usage_widget.py`](.config/hypr/scripts/cursor_usage_widget.py) | QuickShell Cursor usage widget | Read plan pool % from `cursor.com/api/usage-summary` for the status bar |
 

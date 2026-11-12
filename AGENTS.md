@@ -54,7 +54,6 @@ Shell scripts for system integration:
 - `power.sh` — Power management (lock, suspend) via QuickShell menu
 - `qs-menu.sh` — Generic QuickShell menu picker for shell scripts
 - `sudo_askpass.sh` — Graphical sudo password prompt via QuickShell. Any command needing root runs as `sudo -A <cmd>` so the QuickShell prompt fires. Never `sudo -n`; it refuses to call the askpass helper and fails outright.
-- `screenshot.sh` — Screenshot capture with visual feedback
 - `screen_capture.sh` — Video recording with `wf-recorder` (region select, clipboard, notifications)
 - `screen_capture_menu.sh` — QuickShell menu to pick audio source before recording
 - `kbd_monitor.sh` — Keyboard backlight monitoring
@@ -67,6 +66,7 @@ All Hyprland scripts work with Hyprland keybinds and QuickShell desktop notifica
 - `Super+Space` — Toggle QuickShell app launcher
 - `Super+P` — Power menu
 - `Super+Shift+V` — Clipboard history picker
+- `Print` — Region screenshot via `hyprshot -m region`
 - `Super+Print` — Launch screen recording audio source menu
 - `Super+Z` — Launch `shmooz` screen magnifier
 - `Super+N` — Toggle QuickShell notification center

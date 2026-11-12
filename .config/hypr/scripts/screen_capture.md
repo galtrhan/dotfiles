@@ -192,6 +192,5 @@ pacman -S wf-recorder slurp libnotify wl-clipboard ffmpeg
 
 ## See Also
 
-- `screenshot.sh` — Static screenshot utility
-- `screenshot.py` — Python implementation with more options
+- `Print` keybind runs `hyprshot -m region` for still screenshots
 - Hyprland documentation: https://wiki.hyprland.org/
