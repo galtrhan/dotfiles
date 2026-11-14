@@ -14,6 +14,9 @@ Singleton {
     readonly property int launcherPickerWidth: 480
     readonly property int launcherInputPaddingV: 15
     readonly property int launcherInputPaddingH: 15
+    readonly property bool launcherShowAppDetails: true
+    readonly property int launcherDetailIconSize: 128
+    readonly property int launcherDetailWidth: 180
 
     readonly property color bg: Qt.rgba(20 / 255, 20 / 255, 20 / 255, 0.75)
     readonly property color launcherHighlight: "#2185a6"

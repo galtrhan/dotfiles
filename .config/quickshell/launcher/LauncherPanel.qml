@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import ".."
+import "../components"
 
 Scope {
     id: root
@@ -95,7 +96,9 @@ Scope {
                 id: panel
                 anchors.centerIn: parent
                 width: LauncherService.mode === LauncherService.modeApps
-                       ? Theme.launcherAppWidth
+                       ? (Theme.launcherShowAppDetails
+                          ? Theme.launcherAppWidth + Theme.launcherDetailWidth + Theme.spacing
+                          : Theme.launcherAppWidth)
                        : (LauncherService.mode === LauncherService.modeEmoji
                           ? Theme.launcherPickerWidth
                           : (LauncherService.mode === LauncherService.modeMenu
@@ -319,112 +322,197 @@ Scope {
                         }
                     }
 
-                    ScrollView {
-                        id: appScroll
+                    RowLayout {
+                        id: appRow
                         Layout.fillWidth: true
                         Layout.fillHeight: true
                         Layout.preferredHeight: Theme.barHeight * 10
                         visible: LauncherService.mode === LauncherService.modeApps
-                        clip: true
+                        spacing: Theme.spacing
 
-                        ListView {
-                            id: appList
-                            model: ScriptModel {
-                                // Gated by mode so typing in other modes
-                                // doesn't re-filter this list too.
-                                values: LauncherService.mode === LauncherService.modeApps
-                                        ? LauncherService.filteredApps() : []
-                            }
-                            reuseItems: true
-                            currentIndex: LauncherService.selectedIndex
-                            boundsBehavior: Flickable.StopAtBounds
-                            keyNavigationWraps: true
-                            highlightMoveDuration: 80
+                        ScrollView {
+                            id: appScroll
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            clip: true
 
-                            onCurrentIndexChanged: LauncherService.selectedIndex = currentIndex
+                            ListView {
+                                id: appList
+                                model: ScriptModel {
+                                    // Gated by mode so typing in other modes
+                                    // doesn't re-filter this list too.
+                                    values: LauncherService.mode === LauncherService.modeApps
+                                            ? LauncherService.filteredApps() : []
+                                }
+                                reuseItems: true
+                                currentIndex: LauncherService.selectedIndex
+                                boundsBehavior: Flickable.StopAtBounds
+                                keyNavigationWraps: true
+                                highlightMoveDuration: 80
 
-                            onModelChanged: LauncherService.clampSelectedIndex(count)
+                                onCurrentIndexChanged: LauncherService.selectedIndex = currentIndex
 
-                            highlight: Rectangle {
-                                radius: Theme.borderRadius
-                                color: Theme.launcherHighlight
-                            }
+                                onModelChanged: LauncherService.clampSelectedIndex(count)
 
-                            delegate: Item {
-                                required property var modelData
-                                required property int index
-                                width: appList.width
-                                height: Theme.barHeight
+                                highlight: Rectangle {
+                                    radius: Theme.borderRadius
+                                    color: Theme.launcherHighlight
+                                }
 
-                                RowLayout {
-                                    anchors {
-                                        fill: parent
-                                        leftMargin: Theme.barPadding
-                                        rightMargin: Theme.barPadding
+                                delegate: Item {
+                                    required property var modelData
+                                    required property int index
+                                    width: appList.width
+                                    height: Theme.barHeight
+
+                                    RowLayout {
+                                        anchors {
+                                            fill: parent
+                                            leftMargin: Theme.barPadding
+                                            rightMargin: Theme.barPadding
+                                        }
+                                        spacing: Theme.spacing
+
+                                        // IconImage {
+                                        //     Layout.preferredWidth: Theme.launcherFontSize + 4
+                                        //     Layout.preferredHeight: Theme.launcherFontSize + 4
+                                        //     visible: modelData.icon !== ""
+                                        //     source: modelData.icon
+                                        // }
+
+                                        Text {
+                                            Layout.fillWidth: true
+                                            text: modelData.name
+                                            color: appList.currentIndex === index ? Theme.launcherTextActive : Theme.launcherTextDefault
+                                            font.family: Theme.fontFamily
+                                            font.pixelSize: Theme.launcherFontSize
+                                            elide: Text.ElideRight
+                                        }
+
+                                        Text {
+                                            visible: modelData.genericName !== ""
+                                            text: modelData.genericName
+                                            color: Theme.launcherTextInactive
+                                            font.family: Theme.fontFamily
+                                            font.pixelSize: Theme.launcherFontSize
+                                            elide: Text.ElideRight
+                                            Layout.maximumWidth: 140
+                                        }
                                     }
-                                    spacing: Theme.spacing
 
-                                    // IconImage {
-                                    //     Layout.preferredWidth: Theme.launcherFontSize + 4
-                                    //     Layout.preferredHeight: Theme.launcherFontSize + 4
-                                    //     visible: modelData.icon !== ""
-                                    //     source: modelData.icon
-                                    // }
-
-                                    Text {
-                                        Layout.fillWidth: true
-                                        text: modelData.name
-                                        color: appList.currentIndex === index ? Theme.launcherTextActive : Theme.launcherTextDefault
-                                        font.family: Theme.fontFamily
-                                        font.pixelSize: Theme.launcherFontSize
-                                        elide: Text.ElideRight
-                                    }
-
-                                    Text {
-                                        visible: modelData.genericName !== ""
-                                        text: modelData.genericName
-                                        color: Theme.launcherTextInactive
-                                        font.family: Theme.fontFamily
-                                        font.pixelSize: Theme.launcherFontSize
-                                        elide: Text.ElideRight
-                                        Layout.maximumWidth: 140
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: appList.launchEntry(modelData)
+                                        onEntered: appList.currentIndex = index
                                     }
                                 }
 
-                                MouseArea {
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                    cursorShape: Qt.PointingHandCursor
-                                    onClicked: appList.launchEntry(modelData)
-                                    onEntered: appList.currentIndex = index
+                                function launchCurrent(): void {
+                                    const values = LauncherService.filteredApps();
+                                    if (currentIndex < 0 || currentIndex >= values.length)
+                                        return;
+                                    launchEntry(values[currentIndex]);
+                                }
+
+                                function launchEntry(entry): void {
+                                    if (!entry)
+                                        return;
+                                    LauncherService.recordAppLaunch(entry);
+                                    entry.execute();
+                                    LauncherService.close();
+                                }
+
+                                function incrementCurrentIndex(): void {
+                                    if (count === 0)
+                                        return;
+                                    currentIndex = (currentIndex + 1) % count;
+                                }
+
+                                function decrementCurrentIndex(): void {
+                                    if (count === 0)
+                                        return;
+                                    currentIndex = currentIndex <= 0 ? count - 1 : currentIndex - 1;
                                 }
                             }
+                        }
 
-                            function launchCurrent(): void {
-                                const values = LauncherService.filteredApps();
-                                if (currentIndex < 0 || currentIndex >= values.length)
-                                    return;
-                                launchEntry(values[currentIndex]);
+                        Item {
+                            id: appDetail
+                            visible: Theme.launcherShowAppDetails
+                            Layout.preferredWidth: Theme.launcherDetailWidth
+                            Layout.fillHeight: true
+                            clip: true
+
+                            // Use the list model already filtered for ScriptModel.
+                            readonly property var entry: {
+                                const values = appList.model.values;
+                                const i = appList.currentIndex;
+                                if (!values || i < 0 || i >= values.length)
+                                    return null;
+                                return values[i];
                             }
 
-                            function launchEntry(entry): void {
-                                if (!entry)
-                                    return;
-                                LauncherService.recordAppLaunch(entry);
-                                entry.execute();
-                                LauncherService.close();
+                            readonly property string iconName: appDetail.entry && appDetail.entry.icon
+                                ? appDetail.entry.icon : ""
+
+                            readonly property string categoryText: {
+                                const cats = appDetail.entry ? (appDetail.entry.categories || "") : "";
+                                if (!cats)
+                                    return "";
+                                return String(cats).split(";").filter(function (c) {
+                                    return c.length > 0;
+                                }).join(", ");
                             }
 
-                            function incrementCurrentIndex(): void {
-                                if (count === 0)
-                                    return;
-                                currentIndex = (currentIndex + 1) % count;
-                            }
+                            readonly property string descriptionText: appDetail.entry
+                                ? (appDetail.entry.comment || "")
+                                : ""
 
-                            function decrementCurrentIndex(): void {
-                                if (count === 0)
-                                    return;
-                                currentIndex = currentIndex <= 0 ? count - 1 : currentIndex - 1;
+                            ColumnLayout {
+                                anchors.fill: parent
+                                spacing: Theme.spacing
+
+                                Item {
+                                    Layout.alignment: Qt.AlignHCenter
+                                    Layout.preferredWidth: Theme.launcherDetailIconSize
+                                    Layout.preferredHeight: Theme.launcherDetailIconSize
+
+                                    IconImage {
+                                        anchors.centerIn: parent
+                                        width: Theme.launcherDetailIconSize
+                                        height: Theme.launcherDetailIconSize
+                                        visible: appDetail.iconName !== ""
+                                        source: appDetail.iconName !== ""
+                                                ? Quickshell.iconPath(appDetail.iconName)
+                                                : ""
+                                    }
+                                }
+
+                                ElidedTipText {
+                                    text: appDetail.entry ? (appDetail.entry.name || "") : ""
+                                    color: Theme.launcherTextActive
+                                    font.bold: true
+                                }
+
+                                ElidedTipText {
+                                    visible: appDetail.categoryText !== ""
+                                    text: appDetail.categoryText
+                                }
+
+                                ElidedTipText {
+                                    Layout.fillHeight: true
+                                    verticalAlignment: Text.AlignTop
+                                    visible: appDetail.descriptionText !== ""
+                                    text: appDetail.descriptionText
+                                    maximumLineCount: 8
+                                }
+
+                                Item {
+                                    Layout.fillHeight: true
+                                    visible: appDetail.descriptionText === ""
+                                }
                             }
                         }
                     }
